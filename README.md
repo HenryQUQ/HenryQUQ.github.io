@@ -1,5 +1,7 @@
 # Chenyuan Qu Personal Project
 ---
-<p>https://ChenyuanQu.com/</p>
+https://ChenyuanQu.com/
+
 ---
+
 [![Personal Website Screenshot](stats/chenyuanqu.com_.png)](https://ChenyuanQu.com/)
