@@ -1,0 +1,7 @@
+.next
+node_modules
+out
+dist
+npm-debug.log*
+tmp
+tsconfig.tsbuildinfo
