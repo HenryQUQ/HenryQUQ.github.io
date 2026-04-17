@@ -20,9 +20,18 @@ export function TimelineItem({ item, index }: TimelineItemProps) {
           <p className="mt-4 max-w-reading text-base leading-8 text-ink/84">
             {item.detail}
           </p>
+          {item.highlights?.length ? (
+            <ul className="mt-4 max-w-reading space-y-2 text-sm leading-7 text-ink/78 sm:text-base">
+              {item.highlights.map((highlight) => (
+                <li key={highlight} className="flex gap-3">
+                  <span className="mt-[0.85rem] h-1.5 w-1.5 shrink-0 rounded-full bg-accent/70" />
+                  <span>{highlight}</span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
         </div>
       </div>
     </Reveal>
   );
 }
-

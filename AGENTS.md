@@ -18,6 +18,8 @@ This repository is a statically exported Next.js academic website. Keep code and
 - `npm run lint` runs Next.js ESLint checks.
 - `npm run typecheck` runs strict TypeScript validation.
 - `npm run build` creates the production static export in `out/`.
+- `npm run preview:out` serves the exported site locally on port `4173`.
+- `npm run test:e2e` runs Playwright smoke tests against the static export.
 
 Before opening a PR, run:
 
@@ -25,6 +27,7 @@ Before opening a PR, run:
 npm run lint
 npm run typecheck
 npm run build
+npm run test:e2e
 ```
 
 ## Coding Style & Naming Conventions
@@ -37,13 +40,10 @@ npm run build
 
 ## Testing Guidelines
 
-There is no formal automated test suite yet. Validation is currently:
-
-- static checks: `npm run lint` and `npm run typecheck`
-- production safety: `npm run build`
-- visual QA: inspect desktop and mobile layouts, preferably with Playwright screenshots for hero, publications, and project sections
-
-If you add tests later, place them near the feature or in a dedicated `tests/` directory and name them after the feature they verify.
+- Keep browser tests in `tests/` using Playwright. Current coverage is smoke-level: homepage render, anchor navigation, mobile menu, overflow checks, and publication actions.
+- Name specs after the surface they verify, for example `site.spec.ts`.
+- Rebuild before e2e runs; `npm run test:e2e` expects a fresh `out/` directory and starts `npm run preview:out` automatically.
+- When changing layout or content density, inspect both desktop and mobile screenshots in addition to the automated checks.
 
 ## Commit & Pull Request Guidelines
 

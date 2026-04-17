@@ -17,6 +17,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SITE_URL: https://chenyuanqu.com
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,8 +35,23 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run typecheck
+        run: npm run typecheck
+
+      - name: Verify project-page base path build
+        run: NEXT_PUBLIC_BASE_PATH=/project-preview npm run build
+
       - name: Build static export
         run: npm run build
+
+      - name: Run end-to-end tests
+        run: npm run test:e2e
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
@@ -51,4 +68,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-

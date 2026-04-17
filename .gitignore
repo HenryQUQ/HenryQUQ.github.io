@@ -4,4 +4,6 @@ out
 dist
 npm-debug.log*
 tmp
+test-results
+playwright-report
 tsconfig.tsbuildinfo

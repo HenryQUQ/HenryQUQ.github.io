@@ -8,7 +8,7 @@ A quiet editorial research site: warm paper tones, charcoal typography, precise 
 
 1. Hero: name, role, affiliation, short bio, essential links, portrait as the dominant visual plane
 2. Support: research interests and a tightly curated publications selection
-3. Detail: full publication record, project highlights, news, experience, and education
+3. Detail: full publication record, dataset surfaces, news, experience, and education
 4. Final CTA: concise contact footer
 
 ## Interaction thesis
@@ -16,6 +16,8 @@ A quiet editorial research site: warm paper tones, charcoal typography, precise 
 1. Hero entrance sequence: name, metadata, and link row rise in with slight stagger while the portrait fades in more slowly.
 2. Sticky navigation: calm, thin active indicator that tracks the section in view.
 3. Editorial reveal system: section blocks and publication rows ease upward on first entry; hover states extend dividers and shift text color rather than adding cards or shadows.
+4. Publication spotlight: opening a paper should feel like moving into a reading room rather than leaving the page, with a restrained overlay and local media preview.
+5. Media lightbox: figures, posters, and verified video media expand to a quiet full-screen viewer with keyboard controls, not a flashy gallery treatment.
 
 ## Layout system
 
@@ -41,8 +43,8 @@ A quiet editorial research site: warm paper tones, charcoal typography, precise 
 - About: orient the reader in one glance.
 - Research Interests: state the intellectual focus.
 - Selected Publications: present the strongest, most current work.
-- All Publications: provide a complete and compact academic record.
-- Project Highlights: surface project pages, code, datasets, and workshops.
+- Publications & Datasets: provide a complete and compact academic record, with linked dataset surfaces where they materially extend the work.
+- Datasets: surface dataset pages, code, and challenge links without turning the page into a project gallery.
 - News / Highlights: concise milestones only.
 - Experience: present a restrained high-level timeline.
 - Education: show only the most relevant academic history.
@@ -70,7 +72,9 @@ A quiet editorial research site: warm paper tones, charcoal typography, precise 
 - Section heading block
 - Publication feature rows
 - Compact publication list items
-- Project highlight rows
+- Publication spotlight dialog
+- Figure / poster / video lightbox
+- Dataset highlight rows
 - Timeline rows for experience and education
 - Footer link cluster
 
@@ -85,5 +89,5 @@ A quiet editorial research site: warm paper tones, charcoal typography, precise 
 
 - Hero keeps the portrait as a background plane rather than a separate image block.
 - Navigation collapses to a simple drawer button.
-- Publication and project rows stack cleanly with venue and links beneath titles.
+- Publication and dataset rows stack cleanly with venue and links beneath titles.
 - Section spacing remains generous, but paragraph widths are slightly wider than on desktop to avoid awkward wrapping.

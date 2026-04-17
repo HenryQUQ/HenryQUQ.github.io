@@ -34,9 +34,18 @@ The dev server will be available at `http://localhost:3000`.
 npm run lint
 npm run typecheck
 npm run build
+npm run test:e2e
 ```
 
 The static export is written to `out/`.
+
+## Static preview and browser checks
+
+```bash
+npm run preview:out
+```
+
+This serves the exported `out/` directory at `http://127.0.0.1:4173`.
 
 ## GitHub Pages deployment
 
@@ -56,9 +65,19 @@ If you want to preview a project-page deployment path locally, set `NEXT_PUBLIC_
 NEXT_PUBLIC_BASE_PATH=/your-repo-name npm run build
 ```
 
+### Canonical site URL
+
+Production metadata defaults to `https://chenyuanqu.com`. Override it when needed:
+
+```bash
+NEXT_PUBLIC_SITE_URL=https://preview.example.com npm run build
+```
+
 ## Content updates
 
 Most content changes only require editing `src/data/site.ts`.
+
+Publication citation strings, BibTeX blocks, DOI values, and external link labels are also managed from the same file.
 
 Use `docs/sources.md` as the reference for:
 
