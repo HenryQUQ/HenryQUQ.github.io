@@ -68,8 +68,24 @@ test("publication actions expose citation copy and BibTeX", async ({
   const copyButton = publication.getByRole("button", {
     name: /copy citation/i
   });
+  await copyButton.hover();
+  const preview = page.locator('[data-citation-preview="visualsplit"]');
+  await expect(preview).toBeVisible();
+  await expect(preview).toContainText("Will copy citation text");
+  await expect(preview).toContainText(
+    "Exploring Image Representation with Decoupled Classical Visual Descriptors"
+  );
+
   await copyButton.click();
-  await expect(copyButton).toContainText("Copied");
+  await expect(copyButton).toContainText("Copy citation");
+  await expect(preview).toHaveCount(0);
+
+  const toast = page.locator('[data-citation-toast="visualsplit"]');
+  await expect(toast).toBeVisible();
+  await expect(toast).toContainText("Citation copied to clipboard");
+  await expect(toast).toContainText(
+    "Exploring Image Representation with Decoupled Classical Visual Descriptors"
+  );
 
   await publication.getByRole("button", { name: "BibTeX" }).click();
   await expect(publication.locator("pre code")).toContainText(
@@ -212,6 +228,42 @@ test("lightbox opens local poster media and video media", async ({
   await expect(page.locator('[data-lightbox-media-kind="video"] video')).toBeVisible();
 });
 
+test("VisualSplit spotlight includes poster, presentation, and examples", async ({
+  page
+}) => {
+  await page.goto("/?spotlight=visualsplit");
+
+  const spotlight = page.locator('[data-publication-spotlight="visualsplit"]');
+  await expect(spotlight).toBeVisible();
+
+  await expect(spotlight.getByRole("link", { name: "Poster" })).toHaveAttribute(
+    "href",
+    "https://chenyuanqu.com/VisualSplit/docs/posters/0873_poster.pdf"
+  );
+  await expect(
+    spotlight.getByRole("link", { name: "Presentation" })
+  ).toHaveAttribute(
+    "href",
+    "https://chenyuanqu.com/VisualSplit/videos/presentation/0873_presentation_1080p.mp4"
+  );
+  await expect(spotlight.getByRole("link", { name: "Examples" })).toHaveAttribute(
+    "href",
+    "https://chenyuanqu.com/VisualSplit/colour-map-examples/"
+  );
+
+  await page.getByRole("button", { name: /bmvc 2025 poster/i }).click();
+  await expect(page.locator('[data-lightbox-media-id="visualsplit-poster"]')).toBeVisible();
+
+  await page.keyboard.press("Escape");
+  await expect(spotlight).toBeVisible();
+
+  await page.getByRole("button", { name: /bmvc 2025 presentation/i }).click();
+  await expect(
+    page.locator('[data-lightbox-media-id="visualsplit-presentation"]')
+  ).toBeVisible();
+  await expect(page.locator('[data-lightbox-media-kind="video"] video')).toBeVisible();
+});
+
 test("image lightbox closes when clicking outside the visible media panel", async ({
   page
 }) => {
@@ -301,5 +353,32 @@ test.describe("mobile", () => {
     await page.goto("/#publications");
     await expect(page.getByRole("heading", { level: 3, name: "Datasets" })).toBeVisible();
     await expect(page.getByText("text-to-art-database")).toBeVisible();
+  });
+
+  test("mobile copy citation shows a detailed toast without requiring hover", async ({
+    context,
+    page
+  }) => {
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.goto("/#publications");
+
+    const publication = page.locator(
+      '[data-publication-slug="visualsplit"][data-publication-variant="full"]'
+    );
+    await publication.scrollIntoViewIfNeeded();
+
+    const copyButton = publication.getByRole("button", {
+      name: /copy citation/i
+    });
+    await copyButton.click();
+
+    await expect(page.locator('[data-citation-preview="visualsplit"]')).toHaveCount(0);
+
+    const toast = page.locator('[data-citation-toast="visualsplit"]');
+    await expect(toast).toBeVisible();
+    await expect(toast).toContainText("Citation copied to clipboard");
+    await expect(toast).toContainText(
+      "Exploring Image Representation with Decoupled Classical Visual Descriptors"
+    );
   });
 });

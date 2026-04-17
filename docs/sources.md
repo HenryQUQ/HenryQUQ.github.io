@@ -46,13 +46,19 @@ Industry and experience facts were checked against the current personal website 
 - Official BMVC citation block and BibTeX: `https://bmvc2025.bmva.org/proceedings/873/`
 - DOI used on site: `10.48550/arXiv.2510.14536`
 - Local spotlight figure: `/public/images/projects/visualsplit-framework.webp`, matched to the framework overview visual used on the official VisualSplit project page.
+- Local poster preview: `/public/images/publications/visualsplit-poster.webp`, generated from the official poster PDF `https://chenyuanqu.com/VisualSplit/docs/posters/0873_poster.pdf`
+- Local video poster preview: `/public/images/projects/visualsplit-hero.webp`, derived from the official VisualSplit hero image `https://chenyuanqu.com/VisualSplit/images/hero/visualsplit_hero.jpg`
 - Project links:
   - Project page: `https://chenyuanqu.com/VisualSplit/`
   - Paper PDF: `https://chenyuanqu.com/VisualSplit/docs/papers/VisualSplit_BMVC2025.pdf`
   - Supplementary: `https://chenyuanqu.com/VisualSplit/docs/supplementary/VisualSplit_supplementary.pdf`
+  - Poster PDF: `https://chenyuanqu.com/VisualSplit/docs/posters/0873_poster.pdf`
+  - BMVC 2025 presentation video: `https://chenyuanqu.com/VisualSplit/videos/presentation/0873_presentation_1080p.mp4`
+  - Colour-map examples page: `https://chenyuanqu.com/VisualSplit/colour-map-examples/`
   - Code: `https://github.com/HenryQUQ/VisualSplit`
   - Models: `https://huggingface.co/quchenyuan/VisualSplit`
   - arXiv: `https://arxiv.org/abs/2510.14536`
+- The footer text on the VisualSplit project page contains template placeholder language and extra contact details; these were treated as non-authoritative and not copied into the personal site.
 
 #### DIFF
 

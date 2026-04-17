@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import { Publication } from "@/src/data/site";
 import { getPublicationDoiUrl } from "@/src/lib/publications";
@@ -20,18 +21,41 @@ export function PublicationActions({
   showSpotlightButton = true,
   onOpenSpotlight
 }: PublicationActionsProps) {
-  const [copied, setCopied] = useState(false);
+  const reducedMotion = useReducedMotion();
+  const [supportsHover, setSupportsHover] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
   const [showBibtex, setShowBibtex] = useState(false);
   const bibtexId = `${idPrefix}-bibtex`;
+  const citationPreviewId = `${idPrefix}-citation-preview`;
 
   useEffect(() => {
-    if (!copied) {
+    if (typeof window === "undefined" || !window.matchMedia) {
       return undefined;
     }
 
-    const timeoutId = window.setTimeout(() => setCopied(false), 1600);
+    const mediaQuery = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const sync = () => setSupportsHover(mediaQuery.matches);
+
+    sync();
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", sync);
+      return () => mediaQuery.removeEventListener("change", sync);
+    }
+
+    mediaQuery.addListener(sync);
+    return () => mediaQuery.removeListener(sync);
+  }, []);
+
+  useEffect(() => {
+    if (!toastOpen) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => setToastOpen(false), 3200);
     return () => window.clearTimeout(timeoutId);
-  }, [copied]);
+  }, [toastOpen]);
 
   async function handleCopyCitation() {
     try {
@@ -49,9 +73,10 @@ export function PublicationActions({
         document.body.removeChild(textArea);
       }
 
-      setCopied(true);
+      setPreviewOpen(false);
+      setToastOpen(true);
     } catch {
-      setCopied(false);
+      setToastOpen(false);
     }
   }
 
@@ -82,18 +107,62 @@ export function PublicationActions({
         {publication.doi ? (
           <TextLink href={getPublicationDoiUrl(publication.doi)}>DOI</TextLink>
         ) : null}
-        <button
-          type="button"
-          className="group inline-flex items-center gap-1.5 text-sm text-ink/82 hover:text-ink"
-          aria-label={`Copy citation for ${publication.title}`}
-          onClick={() => {
-            void handleCopyCitation();
+        <div
+          className="relative inline-flex"
+          onMouseEnter={() => {
+            if (supportsHover) {
+              setPreviewOpen(true);
+            }
+          }}
+          onMouseLeave={() => {
+            if (supportsHover) {
+              setPreviewOpen(false);
+            }
           }}
         >
-          <span className="border-b border-transparent pb-px group-hover:border-current">
-            {copied ? "Copied" : "Copy citation"}
-          </span>
-        </button>
+          <button
+            type="button"
+            className="group inline-flex items-center gap-1.5 text-sm text-ink/82 hover:text-ink"
+            aria-label={`Copy citation for ${publication.title}`}
+            aria-describedby={previewOpen ? citationPreviewId : undefined}
+            onFocus={() => {
+              if (supportsHover) {
+                setPreviewOpen(true);
+              }
+            }}
+            onBlur={() => {
+              if (supportsHover) {
+                setPreviewOpen(false);
+              }
+            }}
+            onClick={() => {
+              void handleCopyCitation();
+            }}
+          >
+            <span className="border-b border-transparent pb-px group-hover:border-current">
+              Copy citation
+            </span>
+          </button>
+
+          <AnimatePresence>
+            {previewOpen ? (
+              <motion.div
+                id={citationPreviewId}
+                data-citation-preview={publication.slug}
+                initial={reducedMotion ? false : { opacity: 0, y: 6, scale: 0.985 }}
+                animate={reducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                exit={reducedMotion ? undefined : { opacity: 0, y: 4, scale: 0.985 }}
+                transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
+                className="pointer-events-none absolute left-0 top-full z-20 mt-3 w-[min(28rem,calc(100vw-3rem))] rounded-[1rem] border border-line/90 bg-paper/96 p-4 text-left shadow-[0_18px_36px_rgba(29,32,28,0.16)] backdrop-blur-sm"
+              >
+                <p className="meta-label text-accent">Will copy citation text</p>
+                <p className="mt-3 text-sm leading-7 text-ink/84">
+                  {publication.citationText}
+                </p>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+        </div>
         <button
           type="button"
           className="group inline-flex items-center gap-1.5 text-sm text-ink/82 hover:text-ink"
@@ -114,6 +183,25 @@ export function PublicationActions({
           <code>{publication.bibtex}</code>
         </pre>
       ) : null}
+      <AnimatePresence>
+        {toastOpen ? (
+          <motion.div
+            aria-live="polite"
+            role="status"
+            data-citation-toast={publication.slug}
+            initial={reducedMotion ? false : { opacity: 0, y: 14, scale: 0.985 }}
+            animate={reducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+            exit={reducedMotion ? undefined : { opacity: 0, y: 12, scale: 0.985 }}
+            transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-x-4 bottom-4 z-[110] rounded-[1.1rem] border border-line/90 bg-paper/96 p-4 shadow-[0_18px_40px_rgba(29,32,28,0.16)] backdrop-blur-sm sm:left-auto sm:right-5 sm:w-[min(28rem,calc(100vw-2.5rem))]"
+          >
+            <p className="meta-label text-accent">Citation copied to clipboard</p>
+            <p className="mt-3 text-sm leading-7 text-ink/84">
+              {publication.citationText}
+            </p>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </>
   );
 }

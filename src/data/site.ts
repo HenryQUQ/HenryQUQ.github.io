@@ -211,9 +211,9 @@ export const publications: Publication[] = [
     shortVenue: "BMVC",
     year: 2025,
     summary:
-      "VisualSplit revisits classical visual descriptors as controllable, human-interpretable ingredients for representation learning and downstream image generation or editing.",
+      "VisualSplit learns image representations from decoupled edges, colour segmentation, and grey-level histograms, enabling descriptor-to-image reconstruction, controllable editing, and diffusion-based restoration.",
     abstract:
-      "VisualSplit studies whether classical visual descriptors can serve as explicit, controllable ingredients for image representation learning. The framework decouples edge structure, colour regions, and luminance statistics, then learns to reconstruct and manipulate images from those interpretable cues for restoration, generation, and editing.",
+      "VisualSplit decomposes each image into three classical descriptors: edges for geometry, segmented colours for regional chroma, and a grey-level histogram for global illumination. It then learns to reconstruct images from those cues alone, yielding an explicitly interpretable representation that supports descriptor-level illumination and colour editing while transferring naturally to restoration and descriptor-guided image generation with diffusion models.",
     citationText:
       "Qu, Chenyuan, Hao Chen, and Jianbo Jiao. \"Exploring Image Representation with Decoupled Classical Visual Descriptors.\" 36th British Machine Vision Conference (BMVC), 2025.",
     bibtex: `@inproceedings{Qu_2025_BMVC,
@@ -243,6 +243,16 @@ export const publications: Publication[] = [
         href: "https://chenyuanqu.com/VisualSplit/docs/supplementary/VisualSplit_supplementary.pdf"
       },
       {
+        kind: "poster",
+        label: "Poster",
+        href: "https://chenyuanqu.com/VisualSplit/docs/posters/0873_poster.pdf"
+      },
+      {
+        kind: "video",
+        label: "Presentation",
+        href: "https://chenyuanqu.com/VisualSplit/videos/presentation/0873_presentation_1080p.mp4"
+      },
+      {
         kind: "arxiv",
         label: "arXiv",
         href: "https://arxiv.org/abs/2510.14536"
@@ -256,6 +266,11 @@ export const publications: Publication[] = [
         kind: "models",
         label: "Models",
         href: "https://huggingface.co/quchenyuan/VisualSplit"
+      },
+      {
+        kind: "project",
+        label: "Examples",
+        href: "https://chenyuanqu.com/VisualSplit/colour-map-examples/"
       }
     ],
     spotlightMedia: [
@@ -268,6 +283,27 @@ export const publications: Publication[] = [
         width: 1200,
         height: 365,
         fit: "contain"
+      },
+      {
+        id: "visualsplit-poster",
+        kind: "poster",
+        label: "BMVC 2025 poster",
+        src: "/images/publications/visualsplit-poster.webp",
+        alt: "Poster for the VisualSplit BMVC 2025 paper.",
+        width: 1600,
+        height: 2260,
+        fit: "contain"
+      },
+      {
+        id: "visualsplit-presentation",
+        kind: "video",
+        label: "BMVC 2025 presentation",
+        src: "https://chenyuanqu.com/VisualSplit/videos/presentation/0873_presentation_1080p.mp4",
+        posterSrc: "/images/projects/visualsplit-hero.webp",
+        alt: "BMVC 2025 presentation video for VisualSplit.",
+        width: 1920,
+        height: 1080,
+        fit: "cover"
       }
     ]
   },
@@ -542,7 +578,7 @@ export const projects: Project[] = [
     imageFit: "contain",
     relatedPublicationSlug: "visualsplit",
     summary:
-      "A research project on interpretable image representation that decomposes visual structure into controllable classical descriptors for learning, restoration, and editing.",
+      "A descriptor-driven project that reconstructs images from edges, colour segmentation, and grey-level histograms, then reuses those interpretable controls for restoration and prompt-free editing.",
     links: [
       {
         kind: "project",
@@ -558,6 +594,11 @@ export const projects: Project[] = [
         kind: "models",
         label: "Models",
         href: "https://huggingface.co/quchenyuan/VisualSplit"
+      },
+      {
+        kind: "project",
+        label: "Examples",
+        href: "https://chenyuanqu.com/VisualSplit/colour-map-examples/"
       }
     ]
   },
