@@ -9,6 +9,7 @@ import { Project, Publication, PublicationMedia } from "@/src/data/site";
 import { getFocusableElements } from "@/src/lib/focus";
 import { getPublicationProjectLinks } from "@/src/lib/publications";
 
+import { LinkedAuthors } from "./linked-authors";
 import { PublicationActions } from "./publication-actions";
 import { TextLink } from "./text-link";
 
@@ -241,9 +242,10 @@ export function PublicationSpotlight({
               >
                 {publication.title}
               </h2>
-              <p className="mt-4 text-sm leading-7 text-muted sm:text-base">
-                {publication.authors}
-              </p>
+              <LinkedAuthors
+                publication={publication}
+                className="mt-4 text-sm leading-7 text-muted sm:text-base"
+              />
               <p className="mt-3 text-sm leading-7 text-ink/78">{publication.venue}</p>
               <p className="mt-6 max-w-reading text-[1.02rem] leading-8 text-ink/88 sm:text-lg">
                 {publication.summary}

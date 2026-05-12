@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Project, Publication } from "@/src/data/site";
 import { getPublicationProjectLinks } from "@/src/lib/publications";
 
+import { LinkedAuthors } from "./linked-authors";
 import { PublicationActions } from "./publication-actions";
 import { Reveal } from "./reveal";
 import { TextLink } from "./text-link";
@@ -151,7 +152,10 @@ export function PublicationListItem({
             <h3 className="mt-4 font-display text-[1.9rem] leading-tight text-ink sm:text-[2.15rem]">
               {publication.title}
             </h3>
-            <p className="mt-3 text-sm leading-7 text-muted">{publication.authors}</p>
+            <LinkedAuthors
+              publication={publication}
+              className="mt-3 text-sm leading-7 text-muted"
+            />
             <p className="mt-2 text-sm leading-7 text-ink/78">{publication.venue}</p>
             <p className="mt-4 max-w-reading text-base leading-8 text-ink/84">
               {publication.summary}

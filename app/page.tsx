@@ -11,6 +11,8 @@ import {
   education,
   experience,
   newsItems,
+  organisationLinks,
+  personLinks,
   profile,
   projects,
   publications,
@@ -41,15 +43,22 @@ const personSchema = {
   affiliation: [
     {
       "@type": "Organization",
-      name: "Allsee"
+      name: "Allsee",
+      url: organisationLinks.find((organisation) => organisation.label === "Allsee")
+        ?.href
     },
     {
       "@type": "Organization",
-      name: "Vieunite"
+      name: "Vieunite",
+      url: organisationLinks.find((organisation) => organisation.label === "Vieunite")
+        ?.href
     },
     {
       "@type": "Organization",
-      name: "University of Birmingham"
+      name: "University of Birmingham",
+      url: organisationLinks.find(
+        (organisation) => organisation.label === "University of Birmingham"
+      )?.href
     }
   ],
   alumniOf: [
@@ -102,10 +111,15 @@ const publicationSchemas = publications.map((publication) => {
     headline: publication.title,
     url: primaryUrl,
     mainEntityOfPage: primaryUrl,
-    author: publication.authorList.map((author) => ({
-      "@type": "Person",
-      name: author
-    })),
+    author: publication.authorList.map((author) => {
+      const personLink = personLinks.find((person) => person.name === author);
+
+      return {
+        "@type": "Person",
+        name: author,
+        url: personLink?.href
+      };
+    }),
     datePublished: `${publication.year}`,
     description: publication.summary,
     isPartOf: {

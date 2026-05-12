@@ -15,7 +15,23 @@ export function TimelineItem({ item, index }: TimelineItemProps) {
         <div>
           <h3 className="font-display text-2xl text-ink">{item.title}</h3>
           <p className="mt-2 text-sm uppercase tracking-[0.18em] text-muted">
-            {item.organisation}
+            {item.organisationLinks?.length
+              ? item.organisationLinks.map((organisation, linkIndex) => (
+                  <span key={organisation.label}>
+                    <a
+                      href={organisation.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="border-b border-transparent transition-colors hover:border-current hover:text-ink focus-visible:border-current focus-visible:text-ink focus-visible:outline-none"
+                    >
+                      {organisation.label}
+                    </a>
+                    {linkIndex < (item.organisationLinks?.length ?? 0) - 1
+                      ? " · "
+                      : ""}
+                  </span>
+                ))
+              : item.organisation}
           </p>
           <p className="mt-4 max-w-reading text-base leading-8 text-ink/84">
             {item.detail}

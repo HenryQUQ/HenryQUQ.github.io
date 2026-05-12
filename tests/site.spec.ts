@@ -93,6 +93,54 @@ test("publication actions expose citation copy and BibTeX", async ({
   );
 });
 
+test("publication authors and timeline organisations expose reviewed links", async ({
+  page
+}) => {
+  await page.goto("/#publications");
+
+  const visualsplit = page.locator(
+    '[data-publication-slug="visualsplit"][data-publication-variant="full"]'
+  );
+  await visualsplit.scrollIntoViewIfNeeded();
+  await expect(visualsplit.getByRole("link", { name: "Hao Chen" })).toHaveAttribute(
+    "href",
+    "https://h-chen.com/"
+  );
+  await expect(
+    visualsplit.getByRole("link", { name: "Jianbo Jiao" })
+  ).toHaveAttribute("href", "https://jianbojiao.com/");
+
+  const diff = page.locator(
+    '[data-publication-slug="diff"][data-publication-variant="full"]'
+  );
+  await diff.scrollIntoViewIfNeeded();
+  await expect(diff.getByRole("link", { name: "Yuxiang Ji" })).toHaveAttribute(
+    "href",
+    "https://yuxiang-ji.com/"
+  );
+  await expect(diff.getByRole("link", { name: "Boyong He" })).toHaveCount(0);
+  await expect(diff.getByRole("link", { name: "Zhuoyue Tan" })).toHaveCount(0);
+  await expect(diff.getByRole("link", { name: "Chuan Qin" })).toHaveCount(0);
+  await expect(diff.getByRole("link", { name: "Liaoni Wu" })).toHaveCount(0);
+
+  const x360 = page.locator(
+    '[data-publication-slug="x360"][data-publication-variant="full"]'
+  );
+  await x360.scrollIntoViewIfNeeded();
+  await expect(x360.getByRole("link", { name: "UBIRA eData" })).toHaveAttribute(
+    "href",
+    "https://edata.bham.ac.uk/1078/"
+  );
+
+  await page.goto("/#experience");
+  await expect(
+    page.locator("#experience").getByRole("link", { name: "Allsee" })
+  ).toHaveAttribute("href", "https://www.allsee-tech.com/");
+  await expect(
+    page.locator("#experience").getByRole("link", { name: "Vieunite" })
+  ).toHaveAttribute("href", "https://vieunite.com/");
+});
+
 test("contact section shows all email addresses while hero and structured data keep the primary academic email", async ({
   page
 }) => {
@@ -125,6 +173,28 @@ test("contact section shows all email addresses while hero and structured data k
   expect(structuredDataText).not.toContain("henry.qu@allsee-tech.com");
   expect(structuredDataText).not.toContain("henry.qu@vieunite.com");
   expect(structuredDataText).not.toContain("Chenyuan.Qu@outlook.com");
+});
+
+test("news section includes the Help To Grow course start", async ({ page }) => {
+  await page.goto("/#news");
+
+  const news = page.locator("#news");
+  await expect(news.getByText("5 May 2026")).toBeVisible();
+  await expect(
+    news.getByRole("heading", {
+      level: 3,
+      name: "Started Help To Grow: Management at BCU"
+    })
+  ).toBeVisible();
+  await expect(news).toContainText(
+    "I started the 12-week Help To Grow: Management Course at Birmingham City University Business School"
+  );
+
+  await expect(
+    news.locator(
+      'a[href="https://www.bcu.ac.uk/courses/help-to-grow-management-course"]'
+    )
+  ).toHaveText("Source");
 });
 
 test("selected publication row opens spotlight and closes with Escape", async ({

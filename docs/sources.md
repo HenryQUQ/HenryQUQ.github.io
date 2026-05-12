@@ -59,6 +59,10 @@ Industry and experience facts were checked against the current personal website 
   - Models: `https://huggingface.co/quchenyuan/VisualSplit`
   - arXiv: `https://arxiv.org/abs/2510.14536`
 - The footer text on the VisualSplit project page contains template placeholder language and extra contact details; these were treated as non-authoritative and not copied into the personal site.
+- Author links used on the site:
+  - Chenyuan Qu: `https://chenyuanqu.com/`
+  - Hao Chen: `https://h-chen.com/`
+  - Jianbo Jiao: `https://jianbojiao.com/`
 
 #### DIFF
 
@@ -71,6 +75,10 @@ Industry and experience facts were checked against the current personal website 
 - DOI and BibTeX used on site: `https://dblp.org/rec/conf/icassp/JiHQTQW25.bib`
 - Local spotlight figure: `/public/images/projects/diff-pipeline.webp`, derived from the official repository README figure `resources/pipeline.jpg`
 - The publication summary remains based on the arXiv abstract; the spotlight figure and project framing are taken from the official repository README overview.
+- Author links used on the site:
+  - Yuxiang Ji: `https://yuxiang-ji.com/`
+  - Chenyuan Qu: `https://chenyuanqu.com/`
+- Author links intentionally not added for Boyong He, Zhuoyue Tan, Chuan Qin, and Liaoni Wu based on user instruction.
 
 #### 360+x
 
@@ -89,7 +97,16 @@ Industry and experience facts were checked against the current personal website 
   - arXiv: `https://arxiv.org/abs/2404.00989`
   - Code: `https://github.com/x360dataset/x360dataset-kit`
   - Dataset: `https://huggingface.co/datasets/quchenyuan/360x_dataset_HR`, `https://huggingface.co/datasets/quchenyuan/360x_dataset_LR`
+  - UBIRA eData DOI: `https://doi.org/10.25500/edata.bham.00001078`
+  - UBIRA eData page: `https://edata.bham.ac.uk/1078/`
   - Workshop page: `https://x360dataset.github.io/BinEgo-360/`
+- Author links used on the site:
+  - Hao Chen: `https://h-chen.com/`
+  - Yuqi Hou: `https://openreview.net/profile?id=~Yuqi_Hou2`
+  - Chenyuan Qu: `https://chenyuanqu.com/`
+  - Irene Testini: `https://www.chia.cam.ac.uk/team/irene-testini`
+  - Xiaohan Hong: `https://hannh5.github.io/`
+  - Jianbo Jiao: `https://jianbojiao.com/`
 
 #### MeD
 
@@ -106,6 +123,12 @@ Industry and experience facts were checked against the current personal website 
   - Poster: `https://chqwer2.github.io/MeD/static/pdfs/ICCV23_MeD_Poster%20(1)_20230930132936.pdf`
   - arXiv: `https://arxiv.org/abs/2309.05049`
   - Code: `https://github.com/chqwer2/Multi-view-Self-supervised-Disentanglement-Denoising`
+- Author links used on the site:
+  - Hao Chen: `https://h-chen.com/`
+  - Chenyuan Qu: `https://chenyuanqu.com/`
+  - Chen Chen: `https://www.crcv.ucf.edu/chenchen/`
+  - Jianbo Jiao: `https://jianbojiao.com/`
+- No personal link is used for Yu Zhang because the official MeD project page lists an affiliation but no personal URL.
 
 ## Datasets and supporting surfaces
 
@@ -116,6 +139,17 @@ Industry and experience facts were checked against the current personal website 
 | MeD | Featured prior project | MeD project page, CVF OpenAccess |
 | BinEgo-360 | Featured in the datasets block | BinEgo-360 challenge homepage and repository |
 | text-to-art-database | Featured in the datasets block | Hugging Face dataset page and public profile |
+
+## Institution and organisation links
+
+| Entity | Link used | Source |
+| --- | --- | --- |
+| Allsee | `https://www.allsee-tech.com/` | Official Allsee Technologies website |
+| Vieunite | `https://vieunite.com/` | Official Vieunite website |
+| University of Birmingham | `https://www.birmingham.ac.uk/` | Official university website |
+| MI X Group | `https://mix.jianbojiao.com/people/` | Official MI X group people page |
+| University of Southampton | `https://www.southampton.ac.uk/` | Official university website |
+| AsiaInfo Software Co. Ltd | `https://www.asiainfo.com/en_us/about.html` | Official AsiaInfo about page |
 
 ### Hugging Face profile and dataset verification
 
@@ -165,6 +199,7 @@ The Southampton degree is consistent across the Birmingham profile and the curre
 
 | Item | Sources |
 | --- | --- |
+| Started Help To Grow: Management at BCU on 5 May 2026 | Participation is user-provided; course title, start date, 12-week duration, hybrid delivery, Birmingham City University Business School delivery, and curriculum themes come from the BCU Help To Grow: Management Course page: `https://www.bcu.ac.uk/courses/help-to-grow-management-course` |
 | VisualSplit presented as BMVC 2025 work | VisualSplit project page |
 | DIFF published at ICASSP 2025 | Google Scholar citation page, arXiv |
 | 360+x published at CVPR 2024 | Google Scholar citation page, 360+x project page, current personal website news |

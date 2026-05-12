@@ -25,6 +25,16 @@ export type LinkItem = {
 
 export type PublicationLink = LinkItem;
 
+export type PersonLink = {
+  name: string;
+  href: string;
+};
+
+export type OrganisationLink = {
+  label: string;
+  href: string;
+};
+
 export type ContactEmail = {
   label: string;
   address: string;
@@ -49,6 +59,7 @@ export type Publication = {
   title: string;
   authors: string;
   authorList: string[];
+  authorLinks?: PersonLink[];
   venue: string;
   shortVenue: string;
   year: number;
@@ -83,6 +94,7 @@ export type NewsItem = {
 export type TimelineItem = {
   title: string;
   organisation: string;
+  organisationLinks?: OrganisationLink[];
   period: string;
   detail: string;
   highlights?: string[];
@@ -178,6 +190,68 @@ export const profile: Profile = {
   ]
 };
 
+export const personLinks: PersonLink[] = [
+  {
+    name: "Chenyuan Qu",
+    href: "https://chenyuanqu.com/"
+  },
+  {
+    name: "Hao Chen",
+    href: "https://h-chen.com/"
+  },
+  {
+    name: "Jianbo Jiao",
+    href: "https://jianbojiao.com/"
+  },
+  {
+    name: "Yuxiang Ji",
+    href: "https://yuxiang-ji.com/"
+  },
+  {
+    name: "Yuqi Hou",
+    href: "https://openreview.net/profile?id=~Yuqi_Hou2"
+  },
+  {
+    name: "Irene Testini",
+    href: "https://www.chia.cam.ac.uk/team/irene-testini"
+  },
+  {
+    name: "Xiaohan Hong",
+    href: "https://hannh5.github.io/"
+  },
+  {
+    name: "Chen Chen",
+    href: "https://www.crcv.ucf.edu/chenchen/"
+  }
+];
+
+export const organisationLinks: OrganisationLink[] = [
+  {
+    label: "Allsee",
+    href: "https://www.allsee-tech.com/"
+  },
+  {
+    label: "Vieunite",
+    href: "https://vieunite.com/"
+  },
+  {
+    label: "University of Birmingham",
+    href: "https://www.birmingham.ac.uk/"
+  },
+  {
+    label: "MI X Group",
+    href: "https://mix.jianbojiao.com/people/"
+  },
+  {
+    label: "University of Southampton",
+    href: "https://www.southampton.ac.uk/"
+  },
+  {
+    label: "AsiaInfo Software Co. Ltd",
+    href: "https://www.asiainfo.com/en_us/about.html"
+  }
+];
+
 export const researchInterests = [
   {
     title: "Computer Vision",
@@ -207,6 +281,9 @@ export const publications: Publication[] = [
     title: "Exploring Image Representation with Decoupled Classical Visual Descriptors",
     authors: "Chenyuan Qu, Hao Chen, Jianbo Jiao",
     authorList: ["Chenyuan Qu", "Hao Chen", "Jianbo Jiao"],
+    authorLinks: personLinks.filter((person) =>
+      ["Chenyuan Qu", "Hao Chen", "Jianbo Jiao"].includes(person.name)
+    ),
     venue: "British Machine Vision Conference (BMVC)",
     shortVenue: "BMVC",
     year: 2025,
@@ -319,6 +396,9 @@ export const publications: Publication[] = [
       "Chuan Qin",
       "Liaoni Wu"
     ],
+    authorLinks: personLinks.filter((person) =>
+      ["Yuxiang Ji", "Chenyuan Qu"].includes(person.name)
+    ),
     venue:
       "IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)",
     shortVenue: "ICASSP",
@@ -388,6 +468,16 @@ export const publications: Publication[] = [
       "Xiaohan Hong",
       "Jianbo Jiao"
     ],
+    authorLinks: personLinks.filter((person) =>
+      [
+        "Hao Chen",
+        "Yuqi Hou",
+        "Chenyuan Qu",
+        "Irene Testini",
+        "Xiaohan Hong",
+        "Jianbo Jiao"
+      ].includes(person.name)
+    ),
     venue: "IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)",
     shortVenue: "CVPR",
     year: 2024,
@@ -492,6 +582,11 @@ export const publications: Publication[] = [
       "Chen Chen",
       "Jianbo Jiao"
     ],
+    authorLinks: personLinks.filter((person) =>
+      ["Hao Chen", "Chenyuan Qu", "Chen Chen", "Jianbo Jiao"].includes(
+        person.name
+      )
+    ),
     venue: "IEEE/CVF International Conference on Computer Vision (ICCV)",
     shortVenue: "ICCV",
     year: 2023,
@@ -633,6 +728,16 @@ export const projects: Project[] = [
         href: "https://github.com/x360dataset/x360dataset-kit"
       },
       {
+        kind: "dataset",
+        label: "eData DOI",
+        href: "https://doi.org/10.25500/edata.bham.00001078"
+      },
+      {
+        kind: "dataset",
+        label: "UBIRA eData",
+        href: "https://edata.bham.ac.uk/1078/"
+      },
+      {
         kind: "video",
         label: "Video",
         href: "https://x360dataset.github.io/static/videos/teaser_video.mp4"
@@ -710,6 +815,13 @@ export const projects: Project[] = [
 
 export const newsItems: NewsItem[] = [
   {
+    date: "5 May 2026",
+    title: "Started Help To Grow: Management at BCU",
+    detail:
+      "I started the 12-week Help To Grow: Management Course at Birmingham City University Business School, with sessions spanning strategy, digital transformation, marketing, operations, finance, and growth planning.",
+    href: "https://www.bcu.ac.uk/courses/help-to-grow-management-course"
+  },
+  {
     date: "2025",
     title: "VisualSplit accepted to BMVC 2025",
     detail:
@@ -750,6 +862,9 @@ export const experience: TimelineItem[] = [
   {
     title: "PhD Student",
     organisation: "University of Birmingham · MI X Group",
+    organisationLinks: organisationLinks.filter((organisation) =>
+      ["University of Birmingham", "MI X Group"].includes(organisation.label)
+    ),
     period: "2023 — Present",
     detail:
       "Doctoral research in computer vision, multimodal learning, and generative AI within the School of Computer Science."
@@ -757,6 +872,9 @@ export const experience: TimelineItem[] = [
   {
     title: "Tech Lead in AI/ML",
     organisation: "Allsee · Vieunite",
+    organisationLinks: organisationLinks.filter((organisation) =>
+      ["Allsee", "Vieunite"].includes(organisation.label)
+    ),
     period: "Aug 2022 — Present",
     detail:
       "Lead applied AI/ML work across production systems for product discovery, creative generation, and internal tooling.",
@@ -769,6 +887,9 @@ export const experience: TimelineItem[] = [
   {
     title: "Research Assistant",
     organisation: "University of Birmingham",
+    organisationLinks: organisationLinks.filter(
+      (organisation) => organisation.label === "University of Birmingham"
+    ),
     period: "Feb 2023 — Present",
     detail:
       "Research on interpretable hydrological modelling and machine-learning methods for scientific analysis."
@@ -776,6 +897,9 @@ export const experience: TimelineItem[] = [
   {
     title: "Algorithm Engineer Intern",
     organisation: "AsiaInfo Software Co. Ltd",
+    organisationLinks: organisationLinks.filter(
+      (organisation) => organisation.label === "AsiaInfo Software Co. Ltd"
+    ),
     period: "Jul 2020 — Sep 2020",
     detail:
       "Developed and optimised machine-learning components for a visual customer-service anchor in a mobile deployment setting."
@@ -786,6 +910,9 @@ export const education: TimelineItem[] = [
   {
     title: "Master's Study",
     organisation: "University of Birmingham",
+    organisationLinks: organisationLinks.filter(
+      (organisation) => organisation.label === "University of Birmingham"
+    ),
     period: "2021 — 2022",
     detail:
       "Postgraduate study completed at Birmingham before beginning doctoral research."
@@ -793,6 +920,9 @@ export const education: TimelineItem[] = [
   {
     title: "BSc in Physics",
     organisation: "University of Southampton",
+    organisationLinks: organisationLinks.filter(
+      (organisation) => organisation.label === "University of Southampton"
+    ),
     period: "2018 — 2021",
     detail:
       "Undergraduate training in physics, which continues to shape how I think about machine learning and computer vision."

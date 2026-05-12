@@ -2,6 +2,7 @@ import type { KeyboardEvent, MouseEvent } from "react";
 
 import { Publication } from "@/src/data/site";
 
+import { LinkedAuthors } from "./linked-authors";
 import { PublicationActions } from "./publication-actions";
 import { Reveal } from "./reveal";
 
@@ -66,9 +67,10 @@ export function PublicationFeature({
           <h3 className="mt-4 max-w-4xl font-display text-[2.2rem] leading-tight text-ink transition-colors duration-200 group-hover:text-accent group-focus-visible:text-accent sm:text-[2.75rem]">
             {publication.title}
           </h3>
-          <p className="mt-4 text-sm leading-7 text-muted sm:text-base">
-            {publication.authors}
-          </p>
+          <LinkedAuthors
+            publication={publication}
+            className="mt-4 text-sm leading-7 text-muted sm:text-base"
+          />
           <p className="mt-4 max-w-reading text-base leading-8 text-ink/84">
             {publication.summary}
           </p>
