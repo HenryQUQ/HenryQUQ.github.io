@@ -100,6 +100,20 @@ export type TimelineItem = {
   highlights?: string[];
 };
 
+export type TimelineRole = {
+  title: string;
+  period: string;
+  detail: string;
+  highlights?: string[];
+};
+
+export type TimelineGroup = {
+  organisation: string;
+  organisationLinks?: OrganisationLink[];
+  period: string;
+  roles: TimelineRole[];
+};
+
 export type Profile = {
   name: string;
   role: string;
@@ -126,9 +140,9 @@ export const sections = [
 
 export const profile: Profile = {
   name: "Chenyuan Qu",
-  role: "Tech Lead in AI/ML · PhD Student",
+  role: "Head of Technologies · PhD Student",
   affiliation: "Allsee · Vieunite · University of Birmingham",
-  bio: "I work across research and production AI systems, combining doctoral work in computer vision and multimodal learning with applied machine-learning systems for search, recommendation, and generative workflows.",
+  bio: "I work between doctoral research and industry technology leadership, combining computer-vision research with production experience in backend architecture, enterprise software, AI products, business operations, and commercialisation-facing systems.",
   email: "cxq134@student.bham.ac.uk",
   contactEmails: [
     {
@@ -858,51 +872,90 @@ export const newsItems: NewsItem[] = [
   }
 ];
 
-export const experience: TimelineItem[] = [
+export const experience: TimelineGroup[] = [
   {
-    title: "PhD Student",
     organisation: "University of Birmingham · MI X Group",
     organisationLinks: organisationLinks.filter((organisation) =>
       ["University of Birmingham", "MI X Group"].includes(organisation.label)
     ),
-    period: "2023 — Present",
-    detail:
-      "Doctoral research in computer vision, multimodal learning, and generative AI within the School of Computer Science."
+    period: "Feb 2023 — Present",
+    roles: [
+      {
+        title: "PhD Student",
+        period: "2023 — Present",
+        detail:
+          "Doctoral research in computer vision, multimodal learning, and generative AI within the School of Computer Science."
+      },
+      {
+        title: "Research Assistant",
+        period: "Dec 2023 — Present",
+        detail:
+          "Research on compositionality for foundation models, with a focus on representation, reasoning, and generative computer-vision systems."
+      },
+      {
+        title: "Research Assistant",
+        period: "Feb 2023 — Dec 2023",
+        detail:
+          "Research on interpretable hydrological modelling and machine-learning methods for scientific analysis."
+      }
+    ]
   },
   {
-    title: "Tech Lead in AI/ML",
     organisation: "Allsee · Vieunite",
     organisationLinks: organisationLinks.filter((organisation) =>
       ["Allsee", "Vieunite"].includes(organisation.label)
     ),
-    period: "Aug 2022 — Present",
-    detail:
-      "Lead applied AI/ML work across production systems for product discovery, creative generation, and internal tooling.",
-    highlights: [
-      "Build and ship machine-learning systems for recommendation, search, and multimodal product understanding.",
-      "Develop generative workflows for creative and merchandising use cases across the Vieunite stack.",
-      "Work across model development and product delivery, connecting ML pipelines with full-stack engineering."
+    period: "Sep 2022 — Present",
+    roles: [
+      {
+        title: "Head of Technologies",
+        period: "Dec 2024 — Present",
+        detail:
+          "Own the company-wide technology roadmap for digital transformation and AI acceleration, spanning backend architecture, enterprise software, business operations, sales enablement, and commercialisation-facing systems.",
+        highlights: [
+          "Set technical direction for cross-company systems, balancing maintainable engineering, operational control, commercial needs, and practical delivery across hardware, software, and business workflows.",
+          "Lead AI adoption from prototype to production workflow, using machine learning, generative AI, and automation to accelerate internal processes and product-facing capabilities.",
+          "Bridge leadership, engineering, operations, and sales by turning loosely defined business problems into concrete architectures, implementation plans, and shipped tools."
+        ]
+      },
+      {
+        title: "Full-stack Engineer",
+        period: "Dec 2023 — Dec 2024",
+        detail:
+          "Led major full-stack and traditional software-engineering work for the CMS and ERP platforms, including the CMS rebuild that moved the company away from fragmented board-specific codebases toward one shared software architecture across hardware boards and operating systems.",
+        highlights: [
+          "Re-architected the CMS software so one maintainable codebase could support multiple boards, deployment targets, and system environments.",
+          "Built the ERP system from the ground up, designing core workflows, data structures, and interfaces for internal business operations and management visibility.",
+          "Worked across frontend, backend, deployment, and device constraints, connecting product requirements with the engineering detail needed to ship reliable systems."
+        ]
+      },
+      {
+        title: "Algorithm Engineer",
+        period: "Sep 2022 — Dec 2023",
+        detail:
+          "Built early backend and AI capabilities for the Allsee and Vieunite product stack, developing recommendation infrastructure and Vieutopia AI art features that connected machine-learning experiments with production product needs.",
+        highlights: [
+          "Implemented backend services that supported AI-driven product features and internal workflows.",
+          "Developed recommendation-system components for content and product discovery.",
+          "Built Vieutopia AI art functionality, helping translate generative-model capability into usable product features."
+        ]
+      }
     ]
   },
   {
-    title: "Research Assistant",
-    organisation: "University of Birmingham",
-    organisationLinks: organisationLinks.filter(
-      (organisation) => organisation.label === "University of Birmingham"
-    ),
-    period: "Feb 2023 — Present",
-    detail:
-      "Research on interpretable hydrological modelling and machine-learning methods for scientific analysis."
-  },
-  {
-    title: "Algorithm Engineer Intern",
     organisation: "AsiaInfo Software Co. Ltd",
     organisationLinks: organisationLinks.filter(
       (organisation) => organisation.label === "AsiaInfo Software Co. Ltd"
     ),
     period: "Jul 2020 — Sep 2020",
-    detail:
-      "Developed and optimised machine-learning components for a visual customer-service anchor in a mobile deployment setting."
+    roles: [
+      {
+        title: "Algorithm Engineer Intern",
+        period: "Jul 2020 — Sep 2020",
+        detail:
+          "Developed and optimised machine-learning components for a visual customer-service anchor in a mobile deployment setting."
+      }
+    ]
   }
 ];
 

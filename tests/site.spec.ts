@@ -14,8 +14,12 @@ test("homepage loads key content and assets without horizontal overflow", async 
       name: "Publications & Datasets"
     })
   ).toBeVisible();
-  await expect(page.getByText("Tech Lead in AI/ML · PhD Student")).toBeVisible();
+  await expect(page.getByText("Head of Technologies · PhD Student")).toBeVisible();
   await expect(page.getByText("Allsee · Vieunite · University of Birmingham")).toBeVisible();
+  await expect(page.locator("#about").getByText("backend architecture")).toBeVisible();
+  await expect(
+    page.locator("#about").getByText("commercialisation-facing systems")
+  ).toBeVisible();
   await expect(
     page.locator("#about").getByRole("link", { name: "Hugging Face" })
   ).toBeVisible();
@@ -139,6 +143,63 @@ test("publication authors and timeline organisations expose reviewed links", asy
   await expect(
     page.locator("#experience").getByRole("link", { name: "Vieunite" })
   ).toHaveAttribute("href", "https://vieunite.com/");
+});
+
+test("experience section splits the two Research Assistant roles", async ({
+  page
+}) => {
+  await page.goto("/#experience");
+
+  const experience = page.locator("#experience");
+
+  await expect(
+    experience.getByRole("heading", { level: 4, name: "Research Assistant" })
+  ).toHaveCount(2);
+  await expect(
+    experience.getByRole("heading", {
+      level: 3,
+      name: "University of Birmingham · MI X Group"
+    })
+  ).toBeVisible();
+
+  const researchAssistantRoles = experience.locator(
+    '[data-timeline-role="Research Assistant"]'
+  );
+
+  await expect(researchAssistantRoles.nth(0)).toContainText("Dec 2023 — Present");
+  await expect(researchAssistantRoles.nth(1)).toContainText("Feb 2023 — Dec 2023");
+  await expect(researchAssistantRoles.nth(0)).toContainText(
+    "Research on compositionality for foundation models"
+  );
+});
+
+test("experience section groups the Allsee and Vieunite role progression", async ({
+  page
+}) => {
+  await page.goto("/#experience");
+
+  const experience = page.locator("#experience");
+  const allseeGroup = experience
+    .getByRole("heading", { level: 3, name: "Allsee · Vieunite" })
+    .locator("xpath=ancestor::div[1]");
+
+  await expect(experience).toContainText("Sep 2022 — Present");
+  await expect(experience.locator('[data-timeline-role="Head of Technologies"]')).toContainText(
+    "Dec 2024 — Present"
+  );
+  await expect(experience.locator('[data-timeline-role="Full-stack Engineer"]')).toContainText(
+    "Dec 2023 — Dec 2024"
+  );
+  await expect(experience.locator('[data-timeline-role="Algorithm Engineer"]')).toContainText(
+    "Sep 2022 — Dec 2023"
+  );
+  await expect(allseeGroup).toContainText("company-wide technology roadmap");
+  await expect(allseeGroup).toContainText("sales enablement");
+  await expect(allseeGroup).toContainText("one shared software architecture");
+  await expect(allseeGroup).toContainText("traditional software-engineering");
+  await expect(allseeGroup).toContainText("management visibility");
+  await expect(allseeGroup).toContainText("recommendation infrastructure");
+  await expect(allseeGroup).toContainText("Vieutopia AI art functionality");
 });
 
 test("contact section shows all email addresses while hero and structured data keep the primary academic email", async ({

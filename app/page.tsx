@@ -6,7 +6,7 @@ import { SectionHeading } from "@/components/section-heading";
 import { SiteHeader } from "@/components/site-header";
 import { StructuredData } from "@/components/structured-data";
 import { TextLink } from "@/components/text-link";
-import { TimelineItem } from "@/components/timeline-item";
+import { TimelineGroup, TimelineItem } from "@/components/timeline-item";
 import {
   education,
   experience,
@@ -283,9 +283,9 @@ export default function HomePage() {
             />
             <div className="mt-12">
               {experience.map((item, index) => (
-                <TimelineItem
-                  key={`${item.title}-${item.organisation}`}
-                  item={item}
+                <TimelineGroup
+                  key={`${item.organisation}-${item.period}`}
+                  group={item}
                   index={index}
                 />
               ))}

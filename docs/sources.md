@@ -19,13 +19,13 @@ Industry and experience facts were checked against the current personal website 
 | Fact | Value used on site | Sources |
 | --- | --- | --- |
 | Name | Chenyuan Qu | Google Scholar, ORCID, Birmingham profile |
-| Current role line | Tech Lead in AI/ML · PhD Student | User-confirmed title wording for Tech Lead, plus Birmingham profile and MI X people page for PhD status |
+| Current role line | Head of Technologies · PhD Student | User-confirmed current Allsee / Vieunite title wording, plus Birmingham profile and MI X people page for PhD status |
 | Affiliation line | Allsee · Vieunite · University of Birmingham | User-confirmed affiliation line, Birmingham profile, and public Allsee / Vieunite association from the current personal website and BinEgo-360 site |
 | Primary email | `cxq134@student.bham.ac.uk` | Birmingham profile |
 | Additional contact emails | `henry.qu@allsee-tech.com`, `henry.qu@vieunite.com`, `Chenyuan.Qu@outlook.com` | User-provided contact information |
 | Short research areas | Computer vision, multimodal learning, generative AI, AI for science | Birmingham profile, MI X people page, Google Scholar interests |
 | Public links | Google Scholar, GitHub, Hugging Face, LinkedIn, ORCID | Seed URLs supplied by user, Hugging Face public profile, ORCID |
-| Short bio basis | Research in computer vision and multimodal learning, together with applied AI/ML work for search, recommendation, and generative workflows | Birmingham profile, MI X people page, current personal website, user-confirmed Tech Lead framing |
+| Short bio basis | Research in computer vision and multimodal learning, together with industry experience in backend architecture, enterprise software, AI products, business operations, and commercialisation-facing systems | Birmingham profile, MI X people page, current personal website, user-confirmed engineering and technology-leadership framing |
 
 ## Publications used
 
@@ -178,7 +178,29 @@ The current personal site is the only accessible public source with structured e
 
 Because LinkedIn redirects to an authwall, the site only uses high-level role, organisation, and date information derived from the current personal website. Performance claims and detailed product metrics from the old site were intentionally omitted.
 
-The `Tech Lead in AI/ML` wording now shown in the hero and experience section is user-confirmed. Publicly accessible sources support the Allsee role and engineering scope, but not that exact title string.
+The current `Head of Technologies` wording shown in the hero and experience section is user-confirmed. Publicly accessible sources support the Allsee / Vieunite association and engineering scope, but not that exact title string.
+
+On 2026-06-24, Chenyuan Qu confirmed that the Allsee / Vieunite experience should be split into:
+
+- Algorithm Engineer, September 2022 to December 2023, focused on backend development, AI recommendation infrastructure, and AI image-generation features.
+- Full-stack Engineer, December 2023 to December 2024, focused on CMS refactoring into one shared cross-board / cross-system software architecture, and building an ERP system from the ground up.
+- Head of Technologies, December 2024 to present, focused on company-wide digital transformation, AI acceleration, technology-roadmap ownership, and translating business bottlenecks into deployable systems.
+
+Vieutopia was publicly verified on 2026-06-24 as the AI art product name:
+
+- Official site: `https://vieutopia.com/`, which describes Vieutopia as a web and mobile AI art generator with multiple art styles and generated-art management.
+- Google Play: `https://play.google.com/store/apps/details?hl=en_US&id=com.app.vieuly`, which lists `Vieutopia AI Art Redefined` and describes it as an art creation tool by Vieunite.
+
+The more detailed contribution wording in these Allsee / Vieunite role descriptions is user-confirmed. Public sources were not used to verify internal architecture ownership, ERP implementation scope, or company-wide transformation responsibilities.
+
+On 2026-06-24, Chenyuan Qu further confirmed that the personal site should more clearly reflect the depth of his industry experience, including backend architecture, traditional software engineering, enterprise management, and sales / commercialisation collaboration. These positioning statements are treated as user-confirmed professional self-description rather than independently public-verified claims.
+
+On 2026-06-24, Chenyuan Qu confirmed that the previously aggregated University of Birmingham Research Assistant entry should be split into:
+
+- Research Assistant, February 2023 to December 2023, focused on interpretable hydrological modelling and machine-learning methods for scientific analysis.
+- Research Assistant, December 2023 to present, focused on compositionality research for foundation models.
+
+Public search on 2026-06-24 confirmed the University of Birmingham / MI X affiliation and broad computer-vision / multimodal-learning research direction, but did not find a public source for this Research Assistant date split or the compositionality-specific role description. The site therefore treats the split as user-confirmed profile information rather than a publicly cross-verified fact.
 
 ### Education
 
