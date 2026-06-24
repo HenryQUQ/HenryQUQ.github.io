@@ -193,7 +193,7 @@ Vieutopia was publicly verified on 2026-06-24 as the AI art product name:
 
 The more detailed contribution wording in these Allsee / Vieunite role descriptions is user-confirmed. Public sources were not used to verify internal architecture ownership, ERP implementation scope, or company-wide transformation responsibilities.
 
-On 2026-06-24, Chenyuan Qu further confirmed that the personal site should more clearly reflect the depth of his industry experience, including backend architecture, traditional software engineering, enterprise management, and sales / commercialisation collaboration. These positioning statements are treated as user-confirmed professional self-description rather than independently public-verified claims.
+On 2026-06-24, Chenyuan Qu further confirmed that the personal site should more clearly reflect the depth of his industry experience, including backend architecture, traditional software engineering, enterprise management, project-management systems such as Linear, and sales / commercialisation collaboration. These positioning statements are treated as user-confirmed professional self-description rather than independently public-verified claims.
 
 On 2026-06-24, Chenyuan Qu confirmed that the previously aggregated University of Birmingham Research Assistant entry should be split into:
 

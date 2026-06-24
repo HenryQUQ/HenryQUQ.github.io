@@ -195,6 +195,9 @@ test("experience section groups the Allsee and Vieunite role progression", async
   );
   await expect(allseeGroup).toContainText("company-wide technology roadmap");
   await expect(allseeGroup).toContainText("sales enablement");
+  await expect(allseeGroup).toContainText("structured delivery operating system");
+  await expect(allseeGroup).toContainText("Linear");
+  await expect(allseeGroup).toContainText("prioritised roadmaps");
   await expect(allseeGroup).toContainText("one shared software architecture");
   await expect(allseeGroup).toContainText("traditional software-engineering");
   await expect(allseeGroup).toContainText("management visibility");

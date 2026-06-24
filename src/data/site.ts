@@ -914,6 +914,7 @@ export const experience: TimelineGroup[] = [
           "Own the company-wide technology roadmap for digital transformation and AI acceleration, spanning backend architecture, enterprise software, business operations, sales enablement, and commercialisation-facing systems.",
         highlights: [
           "Set technical direction for cross-company systems, balancing maintainable engineering, operational control, commercial needs, and practical delivery across hardware, software, and business workflows.",
+          "Built a structured delivery operating system around Linear, connecting sales, product, operations, and engineering requests into prioritised roadmaps with accountable owners and clearer cross-team visibility.",
           "Lead AI adoption from prototype to production workflow, using machine learning, generative AI, and automation to accelerate internal processes and product-facing capabilities.",
           "Bridge leadership, engineering, operations, and sales by turning loosely defined business problems into concrete architectures, implementation plans, and shipped tools."
         ]
