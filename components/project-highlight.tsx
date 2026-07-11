@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { Project } from "@/src/data/site";
+import { withBasePath } from "@/src/lib/site-config";
 
 import { Reveal } from "./reveal";
 import { TextLink } from "./text-link";
@@ -18,7 +19,7 @@ export function ProjectHighlight({ project, index }: ProjectHighlightProps) {
           {project.image ? (
             <div className="relative aspect-[5/4]">
               <Image
-                src={project.image}
+                src={withBasePath(project.image)}
                 alt={project.title}
                 fill
                 sizes="(max-width: 1024px) 100vw, 18rem"

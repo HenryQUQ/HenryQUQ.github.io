@@ -54,6 +54,28 @@ export type PublicationMedia = {
   embedUrl?: string;
 };
 
+export type ResearchLensRegion = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+export type ResearchLensStep = {
+  id: string;
+  label: string;
+  note: string;
+  focusLabel?: string;
+  regions: [ResearchLensRegion, ...ResearchLensRegion[]];
+};
+
+export type ResearchLens = {
+  id: string;
+  label: string;
+  unitLabel: string;
+  steps: ResearchLensStep[];
+};
+
 export type Publication = {
   slug: string;
   title: string;
@@ -62,6 +84,7 @@ export type Publication = {
   authorLinks?: PersonLink[];
   venue: string;
   shortVenue: string;
+  recognition?: string;
   year: number;
   summary: string;
   abstract: string;
@@ -82,6 +105,45 @@ export type Project = {
   imageFit?: "cover" | "contain";
   relatedPublicationSlug?: Publication["slug"];
   links: LinkItem[];
+};
+
+export type CaseStudy = {
+  slug: string;
+  title: string;
+  eyebrow: string;
+  thesis: string;
+  takeaway: string;
+  challenge: string;
+  contribution: string;
+  outcome: string;
+  year: string;
+  context: string;
+  media: {
+    src: string;
+    alt: string;
+    width: number;
+    height: number;
+    fit?: "cover" | "contain";
+    lens?: ResearchLens;
+  };
+  links: LinkItem[];
+  accent: "blue" | "cyan" | "coral";
+};
+
+export type ResearchThread = {
+  slug: string;
+  index: string;
+  title: string;
+  detail: string;
+  study: {
+    slug: CaseStudy["slug"];
+    label: string;
+  };
+  publication: {
+    slug: Publication["slug"];
+    label: string;
+  };
+  inferFromTarget?: boolean;
 };
 
 export type NewsItem = {
@@ -108,6 +170,7 @@ export type TimelineRole = {
 };
 
 export type TimelineGroup = {
+  track: "academic" | "industry";
   organisation: string;
   organisationLinks?: OrganisationLink[];
   period: string;
@@ -118,8 +181,11 @@ export type Profile = {
   name: string;
   role: string;
   affiliation: string;
+  positioning: string;
+  shortBio: string;
   bio: string;
   email: string;
+  primaryContact: ContactEmail;
   contactEmails: ContactEmail[];
   heroImage: string;
   heroBackgroundImageDesktop: string;
@@ -128,23 +194,33 @@ export type Profile = {
 };
 
 export const sections = [
-  { id: "about", label: "About" },
-  { id: "research", label: "Research" },
-  { id: "selected-publications", label: "Selected Publications" },
-  { id: "publications", label: "Publications & Datasets" },
-  { id: "news", label: "News" },
-  { id: "experience", label: "Experience" },
-  { id: "education", label: "Education" },
+  { id: "work", label: "Research" },
+  { id: "research", label: "Publications" },
+  { id: "journey", label: "Experience" },
+  { id: "updates", label: "News" },
   { id: "contact", label: "Contact" }
 ];
 
 export const profile: Profile = {
   name: "Chenyuan Qu",
-  role: "Head of Technologies · PhD Student",
-  affiliation: "Allsee · Vieunite · University of Birmingham",
-  bio: "I work between doctoral research and industry technology leadership, combining computer-vision research with production experience in backend architecture, enterprise software, AI products, business operations, and commercialisation-facing systems.",
-  email: "cxq134@student.bham.ac.uk",
+  role: "PhD Student · Head of Technologies",
+  affiliation: "University of Birmingham · Allsee · Vieunite",
+  positioning: "Computer vision, multimodal learning, and software systems.",
+  shortBio:
+    "I am a PhD student at the University of Birmingham and Head of Technologies at Allsee and Vieunite.",
+  bio: "My research focuses on computer vision, multimodal learning, and generative models. Alongside my doctoral work, I work on backend services, internal software, and applied machine-learning systems at Allsee and Vieunite.",
+  email: "Chenyuan.Qu@outlook.com",
+  primaryContact: {
+    label: "Personal",
+    address: "Chenyuan.Qu@outlook.com",
+    href: "mailto:Chenyuan.Qu@outlook.com"
+  },
   contactEmails: [
+    {
+      label: "Personal",
+      address: "Chenyuan.Qu@outlook.com",
+      href: "mailto:Chenyuan.Qu@outlook.com"
+    },
     {
       label: "Allsee",
       address: "henry.qu@allsee-tech.com",
@@ -159,11 +235,6 @@ export const profile: Profile = {
       label: "University of Birmingham",
       address: "cxq134@student.bham.ac.uk",
       href: "mailto:cxq134@student.bham.ac.uk"
-    },
-    {
-      label: "Personal",
-      address: "Chenyuan.Qu@outlook.com",
-      href: "mailto:Chenyuan.Qu@outlook.com"
     }
   ],
   heroImage: "/images/portrait.webp",
@@ -198,7 +269,7 @@ export const profile: Profile = {
     {
       kind: "email",
       label: "Email",
-      href: "mailto:cxq134@student.bham.ac.uk",
+      href: "mailto:Chenyuan.Qu@outlook.com",
       external: false
     }
   ]
@@ -266,26 +337,35 @@ export const organisationLinks: OrganisationLink[] = [
   }
 ];
 
-export const researchInterests = [
+export const researchThreads: ResearchThread[] = [
   {
-    title: "Computer Vision",
+    slug: "interpretable-representations",
+    index: "01",
+    title: "Interpretable image representations",
     detail:
-      "Learning interpretable representations and robust visual understanding from images, scenes, and multimodal observations."
+      "Separating visual information into structures such as edges, colour regions, and intensity.",
+    study: { slug: "visualsplit", label: "VisualSplit" },
+    publication: { slug: "visualsplit", label: "BMVC 2025" },
+    inferFromTarget: true
   },
   {
-    title: "Multimodal Learning",
+    slug: "multimodal-scenes",
+    index: "02",
+    title: "Multimodal scene understanding",
     detail:
-      "Studying how visual, spatial, audio, textual, and viewpoint-specific signals can be fused for richer scene understanding."
+      "Learning across viewpoints, images, audio, text, location, and spatial context.",
+    study: { slug: "x360", label: "360+x" },
+    publication: { slug: "x360", label: "CVPR 2024 Oral" },
+    inferFromTarget: true
   },
   {
-    title: "Generative AI",
+    slug: "generative-vision",
+    index: "03",
+    title: "Generative computer vision",
     detail:
-      "Exploring controllable generative systems that connect representation learning with editing, restoration, and creative workflows."
-  },
-  {
-    title: "AI for Science",
-    detail:
-      "Applying machine learning methods in scientifically grounded settings where interpretability and structure matter."
+      "Using generative models for representation learning, reconstruction, restoration, and editing.",
+    study: { slug: "visualsplit", label: "VisualSplit" },
+    publication: { slug: "visualsplit", label: "BMVC 2025" }
   }
 ];
 
@@ -494,9 +574,10 @@ export const publications: Publication[] = [
     ),
     venue: "IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)",
     shortVenue: "CVPR",
+    recognition: "Oral paper",
     year: 2024,
     summary:
-      "A panoptic multimodal dataset that combines panoramic, frontal, and egocentric viewpoints with audio, location, and textual signals for richer scene understanding benchmarks.",
+      "A CVPR 2024 oral paper introducing a panoptic multimodal dataset that combines panoramic, frontal, and egocentric viewpoints with audio, location, and textual signals.",
     abstract:
       "360+x introduces a multimodal scene-understanding dataset that combines panoramic, frontal, and egocentric views together with audio, location, and textual context. It is designed to support richer benchmarks for scene understanding across viewpoints, modalities, and real-world environments.",
     citationText:
@@ -678,6 +759,189 @@ export const publications: Publication[] = [
 
 export const selectedPublicationSlugs = ["visualsplit", "x360"];
 
+export const caseStudies: CaseStudy[] = [
+  {
+    slug: "visualsplit",
+    title: "VisualSplit",
+    eyebrow: "BMVC 2025 · Image representation",
+    thesis:
+      "VisualSplit studies image representations based on three classical visual descriptors: edges, colour segmentation, and grey-level histograms.",
+    takeaway:
+      "Separating geometry, colour, and illumination into explicit descriptors provides an interpretable representation that can also be edited at the descriptor level.",
+    challenge:
+      "Learned image features are often difficult to interpret because geometry, colour, and illumination information are represented together.",
+    contribution:
+      "In this first-author work, we use the three descriptors as separate inputs for image reconstruction and examine their use in editing, restoration, and diffusion-guided generation.",
+    outcome:
+      "The work was published at BMVC 2025. The paper, supplementary material, presentation, code, model weights, and examples are publicly available.",
+    year: "2025",
+    context: "BMVC · First-author research",
+    media: {
+      src: "/images/projects/visualsplit-framework.webp",
+      alt: "VisualSplit framework decomposing an image into interpretable descriptors before reconstruction.",
+      width: 1200,
+      height: 365,
+      fit: "contain",
+      lens: {
+        id: "visualsplit",
+        label: "VisualSplit figure explorer",
+        unitLabel: "stages",
+        steps: [
+          {
+            id: "input",
+            label: "Input",
+            note: "The source image from which the visual descriptors are extracted.",
+            regions: [{ x: 0.8, y: 23.3, width: 7.8, height: 25.5 }]
+          },
+          {
+            id: "edge",
+            label: "Edge",
+            focusLabel: "Colour and Edge ↔ Edge",
+            note: "The combined colour-and-edge descriptor is used on the left; a Sobel operator extracts the reconstructed image's edge descriptor on the right.",
+            regions: [
+              { x: 11.9, y: 33, width: 6.8, height: 22.6 },
+              { x: 93.6, y: 46.8, width: 5, height: 16.5 }
+            ]
+          },
+          {
+            id: "colour",
+            label: "Colour",
+            focusLabel: "Colour and Edge ↔ Colour",
+            note: "The combined colour-and-edge descriptor is used on the left; Soft K-means extracts the reconstructed image's colour descriptor on the right.",
+            regions: [
+              { x: 11.9, y: 33, width: 6.8, height: 22.6 },
+              { x: 93.7, y: 19.7, width: 4.8, height: 15.6 }
+            ]
+          },
+          {
+            id: "histogram",
+            label: "Intensity",
+            focusLabel: "Intensity ↔ Intensity",
+            note: "The input intensity histogram is used on the left; a smooth histogram extracts the reconstructed image's intensity descriptor on the right.",
+            regions: [
+              { x: 11.8, y: 67.8, width: 7.6, height: 12.5 },
+              { x: 93.5, y: 76.7, width: 5.2, height: 12.9 }
+            ]
+          },
+          {
+            id: "reconstruction",
+            label: "Reconstruction",
+            note: "The decoder reconstructs the image from the descriptor representation.",
+            regions: [{ x: 67.3, y: 24.9, width: 7.8, height: 25.2 }]
+          }
+        ]
+      }
+    },
+    links: [
+      {
+        kind: "project",
+        label: "Project",
+        href: "https://chenyuanqu.com/VisualSplit/"
+      },
+      {
+        kind: "paper",
+        label: "Paper",
+        href: "https://chenyuanqu.com/VisualSplit/docs/papers/VisualSplit_BMVC2025.pdf"
+      },
+      {
+        kind: "code",
+        label: "Code",
+        href: "https://github.com/HenryQUQ/VisualSplit"
+      },
+      {
+        kind: "models",
+        label: "Models",
+        href: "https://huggingface.co/quchenyuan/VisualSplit"
+      }
+    ],
+    accent: "blue"
+  },
+  {
+    slug: "x360",
+    title: "360+x",
+    eyebrow: "CVPR 2024 · Oral paper",
+    thesis:
+      "360+x is a dataset for studying scene understanding across multiple viewpoints and aligned sensory modalities.",
+    takeaway:
+      "Aligning panoramic, frontal, and egocentric views with audio, location, and text supports scene-understanding research beyond single-view recognition.",
+    challenge:
+      "Many scene-understanding datasets focus on a single camera view or modality. 360+x records panoramic, frontal, and egocentric views together with spatial, audio, location, and textual signals.",
+    contribution:
+      "I was one of six authors on the project. The dataset, benchmark resources, and publication were produced collaboratively by the research team.",
+    outcome:
+      "The work was selected for an oral presentation at CVPR 2024. The project site provides the paper, supplementary material, code, dataset access, poster, and teaser video.",
+    year: "2024",
+    context: "CVPR Oral · Collaborative research",
+    media: {
+      src: "/images/projects/x360-main.webp",
+      alt: "360+x overview showing panoramic, frontal, and egocentric views with aligned multimodal signals.",
+      width: 1400,
+      height: 787,
+      fit: "contain",
+      lens: {
+        id: "x360",
+        label: "360+x figure explorer",
+        unitLabel: "views and signals",
+        steps: [
+          {
+            id: "panorama",
+            label: "Panorama",
+            note: "A stitched equirectangular projection provides the 360° panoramic view.",
+            regions: [{ x: 2.2, y: 1.5, width: 23.5, height: 26 }]
+          },
+          {
+            id: "front-view",
+            label: "Front view",
+            note: "The third-person front view is projected from the spherical panorama.",
+            regions: [{ x: 1.8, y: 64.5, width: 18.4, height: 22 }]
+          },
+          {
+            id: "egocentric",
+            label: "Egocentric",
+            note: "A stereo camera captures the binocular egocentric view.",
+            regions: [{ x: 74.2, y: 1.8, width: 24.2, height: 24 }]
+          },
+          {
+            id: "audio",
+            label: "Audio",
+            note: "Left and right audio channels are represented as Mel spectrograms.",
+            regions: [{ x: 41.1, y: 68.2, width: 19.2, height: 22 }]
+          },
+          {
+            id: "binaural-delay",
+            label: "Binaural delay",
+            note: "Interaural time delay provides a directional binaural cue.",
+            regions: [{ x: 74.1, y: 71, width: 24.2, height: 18 }]
+          }
+        ]
+      }
+    },
+    links: [
+      {
+        kind: "project",
+        label: "Project",
+        href: "https://x360dataset.github.io/"
+      },
+      {
+        kind: "paper",
+        label: "Paper",
+        href: "https://x360dataset.github.io/static/pdfs/CVPR2024_360x__A_Dataset_for_Panoptic_Multi_modal_Scene_Understanding.pdf"
+      },
+      {
+        kind: "code",
+        label: "Code",
+        href: "https://github.com/x360dataset/x360dataset-kit"
+      },
+      {
+        kind: "dataset",
+        label: "Dataset",
+        href: "https://huggingface.co/datasets/quchenyuan/360x_dataset_HR"
+      }
+    ],
+    accent: "cyan"
+  }
+];
+
 export const projects: Project[] = [
   {
     title: "VisualSplit",
@@ -851,7 +1115,7 @@ export const newsItems: NewsItem[] = [
   },
   {
     date: "2024",
-    title: "360+x published at CVPR 2024",
+    title: "360+x selected for a CVPR 2024 oral presentation",
     detail:
       "Dataset paper with accompanying benchmark resources, code, and public dataset access.",
     href: "https://x360dataset.github.io/"
@@ -874,6 +1138,7 @@ export const newsItems: NewsItem[] = [
 
 export const experience: TimelineGroup[] = [
   {
+    track: "academic",
     organisation: "University of Birmingham · MI X Group",
     organisationLinks: organisationLinks.filter((organisation) =>
       ["University of Birmingham", "MI X Group"].includes(organisation.label)
@@ -901,6 +1166,7 @@ export const experience: TimelineGroup[] = [
     ]
   },
   {
+    track: "industry",
     organisation: "Allsee · Vieunite",
     organisationLinks: organisationLinks.filter((organisation) =>
       ["Allsee", "Vieunite"].includes(organisation.label)
@@ -911,39 +1177,40 @@ export const experience: TimelineGroup[] = [
         title: "Head of Technologies",
         period: "Dec 2024 — Present",
         detail:
-          "Own the company-wide technology roadmap for digital transformation and AI acceleration, spanning backend architecture, enterprise software, business operations, sales enablement, and commercialisation-facing systems.",
+          "Responsible for technology planning across backend architecture, internal software, AI development, and operational systems.",
         highlights: [
-          "Set technical direction for cross-company systems, balancing maintainable engineering, operational control, commercial needs, and practical delivery across hardware, software, and business workflows.",
-          "Built a structured delivery operating system around Linear, connecting sales, product, operations, and engineering requests into prioritised roadmaps with accountable owners and clearer cross-team visibility.",
-          "Lead AI adoption from prototype to production workflow, using machine learning, generative AI, and automation to accelerate internal processes and product-facing capabilities.",
-          "Bridge leadership, engineering, operations, and sales by turning loosely defined business problems into concrete architectures, implementation plans, and shipped tools."
+          "Coordinate technical priorities across hardware, software, and internal workflows, with attention to maintainability and delivery requirements.",
+          "Use Linear to organise requests from sales, product, operations, and engineering into roadmaps, assigned work, and progress tracking.",
+          "Evaluate and implement machine-learning, generative-AI, and automation use cases in internal and product-facing workflows.",
+          "Translate requirements discussed with leadership, operations, and sales into technical designs and implementation plans."
         ]
       },
       {
         title: "Full-stack Engineer",
         period: "Dec 2023 — Dec 2024",
         detail:
-          "Led major full-stack and traditional software-engineering work for the CMS and ERP platforms, including the CMS rebuild that moved the company away from fragmented board-specific codebases toward one shared software architecture across hardware boards and operating systems.",
+          "Worked on the CMS and ERP platforms, including consolidating board-specific CMS code into a shared architecture for multiple hardware boards and operating systems.",
         highlights: [
-          "Re-architected the CMS software so one maintainable codebase could support multiple boards, deployment targets, and system environments.",
-          "Built the ERP system from the ground up, designing core workflows, data structures, and interfaces for internal business operations and management visibility.",
-          "Worked across frontend, backend, deployment, and device constraints, connecting product requirements with the engineering detail needed to ship reliable systems."
+          "Refactored the CMS so a shared codebase could support multiple boards, deployment targets, and system environments.",
+          "Developed the internal ERP system, including its core workflows, data structures, and interfaces.",
+          "Worked across frontend, backend, deployment, and device constraints in response to product requirements."
         ]
       },
       {
         title: "Algorithm Engineer",
         period: "Sep 2022 — Dec 2023",
         detail:
-          "Built early backend and AI capabilities for the Allsee and Vieunite product stack, developing recommendation infrastructure and Vieutopia AI art features that connected machine-learning experiments with production product needs.",
+          "Worked on backend services, recommendation components, and Vieutopia AI art features for Allsee and Vieunite.",
         highlights: [
-          "Implemented backend services that supported AI-driven product features and internal workflows.",
-          "Developed recommendation-system components for content and product discovery.",
-          "Built Vieutopia AI art functionality, helping translate generative-model capability into usable product features."
+          "Implemented backend services for AI-related product features and internal workflows.",
+          "Developed recommendation components for content and product discovery.",
+          "Developed Vieutopia AI art functionality using generative models."
         ]
       }
     ]
   },
   {
+    track: "industry",
     organisation: "AsiaInfo Software Co. Ltd",
     organisationLinks: organisationLinks.filter(
       (organisation) => organisation.label === "AsiaInfo Software Co. Ltd"

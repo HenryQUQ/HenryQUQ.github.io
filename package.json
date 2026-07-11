@@ -2,6 +2,9 @@
   "name": "chenyuan-qu-site",
   "private": true,
   "version": "0.1.0",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -19,6 +22,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.59.1",
     "@types/node": "^22.10.1",
     "@types/react": "^18.3.12",

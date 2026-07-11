@@ -1,5 +1,3 @@
-import type { KeyboardEvent, MouseEvent } from "react";
-
 import { Publication } from "@/src/data/site";
 
 import { LinkedAuthors } from "./linked-authors";
@@ -19,57 +17,40 @@ export function PublicationFeature({
 }: PublicationFeatureProps) {
   const isSpotlightEnabled = Boolean(onOpenSpotlight);
 
-  const openSpotlight = (trigger: HTMLElement | null) => {
-    onOpenSpotlight?.(publication, trigger);
-  };
-
-  const handleArticleClick = (event: MouseEvent<HTMLElement>) => {
-    if (!isSpotlightEnabled) {
-      return;
-    }
-
-    const target = event.target as HTMLElement | null;
-    if (target?.closest("a, button, input, textarea, select, summary")) {
-      return;
-    }
-
-    openSpotlight(event.currentTarget);
-  };
-
-  const handleArticleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (!isSpotlightEnabled || event.target !== event.currentTarget) {
-      return;
-    }
-
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      openSpotlight(event.currentTarget);
-    }
-  };
-
   return (
     <Reveal delay={index * 0.06}>
       <article
         data-publication-slug={publication.slug}
         data-publication-variant="selected"
-        role={isSpotlightEnabled ? "button" : undefined}
-        tabIndex={isSpotlightEnabled ? 0 : undefined}
-        aria-haspopup={isSpotlightEnabled ? "dialog" : undefined}
-        aria-label={
-          isSpotlightEnabled ? `Open spotlight for ${publication.title}` : undefined
-        }
-        className="group grid cursor-pointer gap-6 border-t border-line py-8 text-left transition-colors duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-line/80 lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-12"
-        onClick={handleArticleClick}
-        onKeyDown={handleArticleKeyDown}
+        className="group relative grid gap-6 border-t border-line py-8 text-left transition-colors duration-200 motion-reduce:transition-none lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-12"
       >
-        <div>
-          <p className="meta-label">{publication.shortVenue}</p>
-          <h3 className="mt-4 max-w-4xl font-display text-[2.2rem] leading-tight text-ink transition-colors duration-200 group-hover:text-accent group-focus-visible:text-accent sm:text-[2.75rem]">
+        {isSpotlightEnabled ? (
+          <button
+            type="button"
+            role="button"
+            data-open-publication-spotlight={publication.slug}
+            aria-haspopup="dialog"
+            aria-label={`Open spotlight for ${publication.title}`}
+            className="absolute inset-0 z-0 cursor-pointer rounded-sm text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-4 focus-visible:ring-offset-paper"
+            onClick={(event) =>
+              onOpenSpotlight?.(publication, event.currentTarget)
+            }
+          >
+            <span className="sr-only">Open spotlight for {publication.title}</span>
+          </button>
+        ) : null}
+
+        <div className="pointer-events-none relative z-10">
+          <p className="meta-label">
+            {publication.shortVenue}
+            {publication.recognition ? ` · ${publication.recognition}` : ""}
+          </p>
+          <h3 className="mt-4 max-w-4xl font-display text-[2.2rem] leading-tight text-ink transition-colors duration-200 group-hover:text-accent group-focus-within:text-accent motion-reduce:transition-none sm:text-[2.75rem]">
             {publication.title}
           </h3>
           <LinkedAuthors
             publication={publication}
-            className="mt-4 text-sm leading-7 text-muted sm:text-base"
+            className="pointer-events-auto relative z-20 mt-4 text-sm leading-7 text-muted sm:text-base"
           />
           <p className="mt-4 max-w-reading text-base leading-8 text-ink/84">
             {publication.summary}
@@ -77,10 +58,10 @@ export function PublicationFeature({
           <PublicationActions
             publication={publication}
             idPrefix={`selected-publication-${publication.slug}`}
-            onOpenSpotlight={(trigger) => onOpenSpotlight?.(publication, trigger)}
+            showSpotlightButton={false}
           />
         </div>
-        <div className="grid grid-cols-2 gap-5 border-t border-line pt-4 text-sm text-muted sm:max-w-xs lg:block lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+        <div className="pointer-events-none relative z-10 grid grid-cols-2 gap-5 border-t border-line pt-4 text-sm text-muted sm:max-w-xs lg:block lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
           <div>
             <p className="meta-label">Year</p>
             <p className="mt-2 text-base text-ink">{publication.year}</p>

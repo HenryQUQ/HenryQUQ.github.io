@@ -1,5 +1,3 @@
-import { ArrowUpRight } from "lucide-react";
-
 import { cn } from "@/src/lib/utils";
 
 type TextLinkProps = {
@@ -19,19 +17,15 @@ export function TextLink({
     <a
       href={href}
       className={cn(
-        "group inline-flex items-center gap-1.5 text-sm text-ink/82 hover:text-ink",
+        "group inline-flex min-h-10 items-center py-1 text-sm text-accent hover:text-ink",
         className
       )}
       target={external ? "_blank" : undefined}
       rel={external ? "noreferrer" : undefined}
     >
-      <span className="border-b border-transparent pb-px group-hover:border-current">
+      <span className="border-b border-accent/30 pb-px group-hover:border-ink">
         {children}
       </span>
-      {external ? (
-        <ArrowUpRight className="h-3.5 w-3.5 text-accent transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-      ) : null}
     </a>
   );
 }
-

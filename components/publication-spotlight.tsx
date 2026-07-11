@@ -8,6 +8,7 @@ import { Play, X } from "lucide-react";
 import { Project, Publication, PublicationMedia } from "@/src/data/site";
 import { getFocusableElements } from "@/src/lib/focus";
 import { getPublicationProjectLinks } from "@/src/lib/publications";
+import { withBasePath } from "@/src/lib/site-config";
 
 import { LinkedAuthors } from "./linked-authors";
 import { PublicationActions } from "./publication-actions";
@@ -16,19 +17,77 @@ import { TextLink } from "./text-link";
 type PublicationSpotlightProps = {
   publication: Publication;
   project?: Project;
+  isObscured?: boolean;
   onClose: () => void;
   onOpenMedia: (mediaId: string, trigger: HTMLElement | null) => void;
 };
 
+type IsolatedSibling = {
+  element: HTMLElement;
+  ariaHidden: string | null;
+  hadInert: boolean;
+};
+
+function isolateBackground(root: HTMLElement, layer: number) {
+  const isolatedSiblings: IsolatedSibling[] = [];
+  let current: HTMLElement = root;
+
+  while (current.parentElement) {
+    const parent = current.parentElement;
+
+    Array.from(parent.children).forEach((child) => {
+      if (!(child instanceof HTMLElement) || child === current) {
+        return;
+      }
+
+      const siblingLayer = Number(child.dataset.modalLayer ?? 0);
+      if (siblingLayer > layer) {
+        return;
+      }
+
+      isolatedSiblings.push({
+        element: child,
+        ariaHidden: child.getAttribute("aria-hidden"),
+        hadInert: child.hasAttribute("inert")
+      });
+      child.setAttribute("aria-hidden", "true");
+      child.setAttribute("inert", "");
+    });
+
+    current = parent;
+    if (parent === document.body) {
+      break;
+    }
+  }
+
+  return () => {
+    isolatedSiblings.reverse().forEach(({ element, ariaHidden, hadInert }) => {
+      if (ariaHidden === null) {
+        element.removeAttribute("aria-hidden");
+      } else {
+        element.setAttribute("aria-hidden", ariaHidden);
+      }
+
+      if (!hadInert) {
+        element.removeAttribute("inert");
+      }
+    });
+  };
+}
+
 export function PublicationSpotlight({
   publication,
   project,
+  isObscured = false,
   onClose,
   onOpenMedia
 }: PublicationSpotlightProps) {
   const reducedMotion = useReducedMotion();
+  const backdropRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
   const mediaItems = publication.spotlightMedia ?? [];
   const primaryMedia = mediaItems[0];
   const extraProjectLinks = getPublicationProjectLinks(publication, project);
@@ -40,14 +99,17 @@ export function PublicationSpotlight({
     closeButtonRef.current?.focus();
 
     const dialog = dialogRef.current;
-    if (!dialog) {
+    const backdrop = backdropRef.current;
+    if (!dialog || !backdrop) {
       return undefined;
     }
+
+    const restoreBackground = isolateBackground(backdrop, 1);
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        onClose();
+        onCloseRef.current();
         return;
       }
 
@@ -80,11 +142,19 @@ export function PublicationSpotlight({
     };
 
     dialog.addEventListener("keydown", handleKeyDown);
-    return () => dialog.removeEventListener("keydown", handleKeyDown);
-  }, [onClose]);
+    return () => {
+      dialog.removeEventListener("keydown", handleKeyDown);
+      restoreBackground();
+    };
+  }, []);
 
   return (
     <motion.div
+      ref={backdropRef}
+      data-modal-layer="1"
+      data-modal-obscured={isObscured ? "true" : undefined}
+      aria-hidden={isObscured ? "true" : undefined}
+      inert={isObscured ? true : undefined}
       className="fixed inset-0 z-[90] overflow-y-auto bg-ink/42 px-4 py-4 backdrop-blur-sm sm:px-6 sm:py-8"
       initial={reducedMotion ? false : { opacity: 0 }}
       animate={reducedMotion ? undefined : { opacity: 1 }}
@@ -102,7 +172,7 @@ export function PublicationSpotlight({
           aria-modal="true"
           aria-labelledby={`spotlight-title-${publication.slug}`}
           data-publication-spotlight={publication.slug}
-          className={`relative w-full overflow-hidden rounded-[1.8rem] border border-line/80 bg-paper shadow-[0_28px_80px_rgba(29,32,28,0.18)] ${
+          className={`relative w-full overflow-hidden rounded-[1.8rem] border border-line bg-paper shadow-[0_28px_80px_rgba(29,32,28,0.18)] ${
             mediaItems.length > 0 ? "max-w-6xl" : "max-w-4xl"
           }`}
           initial={reducedMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
@@ -114,7 +184,8 @@ export function PublicationSpotlight({
           <button
             ref={closeButtonRef}
             type="button"
-            className="absolute right-4 top-4 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-line/90 bg-paper/92 text-ink/82 transition-colors hover:text-ink sm:right-5 sm:top-5"
+            data-spotlight-close
+            className="absolute right-4 top-4 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper/92 text-ink/82 transition-colors hover:text-ink motion-reduce:transition-none sm:right-5 sm:top-5"
             aria-label={`Close spotlight for ${publication.title}`}
             onClick={onClose}
           >
@@ -129,7 +200,7 @@ export function PublicationSpotlight({
             }
           >
             {mediaItems.length > 0 ? (
-              <div className="border-b border-line/80 bg-stone/32 p-4 sm:p-6 lg:border-b-0 lg:border-r lg:p-8">
+              <div className="border-b border-line bg-stone/32 p-4 sm:p-6 lg:border-b-0 lg:border-r lg:p-8">
                 {primaryMedia ? (
                   <button
                     type="button"
@@ -144,14 +215,14 @@ export function PublicationSpotlight({
                       <div className="relative aspect-[16/9] sm:aspect-[16/10]">
                         {getPreviewSrc(primaryMedia) ? (
                           <Image
-                            src={getPreviewSrc(primaryMedia) as string}
+                            src={withBasePath(getPreviewSrc(primaryMedia) as string)}
                             alt={primaryMedia.alt}
                             fill
                             sizes="(max-width: 1024px) 100vw, 56vw"
                             className={
                               primaryMedia.fit === "cover"
-                                ? "object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                                : "object-contain p-4 transition-transform duration-300 group-hover:scale-[1.02] sm:p-6"
+                                ? "object-cover transition-transform duration-300 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:transition-none"
+                                : "object-contain p-4 transition-transform duration-300 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:transition-none sm:p-6"
                             }
                           />
                         ) : (
@@ -184,7 +255,7 @@ export function PublicationSpotlight({
                       <button
                         key={media.id}
                         type="button"
-                        className="group overflow-hidden rounded-[1.1rem] border border-line/80 bg-paper/70 text-left transition-colors hover:border-line"
+                        className="group overflow-hidden rounded-[1.1rem] border border-line bg-paper/70 text-left transition-colors hover:border-line"
                         aria-label={`Open ${media.label} for ${publication.title}`}
                         data-spotlight-media-id={media.id}
                         onClick={(event) =>
@@ -194,14 +265,14 @@ export function PublicationSpotlight({
                         <div className="relative aspect-[16/9] sm:aspect-[16/10]">
                           {getPreviewSrc(media) ? (
                             <Image
-                              src={getPreviewSrc(media) as string}
+                              src={withBasePath(getPreviewSrc(media) as string)}
                               alt={media.alt}
                               fill
                               sizes="(max-width: 640px) 100vw, 18rem"
                               className={
                                 media.fit === "cover"
-                                  ? "object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                                  : "object-contain p-3 transition-transform duration-300 group-hover:scale-[1.02]"
+                                  ? "object-cover transition-transform duration-300 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:transition-none"
+                                  : "object-contain p-3 transition-transform duration-300 group-hover:scale-[1.02] motion-reduce:transform-none motion-reduce:transition-none"
                               }
                             />
                           ) : (
@@ -217,7 +288,7 @@ export function PublicationSpotlight({
                             </div>
                           ) : null}
                         </div>
-                        <div className="flex items-center justify-between gap-3 border-t border-line/70 px-4 py-3 text-sm text-ink/82">
+                        <div className="flex items-center justify-between gap-3 border-t border-line px-4 py-3 text-sm text-ink/82">
                           <span>{media.label}</span>
                           <span className="uppercase tracking-[0.18em] text-ink/54">
                             {media.kind}
@@ -234,6 +305,14 @@ export function PublicationSpotlight({
               <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                 <p className="meta-label">{publication.shortVenue}</p>
                 <p className="text-sm text-muted">{publication.year}</p>
+                {publication.recognition ? (
+                  <p
+                    data-publication-recognition={publication.slug}
+                    className="meta-label text-signal"
+                  >
+                    {publication.recognition}
+                  </p>
+                ) : null}
                 {project ? <p className="text-sm text-muted">{project.title}</p> : null}
               </div>
               <h2

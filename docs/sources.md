@@ -2,6 +2,16 @@
 
 Research pass completed on April 16, 2026.
 
+## Narrative restructure
+
+On July 10, 2026, the site was reframed as a personal academic record. The homepage now leads with Chenyuan Qu's name, research interests, and current appointments; VisualSplit and 360+x appear as selected research, while industry work is kept within the experience timeline. This is a presentation and wording change, not a new fact-finding pass.
+
+- VisualSplit and 360+x summaries paraphrase the same official paper, project, code, dataset, and media sources documented below.
+- The 360+x contribution is deliberately described as collaborative co-authorship; the site does not assign unverified individual ownership of the team output.
+- Industry summaries use the user-confirmed CMS, ERP, recommendation-system, and Vieutopia AI work already recorded in the Experience section.
+- No private interface, confidential architecture, performance metric, customer claim, or new factual result was added.
+- The profile introduction is a concise summary of the documented research areas, roles, and affiliations.
+
 ## Source priority
 
 Academic facts were verified in this order:
@@ -19,13 +29,13 @@ Industry and experience facts were checked against the current personal website 
 | Fact | Value used on site | Sources |
 | --- | --- | --- |
 | Name | Chenyuan Qu | Google Scholar, ORCID, Birmingham profile |
-| Current role line | Head of Technologies · PhD Student | User-confirmed current Allsee / Vieunite title wording, plus Birmingham profile and MI X people page for PhD status |
-| Affiliation line | Allsee · Vieunite · University of Birmingham | User-confirmed affiliation line, Birmingham profile, and public Allsee / Vieunite association from the current personal website and BinEgo-360 site |
-| Primary email | `cxq134@student.bham.ac.uk` | Birmingham profile |
-| Additional contact emails | `henry.qu@allsee-tech.com`, `henry.qu@vieunite.com`, `Chenyuan.Qu@outlook.com` | User-provided contact information |
+| Current role line | PhD Student · Head of Technologies | User-confirmed current Allsee / Vieunite title wording, plus Birmingham profile and MI X people page for PhD status |
+| Affiliation line | University of Birmingham · Allsee · Vieunite | User-confirmed affiliations, Birmingham profile, and public Allsee / Vieunite association from the current personal website and BinEgo-360 site |
+| Primary email | `Chenyuan.Qu@outlook.com` | User-provided contact information; selected as the primary public contact in the July 2026 narrative restructure |
+| Additional contact emails | `henry.qu@allsee-tech.com`, `henry.qu@vieunite.com`, `cxq134@student.bham.ac.uk` | User-provided contact information and Birmingham profile |
 | Short research areas | Computer vision, multimodal learning, generative AI, AI for science | Birmingham profile, MI X people page, Google Scholar interests |
 | Public links | Google Scholar, GitHub, Hugging Face, LinkedIn, ORCID | Seed URLs supplied by user, Hugging Face public profile, ORCID |
-| Short bio basis | Research in computer vision and multimodal learning, together with industry experience in backend architecture, enterprise software, AI products, business operations, and commercialisation-facing systems | Birmingham profile, MI X people page, current personal website, user-confirmed engineering and technology-leadership framing |
+| Short bio basis | Research in computer vision, multimodal learning, and generative models, together with work on backend services, internal software, and applied machine-learning systems | Birmingham profile, MI X people page, current personal website, and user-confirmed engineering experience |
 
 ## Publications used
 
@@ -33,7 +43,7 @@ Industry and experience facts were checked against the current personal website 
 | --- | --- | --- | --- |
 | 2025 | Exploring Image Representation with Decoupled Classical Visual Descriptors | Included | Google Scholar citation page, VisualSplit project page, arXiv |
 | 2025 | Diffusion Features to Bridge Domain Gap for Semantic Segmentation | Included | Google Scholar citation page, arXiv, IEEE link exposed from Scholar/arXiv |
-| 2024 | 360+x: A Panoptic Multi-modal Scene Understanding Dataset | Included | Google Scholar citation page, 360+x project page, CVPR OpenAccess, ORCID |
+| 2024 | 360+x: A Panoptic Multi-modal Scene Understanding Dataset | Included · CVPR oral | Google Scholar citation page, 360+x project page, CVPR OpenAccess, ORCID |
 | 2023 | Multi-view Self-supervised Disentanglement for General Image Denoising | Included | Google Scholar citation page, MeD project page, CVF OpenAccess, ORCID |
 
 ### Publication detail mapping
@@ -83,6 +93,7 @@ Industry and experience facts were checked against the current personal website 
 #### 360+x
 
 - Title, authors, venue, year, pages: Google Scholar citation page.
+- Oral-presentation status: the official 360+x project page labels the CVPR 2024 paper as an “Oral Presentation”; the official poster also links to the CVPR virtual oral page at `https://cvpr.thecvf.com/virtual/2024/oral/32053`.
 - ORCID also lists the CVPR 2024 publication with DOI `10.1109/CVPR52733.2024.01833`.
 - Spotlight abstract text on the site is a paraphrase of the official 360+x project page overview.
 - BibTeX used on site was extracted from the official 360+x project page.

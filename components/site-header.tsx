@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { X } from "lucide-react";
 
 import { cn } from "@/src/lib/utils";
 
@@ -15,111 +15,209 @@ type SiteHeaderProps = {
 };
 
 export function SiteHeader({ sections }: SiteHeaderProps) {
-  const [activeId, setActiveId] = useState(sections[0]?.id ?? "about");
+  const [activeId, setActiveId] = useState(sections[0]?.id ?? "work");
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuPanelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 28);
+    let frame = 0;
+
+    const update = () => {
+      const scrollTop = window.scrollY;
+      const marker = scrollTop + window.innerHeight * 0.38;
+      const elements = sections
+        .map(({ id }) => document.getElementById(id))
+        .filter((element): element is HTMLElement => Boolean(element));
+      const current = elements.reduce<HTMLElement | null>((closest, element) => {
+        if (element.offsetTop <= marker) {
+          return element;
+        }
+        return closest;
+      }, elements[0] ?? null);
+
+      setScrolled(scrollTop > 24);
+      if (current?.id) {
+        setActiveId(current.id);
+      }
     };
 
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    const handleScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(update);
+    };
 
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    update();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
+  }, [sections]);
 
   useEffect(() => {
-    const elements = sections
-      .map(({ id }) => document.getElementById(id))
-      .filter(Boolean) as HTMLElement[];
+    if (!menuOpen) {
+      return undefined;
+    }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+    const previousOverflow = document.body.style.overflow;
+    const menuButton = menuButtonRef.current;
+    const main = document.querySelector<HTMLElement>("main");
+    const previousMainAriaHidden = main?.getAttribute("aria-hidden") ?? null;
+    const mainHadInert = main?.hasAttribute("inert") ?? false;
+    document.body.style.overflow = "hidden";
+    main?.setAttribute("aria-hidden", "true");
+    main?.setAttribute("inert", "");
+    const panel = menuPanelRef.current;
+    const focusable = panel?.querySelectorAll<HTMLElement>("a[href], button:not([disabled])");
+    focusable?.[0]?.focus();
 
-        if (visible?.target.id) {
-          setActiveId(visible.target.id);
-        }
-      },
-      {
-        threshold: [0.2, 0.45, 0.7],
-        rootMargin: "-35% 0px -45% 0px"
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setMenuOpen(false);
+        return;
       }
-    );
 
-    elements.forEach((element) => observer.observe(element));
+      if (event.key !== "Tab" || !focusable?.length) {
+        return;
+      }
 
-    return () => observer.disconnect();
-  }, [sections]);
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+      if (event.shiftKey && (active === first || !panel?.contains(active))) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (active === last || !panel?.contains(active))) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      if (main) {
+        if (previousMainAriaHidden === null) {
+          main.removeAttribute("aria-hidden");
+        } else {
+          main.setAttribute("aria-hidden", previousMainAriaHidden);
+        }
+
+        if (!mainHadInert) {
+          main.removeAttribute("inert");
+        }
+      }
+      document.removeEventListener("keydown", handleKeyDown);
+      menuButton?.focus();
+    };
+  }, [menuOpen]);
 
   return (
     <>
       <header
+        aria-hidden={menuOpen ? "true" : undefined}
+        inert={menuOpen ? true : undefined}
         className={cn(
-          "fixed inset-x-0 top-0 z-50 transition-all duration-300",
-          scrolled ? "bg-paper/84 backdrop-blur-md" : "bg-transparent"
+          "fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300",
+          scrolled
+            ? "border-line bg-paper/95 backdrop-blur-md"
+            : "border-transparent bg-transparent"
         )}
       >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 sm:px-8 lg:px-12">
+        <div className="site-container flex h-[4.5rem] items-center justify-between">
           <a
-            href="#about"
-            className="text-sm font-medium uppercase tracking-[0.22em] text-ink/80 hover:text-ink"
+            href="#top"
+            className="py-2 text-[0.95rem] font-medium tracking-[-0.025em] text-ink transition-opacity hover:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/40 focus-visible:ring-offset-4 focus-visible:ring-offset-paper"
+            aria-label="Chenyuan Qu, back to top"
           >
             Chenyuan Qu
           </a>
-          <nav
-            aria-label="Primary"
-            className="hidden items-center gap-5 lg:flex"
-          >
-            {sections.map((section) => {
-              const active = activeId === section.id;
 
-              return (
-                <a
-                  key={section.id}
-                  href={`#${section.id}`}
-                  className={cn(
-                    "relative pb-1 text-sm text-ink/68 hover:text-ink",
-                    active && "text-ink"
-                  )}
-                >
-                  {section.label}
-                  <span
+          <div className="hidden items-center lg:flex">
+            <nav aria-label="Primary" className="flex items-center gap-7">
+              {sections.map((section) => {
+                const active = activeId === section.id;
+                return (
+                  <a
+                    key={section.id}
+                    href={`#${section.id}`}
+                    aria-current={active ? "location" : undefined}
                     className={cn(
-                      "absolute inset-x-0 -bottom-0.5 h-px origin-left bg-accent transition-transform duration-300",
-                      active ? "scale-x-100" : "scale-x-0"
+                      "relative py-2 text-[0.82rem] text-ink/72 transition-colors hover:text-ink",
+                      active && "text-ink"
                     )}
-                  />
-                </a>
-              );
-            })}
-          </nav>
+                  >
+                    {section.label}
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        "absolute inset-x-0 bottom-0 h-px origin-left bg-ink/55 transition-transform duration-300",
+                        active ? "scale-x-100" : "scale-x-0"
+                      )}
+                    />
+                  </a>
+                );
+              })}
+            </nav>
+          </div>
+
           <button
+            ref={menuButtonRef}
             type="button"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-line/80 bg-paper/70 text-ink lg:hidden"
+            className="min-h-11 px-1 text-[0.78rem] text-ink underline decoration-ink/30 underline-offset-4 transition-colors hover:decoration-ink lg:hidden"
             aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
             aria-expanded={menuOpen}
+            aria-controls="mobile-navigation"
             onClick={() => setMenuOpen((open) => !open)}
           >
-            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            {menuOpen ? "Close" : "Menu"}
           </button>
         </div>
       </header>
+
       {menuOpen ? (
-        <div className="fixed inset-0 z-40 bg-ink/18 backdrop-blur-sm lg:hidden">
-          <div className="absolute inset-x-5 top-20 rounded-[1.6rem] bg-paper px-6 py-6 shadow-soft">
-            <nav aria-label="Mobile primary" className="flex flex-col gap-2">
+        <div className="fixed inset-0 z-[60] lg:hidden">
+          <div
+            className="absolute inset-0 cursor-default bg-ink/18"
+            aria-hidden="true"
+            onClick={() => setMenuOpen(false)}
+          />
+          <div
+            ref={menuPanelRef}
+            id="mobile-navigation"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation"
+            className="absolute inset-x-0 top-0 overflow-hidden border-b border-line bg-paper"
+          >
+            <div className="site-container flex h-[4.5rem] items-center justify-between border-b border-line">
+              <p className="text-[0.95rem] font-medium tracking-[-0.025em] text-ink">
+                Chenyuan Qu
+              </p>
+              <button
+                type="button"
+                className="grid h-11 w-11 place-items-center text-ink transition-opacity hover:opacity-60"
+                aria-label="Close navigation menu"
+                onClick={() => setMenuOpen(false)}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <nav aria-label="Mobile primary" className="site-container py-5">
               {sections.map((section) => (
                 <a
                   key={section.id}
                   href={`#${section.id}`}
+                  aria-current={activeId === section.id ? "location" : undefined}
                   className={cn(
-                    "border-b border-line py-3 text-base text-ink/84",
-                    activeId === section.id && "text-accent"
+                    "flex min-h-14 items-center border-b border-line py-3 text-lg text-ink/72 last:border-b-0",
+                    activeId === section.id && "text-ink underline decoration-ink/30 underline-offset-4"
                   )}
                   onClick={() => setMenuOpen(false)}
                 >
@@ -133,4 +231,3 @@ export function SiteHeader({ sections }: SiteHeaderProps) {
     </>
   );
 }
-

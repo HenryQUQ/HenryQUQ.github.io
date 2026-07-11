@@ -54,24 +54,32 @@ function RoleSegment({ role }: { role: TimelineRole }) {
     >
       <span
         aria-hidden="true"
-        className="absolute -left-[5px] top-2 h-2.5 w-2.5 rounded-full bg-accent/70 ring-4 ring-paper"
+        className="absolute -left-[4px] top-2 h-2 w-2 rounded-full bg-ink ring-4 ring-surface"
       />
-      <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
-        <h4 className="font-display text-xl text-ink">{role.title}</h4>
-        <div className="meta-label shrink-0 pt-1">{role.period}</div>
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-5">
+        <h5 className="text-lg font-semibold text-ink">{role.title}</h5>
+        <div className="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-muted sm:text-right">
+          {role.period}
+        </div>
       </div>
-      <p className="mt-3 max-w-reading text-base leading-8 text-ink/84">
+      <p className="mt-3 max-w-reading text-sm leading-7 text-ink/72 sm:text-[0.95rem]">
         {role.detail}
       </p>
       {role.highlights?.length ? (
-        <ul className="mt-4 max-w-reading space-y-2 text-sm leading-7 text-ink/78 sm:text-base">
-          {role.highlights.map((highlight) => (
-            <li key={highlight} className="flex gap-3">
-              <span className="mt-[0.85rem] h-1.5 w-1.5 shrink-0 rounded-full bg-accent/70" />
-              <span>{highlight}</span>
-            </li>
-          ))}
-        </ul>
+        <details className="group mt-4 border-t border-line pt-3">
+          <summary className="flex min-h-9 cursor-pointer list-none items-center justify-between text-sm text-muted marker:content-none hover:text-ink">
+            Details
+            <span>{role.highlights.length} items</span>
+          </summary>
+          <ul className="mt-3 max-w-reading space-y-2 pb-1 text-sm leading-7 text-ink/72">
+            {role.highlights.map((highlight) => (
+              <li key={highlight} className="flex gap-3">
+                <span className="mt-[0.72rem] h-1 w-1 shrink-0 rounded-full bg-ink/55" />
+                <span>{highlight}</span>
+              </li>
+            ))}
+          </ul>
+        </details>
       ) : null}
     </div>
   );
@@ -80,30 +88,20 @@ function RoleSegment({ role }: { role: TimelineRole }) {
 export function TimelineItem({ item, index }: TimelineItemProps) {
   return (
     <Reveal delay={index * 0.04}>
-      <div className="grid gap-3 border-t border-line py-6 md:grid-cols-[11rem_minmax(0,1fr)] md:gap-8">
-        <div className="meta-label pt-1">{item.period}</div>
-        <div>
-          <h3 className="font-display text-2xl text-ink">{item.title}</h3>
-          <p className="mt-2 text-sm uppercase tracking-[0.18em] text-muted">
+      <div className="border-b border-line py-6">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-5">
+          <div>
+            <h5 className="font-display text-[1.45rem] font-normal text-ink">{item.title}</h5>
+            <p className="mt-2 text-sm text-muted">
             <OrganisationLabel
               fallback={item.organisation}
               links={item.organisationLinks}
             />
-          </p>
-          <p className="mt-4 max-w-reading text-base leading-8 text-ink/84">
-            {item.detail}
-          </p>
-          {item.highlights?.length ? (
-            <ul className="mt-4 max-w-reading space-y-2 text-sm leading-7 text-ink/78 sm:text-base">
-              {item.highlights.map((highlight) => (
-                <li key={highlight} className="flex gap-3">
-                  <span className="mt-[0.85rem] h-1.5 w-1.5 shrink-0 rounded-full bg-accent/70" />
-                  <span>{highlight}</span>
-                </li>
-              ))}
-            </ul>
-          ) : null}
+            </p>
+          </div>
+          <div className="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-muted sm:text-right">{item.period}</div>
         </div>
+        <p className="mt-3 max-w-reading text-sm leading-7 text-ink/72">{item.detail}</p>
       </div>
     </Reveal>
   );
@@ -112,20 +110,22 @@ export function TimelineItem({ item, index }: TimelineItemProps) {
 export function TimelineGroup({ group, index }: TimelineGroupProps) {
   return (
     <Reveal delay={index * 0.04}>
-      <div className="grid gap-5 border-t border-line py-7 md:grid-cols-[11rem_minmax(0,1fr)] md:gap-8">
-        <div className="meta-label pt-1">{group.period}</div>
-        <div>
-          <h3 className="font-display text-2xl text-ink">
+      <div className="border-b border-line py-7">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-5">
+          <h4 className="font-display text-[1.65rem] font-normal text-ink">
             <OrganisationLabel
               fallback={group.organisation}
               links={group.organisationLinks}
             />
-          </h3>
-          <div className="mt-6 space-y-6">
-            {group.roles.map((role) => (
-              <RoleSegment key={`${role.title}-${role.period}`} role={role} />
-            ))}
+          </h4>
+          <div className="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-muted sm:text-right">
+            {group.period}
           </div>
+        </div>
+        <div className="mt-7 space-y-7">
+          {group.roles.map((role) => (
+            <RoleSegment key={`${role.title}-${role.period}`} role={role} />
+          ))}
         </div>
       </div>
     </Reveal>

@@ -5,21 +5,90 @@ import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
-import { PublicationMedia } from "@/src/data/site";
+import type { PublicationMedia, ResearchLens } from "@/src/data/site";
 import { getFocusableElements } from "@/src/lib/focus";
+import { withBasePath } from "@/src/lib/site-config";
+
+import { ResearchLensPanel } from "./research-lens-panel";
 
 type MediaLightboxProps = {
   publicationTitle: string;
   mediaItems: PublicationMedia[];
   activeMediaId: string;
+  researchLens?: ResearchLens;
   onClose: () => void;
   onSelectMedia: (mediaId: string) => void;
 };
+
+type IsolatedSibling = {
+  element: HTMLElement;
+  ariaHidden: string | null;
+  hadInert: boolean;
+};
+
+function isolateBackground(root: HTMLElement, layer: number) {
+  const isolatedSiblings: IsolatedSibling[] = [];
+  let current: HTMLElement = root;
+
+  while (current.parentElement) {
+    const parent = current.parentElement;
+
+    Array.from(parent.children).forEach((child) => {
+      if (!(child instanceof HTMLElement) || child === current) {
+        return;
+      }
+
+      const siblingLayer = Number(child.dataset.modalLayer ?? 0);
+      if (siblingLayer > layer) {
+        return;
+      }
+
+      isolatedSiblings.push({
+        element: child,
+        ariaHidden: child.getAttribute("aria-hidden"),
+        hadInert: child.hasAttribute("inert")
+      });
+      child.setAttribute("aria-hidden", "true");
+      child.setAttribute("inert", "");
+    });
+
+    current = parent;
+    if (parent === document.body) {
+      break;
+    }
+  }
+
+  return () => {
+    isolatedSiblings.reverse().forEach(({ element, ariaHidden, hadInert }) => {
+      if (element.dataset.modalLayer === "1") {
+        if (element.dataset.modalObscured === "true") {
+          element.setAttribute("aria-hidden", "true");
+          element.setAttribute("inert", "");
+        } else {
+          element.removeAttribute("aria-hidden");
+          element.removeAttribute("inert");
+        }
+        return;
+      }
+
+      if (ariaHidden === null) {
+        element.removeAttribute("aria-hidden");
+      } else {
+        element.setAttribute("aria-hidden", ariaHidden);
+      }
+
+      if (!hadInert) {
+        element.removeAttribute("inert");
+      }
+    });
+  };
+}
 
 export function MediaLightbox({
   publicationTitle,
   mediaItems,
   activeMediaId,
+  researchLens,
   onClose,
   onSelectMedia
 }: MediaLightboxProps) {
@@ -38,31 +107,61 @@ export function MediaLightbox({
   const nextMedia = hasMultiple
     ? mediaItems[(safeIndex + 1) % mediaItems.length]
     : null;
+  const onCloseRef = useRef(onClose);
+  const onSelectMediaRef = useRef(onSelectMedia);
+  const previousMediaRef = useRef(previousMedia);
+  const nextMediaRef = useRef(nextMedia);
+  onCloseRef.current = onClose;
+  onSelectMediaRef.current = onSelectMedia;
+  previousMediaRef.current = previousMedia;
+  nextMediaRef.current = nextMedia;
 
   useEffect(() => {
-    closeButtonRef.current?.focus();
+    const focusFrame = window.requestAnimationFrame(() => {
+      closeButtonRef.current?.focus();
+    });
 
+    return () => window.cancelAnimationFrame(focusFrame);
+  }, [activeMediaId]);
+
+  useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) {
       return undefined;
     }
 
+    const restoreBackground = isolateBackground(dialog, 2);
+
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented) {
+        return;
+      }
+
       if (event.key === "Escape") {
         event.preventDefault();
-        onClose();
+        onCloseRef.current();
         return;
       }
 
-      if (event.key === "ArrowLeft" && previousMedia) {
-        event.preventDefault();
-        onSelectMedia(previousMedia.id);
+      const target = event.target;
+      const usesHorizontalKeys =
+        target instanceof HTMLMediaElement ||
+        (target instanceof HTMLElement &&
+          target.matches("input, textarea, select, [contenteditable='true']"));
+
+      if (usesHorizontalKeys && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
         return;
       }
 
-      if (event.key === "ArrowRight" && nextMedia) {
+      if (event.key === "ArrowLeft" && previousMediaRef.current) {
         event.preventDefault();
-        onSelectMedia(nextMedia.id);
+        onSelectMediaRef.current(previousMediaRef.current.id);
+        return;
+      }
+
+      if (event.key === "ArrowRight" && nextMediaRef.current) {
+        event.preventDefault();
+        onSelectMediaRef.current(nextMediaRef.current.id);
         return;
       }
 
@@ -94,9 +193,12 @@ export function MediaLightbox({
       }
     };
 
-    dialog.addEventListener("keydown", handleKeyDown);
-    return () => dialog.removeEventListener("keydown", handleKeyDown);
-  }, [nextMedia, onClose, onSelectMedia, previousMedia]);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      restoreBackground();
+    };
+  }, []);
 
   if (!activeMedia) {
     return null;
@@ -104,6 +206,11 @@ export function MediaLightbox({
 
   return (
     <motion.div
+      ref={dialogRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={`lightbox-title-${activeMedia.id}`}
+      data-modal-layer="2"
       data-lightbox-backdrop="true"
       className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/76 px-4 py-4 backdrop-blur-md sm:px-6 sm:py-6"
       initial={reducedMotion ? false : { opacity: 0 }}
@@ -115,34 +222,40 @@ export function MediaLightbox({
         }
       }}
     >
-      {previousMedia ? (
+      {researchLens && !isVideoMedia ? (
+        <ResearchLensPanel
+          media={activeMedia}
+          lens={researchLens}
+          publicationTitle={publicationTitle}
+          closeButtonRef={closeButtonRef}
+          onClose={onClose}
+        />
+      ) : (
+        <>
+          {previousMedia ? (
         <button
           type="button"
-          className="absolute left-3 top-1/2 z-[101] inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/12 bg-[#181b17]/72 text-paper/82 transition-colors hover:text-paper sm:left-5"
+          className="absolute left-3 top-1/2 z-[101] inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/12 bg-[#181b17]/72 text-paper/82 transition-colors hover:text-paper motion-reduce:transition-none sm:left-5"
           aria-label={`Show previous media for ${publicationTitle}`}
           onClick={() => onSelectMedia(previousMedia.id)}
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
-      ) : null}
+          ) : null}
 
-      {nextMedia ? (
+          {nextMedia ? (
         <button
           type="button"
-          className="absolute right-3 top-1/2 z-[101] inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/12 bg-[#181b17]/72 text-paper/82 transition-colors hover:text-paper sm:right-5"
+          className="absolute right-3 top-1/2 z-[101] inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/12 bg-[#181b17]/72 text-paper/82 transition-colors hover:text-paper motion-reduce:transition-none sm:right-5"
           aria-label={`Show next media for ${publicationTitle}`}
           onClick={() => onSelectMedia(nextMedia.id)}
         >
           <ChevronRight className="h-5 w-5" />
         </button>
-      ) : null}
+          ) : null}
 
-      {isVideoMedia ? (
+          {isVideoMedia ? (
         <motion.div
-          ref={dialogRef}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={`lightbox-title-${activeMedia.id}`}
           data-lightbox-media-id={activeMedia.id}
           data-lightbox-media-kind={activeMedia.kind}
           className="relative flex h-full w-full flex-col overflow-hidden rounded-[1.8rem] border border-white/10 bg-[#181b17]/94 text-paper"
@@ -154,7 +267,7 @@ export function MediaLightbox({
         >
           <div className="flex items-center justify-between gap-4 border-b border-white/10 px-4 py-4 sm:px-6">
             <div className="min-w-0">
-              <p className="text-[0.72rem] uppercase tracking-[0.18em] text-paper/58">
+              <p className="text-[0.72rem] uppercase tracking-[0.18em] text-paper/70">
                 {activeMedia.kind}
               </p>
               <h3
@@ -167,7 +280,7 @@ export function MediaLightbox({
             <button
               ref={closeButtonRef}
               type="button"
-              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/12 text-paper/82 transition-colors hover:text-paper"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/12 text-paper/82 transition-colors hover:text-paper motion-reduce:transition-none"
               aria-label={`Close media lightbox for ${publicationTitle}`}
               onClick={onClose}
             >
@@ -183,6 +296,7 @@ export function MediaLightbox({
                     <iframe
                       src={activeMedia.embedUrl}
                       title={`${activeMedia.label} for ${publicationTitle}`}
+                      tabIndex={0}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowFullScreen
                       className="h-full w-full"
@@ -192,11 +306,16 @@ export function MediaLightbox({
                   <video
                     controls
                     playsInline
+                    tabIndex={0}
                     preload="metadata"
-                    poster={activeMedia.posterSrc}
+                    poster={
+                      activeMedia.posterSrc
+                        ? withBasePath(activeMedia.posterSrc)
+                        : undefined
+                    }
                     className="max-h-full max-w-full rounded-[1.4rem] border border-white/10 bg-black"
                   >
-                    <source src={activeMedia.src} type="video/mp4" />
+                    <source src={withBasePath(activeMedia.src)} type="video/mp4" />
                   </video>
                 )}
               </div>
@@ -209,10 +328,6 @@ export function MediaLightbox({
         </motion.div>
       ) : (
         <motion.div
-          ref={dialogRef}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby={`lightbox-title-${activeMedia.id}`}
           data-lightbox-media-id={activeMedia.id}
           data-lightbox-media-kind={activeMedia.kind}
           data-lightbox-panel="image"
@@ -226,7 +341,7 @@ export function MediaLightbox({
           <button
             ref={closeButtonRef}
             type="button"
-            className="absolute right-3 top-3 z-[101] inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-[#181b17]/76 text-paper/82 transition-colors hover:text-paper"
+            className="absolute right-3 top-3 z-[101] inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-[#181b17]/76 text-paper/82 transition-colors hover:text-paper motion-reduce:transition-none"
             aria-label={`Close media lightbox for ${publicationTitle}`}
             onClick={onClose}
           >
@@ -235,7 +350,7 @@ export function MediaLightbox({
 
           <div className="relative inline-flex max-w-full items-center justify-center overflow-hidden rounded-[1.4rem] border border-white/10 bg-[#11120f] shadow-[0_18px_44px_rgba(0,0,0,0.26)]">
             <Image
-              src={activeMedia.src}
+              src={withBasePath(activeMedia.src)}
               alt={activeMedia.alt}
               width={activeMedia.width}
               height={activeMedia.height}
@@ -249,7 +364,7 @@ export function MediaLightbox({
 
             <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#11120f]/90 via-[#11120f]/48 to-transparent px-4 pb-4 pt-8 sm:px-5 sm:pb-5">
               <div className="min-w-0">
-                <p className="text-[0.7rem] uppercase tracking-[0.18em] text-paper/58">
+                <p className="text-[0.7rem] uppercase tracking-[0.18em] text-paper/70">
                   {activeMedia.kind}
                 </p>
                 <h3
@@ -263,6 +378,8 @@ export function MediaLightbox({
             </div>
           </div>
         </motion.div>
+          )}
+        </>
       )}
     </motion.div>
   );

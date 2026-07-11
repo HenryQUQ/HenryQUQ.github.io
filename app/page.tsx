@@ -1,13 +1,15 @@
 import Image from "next/image";
 
+import { CaseStudyScroller } from "@/components/case-study-scroller";
+import { LocalTime } from "@/components/local-time";
 import { PublicationsExperience } from "@/components/publications-experience";
-import { Reveal } from "@/components/reveal";
-import { SectionHeading } from "@/components/section-heading";
+import { ResearchThreadExperience } from "@/components/research-thread-experience";
 import { SiteHeader } from "@/components/site-header";
 import { StructuredData } from "@/components/structured-data";
 import { TextLink } from "@/components/text-link";
 import { TimelineGroup, TimelineItem } from "@/components/timeline-item";
 import {
+  caseStudies,
   education,
   experience,
   newsItems,
@@ -16,15 +18,14 @@ import {
   profile,
   projects,
   publications,
-  researchInterests,
-  sections,
-  selectedPublicationSlugs
+  researchThreads,
+  sections
 } from "@/src/data/site";
 import {
   getPrimaryPublicationHref,
   getPublicationDoiUrl
 } from "@/src/lib/publications";
-import { absoluteUrl } from "@/src/lib/site-config";
+import { absoluteUrl, withBasePath } from "@/src/lib/site-config";
 
 const personSchema = {
   "@context": "https://schema.org",
@@ -62,47 +63,26 @@ const personSchema = {
     }
   ],
   alumniOf: [
-    {
-      "@type": "CollegeOrUniversity",
-      name: "University of Birmingham"
-    },
-    {
-      "@type": "CollegeOrUniversity",
-      name: "University of Southampton"
-    }
+    { "@type": "CollegeOrUniversity", name: "University of Birmingham" },
+    { "@type": "CollegeOrUniversity", name: "University of Southampton" }
   ],
   sameAs: profile.links
     .filter((link) => link.kind !== "email")
     .map((link) => link.href)
 };
+
 const publicationSchemas = publications.map((publication) => {
   const primaryUrl =
     getPrimaryPublicationHref(publication) ??
     `${absoluteUrl("/")}#publication-${publication.slug}`;
   const identifiers = [
     publication.doi
-      ? {
-          "@type": "PropertyValue",
-          propertyID: "DOI",
-          value: publication.doi
-        }
+      ? { "@type": "PropertyValue", propertyID: "DOI", value: publication.doi }
       : null,
     publication.arxivId
-      ? {
-          "@type": "PropertyValue",
-          propertyID: "arXiv",
-          value: publication.arxivId
-        }
+      ? { "@type": "PropertyValue", propertyID: "arXiv", value: publication.arxivId }
       : null
-  ].filter(
-    (
-      value
-    ): value is {
-      "@type": "PropertyValue";
-      propertyID: string;
-      value: string;
-    } => Boolean(value)
-  );
+  ].filter(Boolean);
 
   return {
     "@type": "ScholarlyArticle",
@@ -113,19 +93,11 @@ const publicationSchemas = publications.map((publication) => {
     mainEntityOfPage: primaryUrl,
     author: publication.authorList.map((author) => {
       const personLink = personLinks.find((person) => person.name === author);
-
-      return {
-        "@type": "Person",
-        name: author,
-        url: personLink?.href
-      };
+      return { "@type": "Person", name: author, url: personLink?.href };
     }),
     datePublished: `${publication.year}`,
     description: publication.summary,
-    isPartOf: {
-      "@type": "CreativeWork",
-      name: publication.venue
-    },
+    isPartOf: { "@type": "CreativeWork", name: publication.venue },
     sameAs: [
       ...publication.links.map((link) => link.href),
       publication.doi ? getPublicationDoiUrl(publication.doi) : null
@@ -133,236 +105,230 @@ const publicationSchemas = publications.map((publication) => {
     identifier: identifiers.length > 0 ? identifiers : undefined
   };
 });
+
 const structuredData = {
   "@context": "https://schema.org",
   "@graph": [personSchema, ...publicationSchemas]
 };
 
 export default function HomePage() {
+  const academicExperience = experience.filter((item) => item.track === "academic");
+  const industryExperience = experience.filter((item) => item.track === "industry");
+  const selectedResearch = caseStudies.filter(
+    (study) => study.slug === "visualsplit" || study.slug === "x360"
+  );
+  const currentUpdates = newsItems.slice(0, 3);
+  const archivedUpdates = newsItems.slice(3);
+  const secondaryContactEmails = profile.contactEmails.filter(
+    (contact) => contact.address !== profile.primaryContact.address
+  );
+
   return (
-    <div className="bg-paper text-ink">
+    <div id="top" className="bg-paper text-ink">
       <StructuredData data={structuredData} />
       <SiteHeader sections={sections} />
 
       <main>
-        <section
-          id="about"
-          className="relative isolate min-h-[100svh] overflow-hidden"
-        >
-          <div className="pointer-events-none absolute inset-0">
-            <Image
-              src={profile.heroBackgroundImageMobile}
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover object-center md:hidden"
-            />
-            <Image
-              src={profile.heroBackgroundImageDesktop}
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              className="hidden object-cover object-center md:block"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(243,239,232,0.988)_0%,rgba(243,239,232,0.97)_26%,rgba(243,239,232,0.9)_40%,rgba(243,239,232,0.64)_56%,rgba(243,239,232,0.22)_76%,rgba(243,239,232,0.08)_100%)] md:bg-[linear-gradient(90deg,rgba(243,239,232,0.992)_0%,rgba(243,239,232,0.972)_24%,rgba(243,239,232,0.88)_38%,rgba(243,239,232,0.52)_54%,rgba(243,239,232,0.16)_72%,rgba(243,239,232,0.04)_100%)]" />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(243,239,232,0.16)_0%,rgba(243,239,232,0.04)_36%,rgba(243,239,232,0.4)_100%)] md:bg-[linear-gradient(180deg,rgba(243,239,232,0.12)_0%,rgba(243,239,232,0.01)_44%,rgba(243,239,232,0.22)_100%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_30%,rgba(255,255,255,0.28)_0%,rgba(255,255,255,0.07)_24%,rgba(255,255,255,0)_48%)]" />
-          </div>
-          <div className="relative z-10 mx-auto flex min-h-[100svh] max-w-7xl items-end px-6 pb-14 pt-24 sm:px-8 md:items-center md:pb-20 md:pt-28 lg:px-12">
-            <div className="max-w-[18rem] sm:max-w-[23rem] md:max-w-[28rem] lg:max-w-[31rem] xl:max-w-[33rem] md:-translate-y-10 lg:-translate-y-12">
-              <Reveal>
-                <p className="meta-label">Computer Vision · Multimodal Learning</p>
-              </Reveal>
-              <Reveal delay={0.08}>
-                <h1 className="mt-4 font-display text-[3.35rem] leading-[0.9] tracking-[-0.05em] text-ink sm:text-[5rem] lg:text-[6.25rem] xl:text-[6.8rem]">
-                  {profile.name}
-                </h1>
-              </Reveal>
-              <Reveal delay={0.16}>
-                <div className="mt-6 flex flex-col gap-2 text-[1.05rem] leading-8 text-muted sm:flex-row sm:flex-wrap sm:items-center sm:gap-4 sm:text-lg">
-                  <span>{profile.role}</span>
-                  <span className="hidden h-1 w-1 rounded-full bg-muted/50 sm:inline-block" />
-                  <span>{profile.affiliation}</span>
-                </div>
-              </Reveal>
-              <Reveal delay={0.22}>
-                <p className="mt-7 max-w-[20rem] text-balance text-[0.98rem] leading-8 text-ink/88 sm:mt-8 sm:max-w-reading sm:text-xl sm:leading-9">
-                  {profile.bio}
-                </p>
-              </Reveal>
-              <Reveal delay={0.3}>
-                <div className="mt-8 flex max-w-[19.5rem] flex-wrap gap-x-5 gap-y-3 sm:mt-10 sm:max-w-none sm:gap-x-6">
-                  {profile.links.map((link) => (
+        <section className="border-b border-line pt-28 sm:pt-32">
+          <div className="site-container grid gap-12 py-12 sm:py-16 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start lg:gap-20 lg:py-20">
+            <div className="max-w-3xl">
+              <p className="meta-label">{profile.positioning}</p>
+              <h1 className="mt-6 font-display text-[clamp(3.5rem,15vw,4.2rem)] font-normal leading-[0.9] tracking-[-0.03em] text-ink sm:text-[clamp(4.25rem,10vw,7.75rem)] sm:tracking-[-0.035em]">
+                {profile.name}
+              </h1>
+              <p className="mt-8 max-w-2xl text-xl leading-8 text-ink sm:text-2xl sm:leading-9">
+                {profile.shortBio}
+              </p>
+              <p className="mt-5 max-w-2xl text-base leading-8 text-muted sm:text-lg">
+                {profile.bio}
+              </p>
+
+              <div className="mt-8 flex flex-wrap gap-x-5 gap-y-1 border-t border-line pt-5">
+                {profile.links
+                  .filter((link) => ["email", "scholar", "github", "orcid"].includes(link.kind))
+                  .map((link) => (
                     <TextLink
                       key={link.label}
                       href={link.href}
-                      external={link.external ?? true}
-                      className="text-[0.9rem] sm:text-[0.95rem]"
+                      external={link.external ?? link.kind !== "email"}
                     >
                       {link.label}
                     </TextLink>
                   ))}
-                </div>
-              </Reveal>
+              </div>
+              <p className="mt-5 text-sm text-muted">{profile.affiliation}</p>
             </div>
+
+            <figure className="w-full max-w-[22rem] lg:justify-self-end">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[0.45rem] border border-line bg-stone">
+                <Image
+                  src={withBasePath(profile.heroImage)}
+                  alt="Portrait of Chenyuan Qu"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 82vw, 19rem"
+                  className="object-cover object-[58%_center]"
+                />
+              </div>
+              <figcaption>
+                <LocalTime className="mt-3 block text-sm tabular-nums text-muted" />
+              </figcaption>
+            </figure>
           </div>
         </section>
 
-        <section id="research" className="section-rule">
-          <div className="mx-auto max-w-7xl px-6 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28">
-            <SectionHeading
-              eyebrow="Research"
-              title="Research Interests"
-            />
-            <div className="mt-14 grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
-              <Reveal>
-                <p className="max-w-reading text-base leading-8 text-ink/82 sm:text-lg">
-                  My recent work spans interpretable image representations,
-                  multimodal scene understanding, diffusion-based methods, and
-                  dataset-building for visual learning.
-                </p>
-              </Reveal>
+        <ResearchThreadExperience threads={researchThreads}>
+          <CaseStudyScroller
+            studies={selectedResearch}
+            researchThreads={researchThreads}
+          />
+
+          <PublicationsExperience
+            publications={publications}
+            projects={projects}
+            researchThreads={researchThreads}
+          />
+        </ResearchThreadExperience>
+
+        <section id="journey" className="border-t border-line bg-surface/35">
+          <div className="site-container section-shell">
+            <header className="grid gap-5 border-b border-line pb-10 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-10 lg:pb-12">
+              <p className="section-kicker">Experience</p>
               <div>
-                {researchInterests.map((interest, index) => (
-                  <Reveal key={interest.title} delay={index * 0.05}>
-                    <div className="grid gap-3 border-t border-line py-6 md:grid-cols-[12rem_minmax(0,1fr)] md:gap-8">
-                      <p className="meta-label pt-1">{interest.title}</p>
-                      <p className="max-w-reading text-base leading-8 text-ink/84">
-                        {interest.detail}
-                      </p>
-                    </div>
-                  </Reveal>
+                <h2 className="section-title">Experience &amp; education</h2>
+                <p className="mt-5 max-w-2xl text-base leading-7 text-muted sm:text-lg sm:leading-8">
+                  Research appointments, industry roles, and education.
+                </p>
+              </div>
+            </header>
+
+            <div className="mt-12 grid gap-14 xl:grid-cols-2 xl:gap-16">
+              <div>
+                <h3 className="border-b border-line pb-4 font-display text-2xl font-normal">Research appointments</h3>
+                {academicExperience.map((item, index) => (
+                  <TimelineGroup key={`${item.organisation}-${item.period}`} group={item} index={index} />
+                ))}
+                <div className="mt-10 border-t border-line pt-6">
+                  <h3 className="font-display text-2xl font-normal">Education</h3>
+                  {education.map((item, index) => (
+                    <TimelineItem key={`${item.title}-${item.organisation}`} item={item} index={index} />
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 className="border-b border-line pb-4 font-display text-2xl font-normal">Industry experience</h3>
+                {industryExperience.map((item, index) => (
+                  <TimelineGroup key={`${item.organisation}-${item.period}`} group={item} index={index} />
                 ))}
               </div>
             </div>
           </div>
         </section>
 
-        <PublicationsExperience
-          publications={publications}
-          projects={projects}
-          selectedPublicationSlugs={selectedPublicationSlugs}
-        />
+        <section id="updates" className="border-t border-line bg-paper">
+          <div className="site-container section-shell">
+            <header className="grid gap-5 border-b border-line pb-10 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-10 lg:pb-12">
+              <p className="section-kicker">News</p>
+              <div>
+                <h2 className="section-title">Recent updates</h2>
+                <p className="mt-5 max-w-2xl text-base leading-7 text-muted sm:text-lg sm:leading-8">
+                  Publications, presentations, and research updates.
+                </p>
+              </div>
+            </header>
 
-        <section id="news" className="section-rule">
-          <div className="mx-auto max-w-7xl px-6 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28">
-            <SectionHeading
-              eyebrow="News"
-              title="Recent News"
-            />
-            <div className="mt-12">
-              {newsItems.map((item, index) => (
-                <Reveal key={`${item.date}-${item.title}`} delay={index * 0.04}>
-                  <div className="grid gap-4 border-t border-line py-6 md:grid-cols-[7rem_minmax(0,1fr)] md:gap-8">
-                    <div className="meta-label pt-1">{item.date}</div>
-                    <div>
-                      <h3 className="font-display text-2xl text-ink">{item.title}</h3>
-                      <p className="mt-3 max-w-reading text-base leading-8 text-ink/84">
-                        {item.detail}
-                      </p>
-                      {item.href ? (
-                        <div className="mt-4">
-                          <TextLink href={item.href}>Source</TextLink>
-                        </div>
-                      ) : null}
-                    </div>
+            <div>
+              {currentUpdates.map((item) => (
+                <article key={`${item.date}-${item.title}`} className="grid gap-3 border-b border-line py-7 md:grid-cols-[8rem_minmax(0,1fr)_auto] md:gap-8">
+                  <time className="font-mono text-[0.64rem] uppercase tracking-[0.1em] text-muted">{item.date}</time>
+                  <div>
+                    <h3 className="font-display text-2xl font-normal leading-tight sm:text-[1.7rem]">{item.title}</h3>
+                    <p className="mt-3 max-w-3xl text-sm leading-7 text-muted sm:text-base">{item.detail}</p>
                   </div>
-                </Reveal>
+                  {item.href ? <TextLink href={item.href} className="md:justify-self-end">Source</TextLink> : null}
+                </article>
               ))}
             </div>
-          </div>
-        </section>
 
-        <section id="experience" className="section-rule">
-          <div className="mx-auto max-w-7xl px-6 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28">
-            <SectionHeading
-              eyebrow="Experience"
-              title="Professional Experience"
-            />
-            <div className="mt-12">
-              {experience.map((item, index) => (
-                <TimelineGroup
-                  key={`${item.organisation}-${item.period}`}
-                  group={item}
-                  index={index}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="education" className="section-rule">
-          <div className="mx-auto max-w-7xl px-6 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28">
-            <SectionHeading
-              eyebrow="Education"
-              title="Academic Training"
-            />
-            <div className="mt-12">
-              {education.map((item, index) => (
-                <TimelineItem
-                  key={`${item.title}-${item.organisation}`}
-                  item={item}
-                  index={index}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="contact" className="section-rule">
-          <div className="mx-auto max-w-7xl px-6 py-20 sm:px-8 lg:px-12">
-            <Reveal>
-              <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-                <div>
-                  <p className="meta-label">Contact</p>
-                  <h2 className="mt-4 max-w-3xl font-display text-4xl tracking-tight text-ink sm:text-5xl">
-                    Contact
-                  </h2>
-                  <p className="mt-5 max-w-reading text-base leading-8 text-muted sm:text-lg">
-                    The easiest way to reach me is by email.
-                  </p>
-                </div>
-                <address className="grid gap-5 not-italic md:justify-items-end md:text-right">
-                  {profile.contactEmails.map((contactEmail) => (
-                    <div
-                      key={contactEmail.address}
-                      className="flex flex-col gap-1 md:items-end"
-                    >
-                      <p className="meta-label">{contactEmail.label}</p>
-                      <TextLink
-                        href={contactEmail.href}
-                        external={false}
-                        className="text-lg"
-                      >
-                        {contactEmail.address}
-                      </TextLink>
-                    </div>
+            {archivedUpdates.length > 0 ? (
+              <details className="group mt-6 border-b border-line">
+                <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between py-4 text-sm font-semibold marker:content-none">
+                  Earlier news
+                  <span className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-muted group-open:text-signal">
+                    {archivedUpdates.length} entries
+                  </span>
+                </summary>
+                <div className="pb-5">
+                  {archivedUpdates.map((item, index) => (
+                    <article key={`${item.date}-${item.title}`} className="grid gap-3 border-t border-line py-6 md:grid-cols-[8rem_minmax(0,1fr)_auto] md:gap-6">
+                      <time className="font-mono text-[0.65rem] uppercase tracking-[0.12em] text-muted">{item.date}</time>
+                      <div>
+                        <h3 className="text-lg font-semibold">{item.title}</h3>
+                        <p className="mt-2 max-w-3xl text-sm leading-7 text-muted">{item.detail}</p>
+                      </div>
+                      {item.href ? <TextLink href={item.href}>Source</TextLink> : null}
+                    </article>
                   ))}
+                </div>
+              </details>
+            ) : null}
+          </div>
+        </section>
+
+        <section id="contact" className="border-t border-line bg-surface/55">
+          <div className="site-container py-14 sm:py-16 lg:py-20">
+            <div className="grid gap-8 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-10">
+              <h2 className="section-kicker">Contact</h2>
+              <div>
+                <p className="max-w-xl text-base leading-7 text-muted sm:text-lg sm:leading-8">
+                  Email is the best way to reach me about research, software, or related work.
+                </p>
+                <a
+                  href={profile.primaryContact.href}
+                  className="mt-5 inline-block max-w-full break-all border-b border-ink/30 pb-1 font-display text-[clamp(1.6rem,4.8vw,3rem)] leading-tight text-ink transition-colors hover:border-ink hover:text-accent sm:break-normal"
+                >
+                  {profile.primaryContact.address}
+                </a>
+                <address className="mt-9 max-w-3xl border-t border-line pt-5 not-italic">
+                  <p className="section-kicker">Other addresses</p>
+                  <dl className="mt-4 divide-y divide-line border-b border-line">
+                    {secondaryContactEmails.map((contact) => (
+                      <div
+                        key={contact.address}
+                        className="grid gap-1 py-3.5 sm:grid-cols-[12rem_minmax(0,1fr)] sm:items-baseline sm:gap-6"
+                      >
+                        <dt className="text-sm text-muted">{contact.label}</dt>
+                        <dd>
+                          <a
+                            href={contact.href}
+                            className="break-all text-base text-ink underline decoration-ink/20 underline-offset-4 transition-colors hover:text-accent sm:break-normal"
+                          >
+                            {contact.address}
+                          </a>
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
                 </address>
               </div>
-            </Reveal>
+            </div>
+
+            <footer className="mt-12 flex flex-col gap-5 border-t border-line pt-6 text-sm text-muted md:flex-row md:items-center md:justify-between">
+              <p>© {new Date().getFullYear()} Chenyuan Qu.</p>
+              <div className="flex flex-wrap gap-x-5 gap-y-2">
+                {profile.links
+                  .filter((link) => link.kind !== "email")
+                  .map((link) => (
+                    <a key={link.label} href={link.href} target="_blank" rel="noreferrer" className="underline decoration-ink/20 underline-offset-4 transition-colors hover:text-ink">
+                      {link.label}
+                    </a>
+                  ))}
+              </div>
+            </footer>
           </div>
         </section>
       </main>
-
-      <footer className="section-rule">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-8 text-sm text-muted sm:px-8 md:flex-row md:items-center md:justify-between lg:px-12">
-          <p>Chenyuan Qu · Personal website.</p>
-          <div className="flex flex-wrap gap-x-5 gap-y-2">
-            {profile.links.map((link) => (
-              <TextLink
-                key={link.label}
-                href={link.href}
-                external={link.external ?? true}
-              >
-                {link.label}
-              </TextLink>
-            ))}
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

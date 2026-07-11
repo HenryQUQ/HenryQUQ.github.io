@@ -1,28 +1,39 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, IBM_Plex_Sans } from "next/font/google";
+import { IBM_Plex_Mono, Newsreader, Source_Sans_3 } from "next/font/google";
 
 import { profile } from "@/src/data/site";
 import { absoluteUrl, siteConfig, withBasePath } from "@/src/lib/site-config";
 
 import "./globals.css";
 
-const display = Cormorant_Garamond({
-  subsets: ["latin"],
-  variable: "--font-display",
-  weight: ["400", "500", "600", "700"]
-});
-
-const sans = IBM_Plex_Sans({
+const sans = Source_Sans_3({
   subsets: ["latin"],
   variable: "--font-sans",
-  weight: ["400", "500", "600", "700"]
+  display: "swap"
+});
+
+const display = Newsreader({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: "variable",
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+  adjustFontFallback: false,
+  display: "swap"
+});
+
+const mono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  weight: ["400", "500", "600"],
+  display: "swap"
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
   title: siteConfig.title,
   description: siteConfig.description,
-  applicationName: siteConfig.title,
+  applicationName: siteConfig.shortTitle,
   authors: [
     {
       name: profile.name,
@@ -31,14 +42,7 @@ export const metadata: Metadata = {
   ],
   creator: profile.name,
   publisher: profile.name,
-  keywords: [
-    "Chenyuan Qu",
-    "computer vision",
-    "multimodal learning",
-    "generative AI",
-    "University of Birmingham",
-    "MI X Group"
-  ],
+  keywords: [siteConfig.name, ...siteConfig.keywords],
   alternates: {
     canonical: withBasePath("/")
   },
@@ -48,13 +52,13 @@ export const metadata: Metadata = {
     url: absoluteUrl("/"),
     title: siteConfig.title,
     description: siteConfig.description,
-    siteName: siteConfig.title,
+    siteName: siteConfig.shortTitle,
     images: [
       {
         url: absoluteUrl("/images/social/chenyuan-qu-og.png"),
         width: 1200,
         height: 630,
-        alt: "Chenyuan Qu research website"
+        alt: "Chenyuan Qu — computer vision researcher"
       }
     ]
   },
@@ -81,7 +85,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f3efe8"
+  themeColor: "#f7f5ef",
+  colorScheme: "light"
 };
 
 export default function RootLayout({
@@ -90,7 +95,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable}`}>
+    <html
+      lang="en"
+      className={`${sans.variable} ${display.variable} ${mono.variable}`}
+    >
       <body className="antialiased">{children}</body>
     </html>
   );

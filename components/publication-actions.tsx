@@ -82,7 +82,7 @@ export function PublicationActions({
 
   return (
     <>
-      <div className="mt-5 flex flex-wrap gap-x-4 gap-y-3 sm:gap-x-5">
+      <div className="pointer-events-none relative z-20 mt-5 flex flex-wrap gap-x-4 gap-y-3 [&>*]:pointer-events-auto sm:gap-x-5">
         {showSpotlightButton ? (
           <button
             type="button"
@@ -91,7 +91,7 @@ export function PublicationActions({
             onClick={(event) => onOpenSpotlight?.(event.currentTarget)}
           >
             <span className="border-b border-transparent pb-px group-hover:border-current">
-              Spotlight
+              Open spotlight
             </span>
           </button>
         ) : null}
@@ -153,7 +153,7 @@ export function PublicationActions({
                 animate={reducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
                 exit={reducedMotion ? undefined : { opacity: 0, y: 4, scale: 0.985 }}
                 transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
-                className="pointer-events-none absolute left-0 top-full z-20 mt-3 w-[min(28rem,calc(100vw-3rem))] rounded-[1rem] border border-line/90 bg-paper/96 p-4 text-left shadow-[0_18px_36px_rgba(29,32,28,0.16)] backdrop-blur-sm"
+                className="pointer-events-none absolute left-0 top-full z-20 mt-3 w-[min(28rem,calc(100vw-3rem))] rounded-[1rem] border border-line bg-paper/96 p-4 text-left shadow-[0_18px_36px_rgba(29,32,28,0.16)] backdrop-blur-sm"
               >
                 <p className="meta-label text-accent">Will copy citation text</p>
                 <p className="mt-3 text-sm leading-7 text-ink/84">
@@ -178,7 +178,7 @@ export function PublicationActions({
       {showBibtex ? (
         <pre
           id={bibtexId}
-          className="mt-4 overflow-x-auto rounded-[1.15rem] border border-line/90 bg-stone/40 p-4 text-[0.78rem] leading-6 text-ink/82 sm:text-[0.82rem]"
+          className="mt-4 overflow-x-auto rounded-[1.15rem] border border-line bg-stone/40 p-4 text-[0.78rem] leading-6 text-ink/82 sm:text-[0.82rem]"
         >
           <code>{publication.bibtex}</code>
         </pre>
@@ -193,7 +193,7 @@ export function PublicationActions({
             animate={reducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
             exit={reducedMotion ? undefined : { opacity: 0, y: 12, scale: 0.985 }}
             transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-x-4 bottom-4 z-[110] rounded-[1.1rem] border border-line/90 bg-paper/96 p-4 shadow-[0_18px_40px_rgba(29,32,28,0.16)] backdrop-blur-sm sm:left-auto sm:right-5 sm:w-[min(28rem,calc(100vw-2.5rem))]"
+            className="fixed inset-x-4 bottom-4 z-[110] rounded-[1.1rem] border border-line bg-paper/96 p-4 shadow-[0_18px_40px_rgba(29,32,28,0.16)] backdrop-blur-sm sm:left-auto sm:right-5 sm:w-[min(28rem,calc(100vw-2.5rem))]"
           >
             <p className="meta-label text-accent">Citation copied to clipboard</p>
             <p className="mt-3 text-sm leading-7 text-ink/84">

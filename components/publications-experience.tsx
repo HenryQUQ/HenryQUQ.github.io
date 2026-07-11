@@ -1,25 +1,29 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { AnimatePresence } from "framer-motion";
 
-import { ProjectHighlight } from "@/components/project-highlight";
-import { PublicationFeature } from "@/components/publication-feature";
 import { PublicationListItem } from "@/components/publication-list-item";
-import { SectionHeading } from "@/components/section-heading";
+import { PublicationSpotlight } from "@/components/publication-spotlight";
+import { TextLink } from "@/components/text-link";
 import {
   Project,
-  Publication
+  Publication,
+  ResearchThread
 } from "@/src/data/site";
 import { groupPublicationsByYear } from "@/src/lib/publications";
+import { getResearchThreadsForPublication } from "@/src/lib/research-threads";
 
-import { MediaLightbox } from "./media-lightbox";
-import { PublicationSpotlight } from "./publication-spotlight";
+const MediaLightbox = dynamic(
+  () => import("./media-lightbox").then((module) => module.MediaLightbox),
+  { ssr: false }
+);
 
 type PublicationsExperienceProps = {
   publications: Publication[];
   projects: Project[];
-  selectedPublicationSlugs: Publication["slug"][];
+  researchThreads: ResearchThread[];
 };
 
 function getOverlayStateFromLocation(publications: Publication[]) {
@@ -48,16 +52,13 @@ function getOverlayStateFromLocation(publications: Publication[]) {
 export function PublicationsExperience({
   publications,
   projects,
-  selectedPublicationSlugs
+  researchThreads
 }: PublicationsExperienceProps) {
   const [spotlightSlug, setSpotlightSlug] = useState<Publication["slug"] | null>(null);
   const [activeMediaId, setActiveMediaId] = useState<string | null>(null);
   const spotlightTriggerRef = useRef<HTMLElement | null>(null);
   const mediaTriggerRef = useRef<HTMLElement | null>(null);
 
-  const selectedPublications = publications.filter((publication) =>
-    selectedPublicationSlugs.includes(publication.slug)
-  );
   const publicationGroups = groupPublicationsByYear(publications);
   const projectsByPublicationSlug = new Map(
     projects
@@ -70,7 +71,9 @@ export function PublicationsExperience({
       )
       .map((project) => [project.relatedPublicationSlug, project])
   );
-  const datasets = projects.filter((project) => project.category === "dataset");
+  const standaloneDatasets = projects.filter(
+    (project) => project.category === "dataset" && !project.relatedPublicationSlug
+  );
   const activePublication =
     publications.find((publication) => publication.slug === spotlightSlug) ?? null;
   const activeProject = activePublication
@@ -104,7 +107,11 @@ export function PublicationsExperience({
     };
   }, [activeMediaId, spotlightSlug]);
 
-  const updateUrl = (nextSpotlightSlug: string | null, nextMediaId: string | null) => {
+  const updateUrl = (
+    nextSpotlightSlug: string | null,
+    nextMediaId: string | null,
+    mode: "push" | "replace" = "push"
+  ) => {
     const url = new URL(window.location.href);
 
     if (nextSpotlightSlug) {
@@ -119,7 +126,12 @@ export function PublicationsExperience({
       url.searchParams.delete("media");
     }
 
-    window.history.pushState({}, "", `${url.pathname}${url.search}${url.hash}`);
+    const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+    if (mode === "replace") {
+      window.history.replaceState({}, "", nextUrl);
+    } else {
+      window.history.pushState({}, "", nextUrl);
+    }
   };
 
   const openSpotlight = (
@@ -135,10 +147,12 @@ export function PublicationsExperience({
   const closeSpotlight = () => {
     setActiveMediaId(null);
     setSpotlightSlug(null);
-    updateUrl(null, null);
+    updateUrl(null, null, "replace");
 
     window.requestAnimationFrame(() => {
-      spotlightTriggerRef.current?.focus();
+      if (spotlightTriggerRef.current?.isConnected) {
+        spotlightTriggerRef.current.focus();
+      }
     });
   };
 
@@ -149,7 +163,7 @@ export function PublicationsExperience({
 
     mediaTriggerRef.current = trigger;
     setActiveMediaId(mediaId);
-    updateUrl(activePublication.slug, mediaId);
+    updateUrl(activePublication.slug, mediaId, "replace");
   };
 
   const selectMedia = (mediaId: string) => {
@@ -158,7 +172,7 @@ export function PublicationsExperience({
     }
 
     setActiveMediaId(mediaId);
-    updateUrl(activePublication.slug, mediaId);
+    updateUrl(activePublication.slug, mediaId, "replace");
   };
 
   const closeMedia = () => {
@@ -167,41 +181,41 @@ export function PublicationsExperience({
     }
 
     setActiveMediaId(null);
-    updateUrl(activePublication.slug, null);
+    updateUrl(activePublication.slug, null, "replace");
 
     window.requestAnimationFrame(() => {
-      mediaTriggerRef.current?.focus();
+      if (mediaTriggerRef.current?.isConnected) {
+        mediaTriggerRef.current.focus();
+        return;
+      }
+
+      document
+        .querySelector<HTMLButtonElement>("[data-spotlight-close]")
+        ?.focus();
     });
   };
 
   return (
     <>
-      <section id="selected-publications" className="section-rule">
-        <div className="mx-auto max-w-7xl px-6 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28">
-          <SectionHeading eyebrow="Publications" title="Selected Publications" />
-          <div className="mt-12">
-            {selectedPublications.map((publication, index) => (
-              <PublicationFeature
-                key={publication.slug}
-                publication={publication}
-                index={index}
-                onOpenSpotlight={openSpotlight}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+      <section id="research" className="border-t border-line bg-paper">
+        <div className="site-container section-shell">
+          <header className="grid gap-5 border-b border-line pb-10 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-10 lg:pb-12">
+            <p className="section-kicker">Research output</p>
+            <div>
+              <h2 className="section-title">Publications</h2>
+              <p className="mt-5 max-w-2xl text-base leading-7 text-muted sm:text-lg sm:leading-8">
+                Peer-reviewed papers with links to the paper, code, datasets, citation text, and available project media.
+              </p>
+            </div>
+          </header>
 
-      <section id="publications" className="section-rule">
-        <div className="mx-auto max-w-7xl px-6 py-20 sm:px-8 sm:py-24 lg:px-12 lg:py-28">
-          <SectionHeading eyebrow="Publications" title="Publications & Datasets" />
-          <div className="mt-12 space-y-12">
+          <div className="mt-14 space-y-14">
             {publicationGroups.map(([year, items]) => (
               <div
                 key={year}
-                className="grid gap-5 lg:grid-cols-[7rem_minmax(0,1fr)] lg:gap-8"
+                className="grid gap-5 lg:grid-cols-[7rem_minmax(0,1fr)] lg:gap-10"
               >
-                <div className="meta-label pt-1 lg:sticky lg:top-28 lg:self-start">
+                <div className="font-mono text-xs text-signal lg:sticky lg:top-28 lg:self-start">
                   {year}
                 </div>
                 <ul>
@@ -210,6 +224,10 @@ export function PublicationsExperience({
                       key={publication.slug}
                       publication={publication}
                       project={projectsByPublicationSlug.get(publication.slug)}
+                      researchThreads={getResearchThreadsForPublication(
+                        researchThreads,
+                        publication.slug
+                      )}
                       index={index}
                       onOpenSpotlight={openSpotlight}
                     />
@@ -219,15 +237,34 @@ export function PublicationsExperience({
             ))}
           </div>
 
-          {datasets.length > 0 ? (
-            <div className="mt-16 border-t border-line pt-12">
-              <h3 className="font-display text-3xl tracking-tight text-ink sm:text-4xl">
-                Datasets
-              </h3>
-              <div className="mt-10">
-                {datasets.map((project, index) => (
-                  <ProjectHighlight key={project.title} project={project} index={index} />
-                ))}
+          {standaloneDatasets.length > 0 ? (
+            <div className="mt-20 border-t border-line pt-10">
+              <div className="grid gap-8 lg:grid-cols-[7rem_minmax(0,1fr)] lg:gap-10">
+                <p className="section-kicker pt-1">Datasets</p>
+                <div className="border-t border-line">
+                  {standaloneDatasets.map((project) => (
+                    <article key={project.title} className="grid gap-4 border-b border-line py-6 sm:grid-cols-[7rem_minmax(0,1fr)] sm:gap-6">
+                      <p className="font-mono text-[0.62rem] uppercase tracking-[0.1em] text-muted">
+                        {project.year}
+                      </p>
+                      <div>
+                        <h3 className="font-display text-2xl font-normal sm:text-[1.75rem]">{project.title}</h3>
+                        <p className="mt-3 max-w-2xl text-sm leading-7 text-muted">{project.summary}</p>
+                        <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1">
+                          {project.links.map((link) => (
+                            <TextLink
+                              key={`${project.title}-${link.label}`}
+                              href={link.href}
+                              external={link.external ?? true}
+                            >
+                              {link.label}
+                            </TextLink>
+                          ))}
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
               </div>
             </div>
           ) : null}
@@ -239,23 +276,22 @@ export function PublicationsExperience({
           <PublicationSpotlight
             publication={activePublication}
             project={activeProject}
+            isObscured={Boolean(activeMediaId)}
             onClose={closeSpotlight}
             onOpenMedia={openMedia}
           />
         ) : null}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {activePublication && activeMediaId && activePublication.spotlightMedia ? (
-          <MediaLightbox
-            publicationTitle={activePublication.title}
-            mediaItems={activePublication.spotlightMedia}
-            activeMediaId={activeMediaId}
-            onClose={closeMedia}
-            onSelectMedia={selectMedia}
-          />
-        ) : null}
-      </AnimatePresence>
+      {activePublication && activeMediaId && activePublication.spotlightMedia ? (
+        <MediaLightbox
+          publicationTitle={activePublication.title}
+          mediaItems={activePublication.spotlightMedia}
+          activeMediaId={activeMediaId}
+          onClose={closeMedia}
+          onSelectMedia={selectMedia}
+        />
+      ) : null}
     </>
   );
 }

@@ -1,35 +1,44 @@
-import { expect, test } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+import { expect, test, type Page } from "@playwright/test";
 
-test("homepage loads key content and assets without horizontal overflow", async ({
+const publicationRow = (page: Page, slug: string) =>
+  page.locator(
+    `[data-publication-slug="${slug}"][data-publication-variant="full"]`
+  );
+
+test("homepage presents the personal academic profile without overflow", async ({
   page
 }) => {
   await page.goto("/");
 
   await expect(
-    page.getByRole("heading", { level: 1, name: "Chenyuan Qu" })
-  ).toBeVisible();
-  await expect(
     page.getByRole("heading", {
-      level: 2,
-      name: "Publications & Datasets"
+      level: 1,
+      name: "Chenyuan Qu"
     })
   ).toBeVisible();
-  await expect(page.getByText("Head of Technologies · PhD Student")).toBeVisible();
-  await expect(page.getByText("Allsee · Vieunite · University of Birmingham")).toBeVisible();
-  await expect(page.locator("#about").getByText("backend architecture")).toBeVisible();
   await expect(
-    page.locator("#about").getByText("commercialisation-facing systems")
+    page.getByText(
+      "I am a PhD student at the University of Birmingham and Head of Technologies at Allsee and Vieunite."
+    )
   ).toBeVisible();
+  await expect(page.getByText("Start a conversation")).toHaveCount(0);
   await expect(
-    page.locator("#about").getByRole("link", { name: "Hugging Face" })
+    page.getByText("University of Birmingham · Allsee · Vieunite", { exact: true })
   ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Email", exact: true })).toHaveAttribute(
+    "href",
+    "mailto:Chenyuan.Qu@outlook.com"
+  );
+  await expect(page.locator("time").filter({ hasText: /Birmingham · \d{2}:\d{2} local/ })).toBeVisible();
   await expect(
-    page
-      .locator("#selected-publications")
-      .getByText("Diffusion Features to Bridge Domain Gap for Semantic Segmentation")
-  ).toHaveCount(0);
+    page.locator("#thread-interpretable-representations")
+  ).toHaveAttribute(
+    "href",
+    "/?thread=interpretable-representations#study-visualsplit"
+  );
 
-  const heroImage = page.locator("#about img").nth(1);
+  const heroImage = page.getByAltText("Portrait of Chenyuan Qu");
   await expect(heroImage).toBeVisible();
   await expect(
     heroImage.evaluate((image) => (image as HTMLImageElement).naturalWidth > 0)
@@ -40,272 +49,449 @@ test("homepage loads key content and assets without horizontal overflow", async 
     viewport: window.innerWidth,
     document: document.documentElement.scrollWidth
   }));
-
   expect(overflow.body).toBeLessThanOrEqual(overflow.viewport);
   expect(overflow.document).toBeLessThanOrEqual(overflow.viewport);
 });
 
-test("anchor navigation lands publications content below the fixed header", async ({
+test("primary navigation reaches the publication list below the header", async ({
   page
 }) => {
   await page.goto("/");
-  await page.getByRole("link", { name: "Publications & Datasets" }).click();
+  await page.getByRole("link", { name: "Publications", exact: true }).click();
 
-  await expect(page).toHaveURL(/#publications/);
+  await expect(page).toHaveURL(/#research/);
+  await expect(page.locator("#research").getByRole("heading", { name: "Publications" })).toBeVisible();
 
-  const headingBox = await page.locator("#publications h2").boundingBox();
-  expect(headingBox?.y ?? 0).toBeGreaterThan(40);
+  const headingBox = await page.locator("#research h2").boundingBox();
+  expect(headingBox?.y ?? 0).toBeGreaterThan(60);
 });
 
-test("publication actions expose citation copy and BibTeX", async ({
-  context,
+test("selected research contains two factual project summaries", async ({ page }) => {
+  await page.goto("/#work");
+  const work = page.locator("#work");
+
+  await expect(work.locator('[data-case-study="visualsplit"]')).toContainText("first-author work");
+  await expect(work.locator('[data-case-study="x360"]')).toContainText("one of six authors");
+  await expect(work.locator('[data-case-study="x360"]')).toContainText(
+    "CVPR 2024 · Oral paper"
+  );
+  await expect(work.locator("[data-case-study]")).toHaveCount(2);
+  await expect(work.locator("[data-case-study-takeaway]")).toHaveCount(2);
+  await expect(
+    work.locator('[data-case-study-takeaway="visualsplit"]')
+  ).toContainText("Separating geometry, colour, and illumination");
+  await expect(
+    work.locator('[data-case-study-takeaway="x360"]')
+  ).toContainText("beyond single-view recognition");
+
+  const figureButton = work.getByRole("link", {
+    name: "Open figure: VisualSplit overview"
+  });
+  await expect(figureButton).toHaveAttribute(
+    "href",
+    "/images/projects/visualsplit-framework.webp"
+  );
+  await figureButton.click();
+  const lens = page.locator('[data-research-lens="visualsplit"]');
+  await expect(lens).toBeVisible();
+  await expect(lens.getByRole("tab")).toHaveCount(5);
+  await expect(lens.getByRole("tab", { selected: true })).toContainText("Input");
+  await expect(lens).toHaveAttribute("data-active-lens-step", "input");
+
+  await lens.getByRole("tab", { name: /Input/ }).focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(lens).toHaveAttribute("data-active-lens-step", "edge");
+  const edgeRegions = lens.locator('[data-lens-region="edge"]');
+  await expect(edgeRegions).toHaveCount(2);
+  await expect(edgeRegions.first()).toBeVisible();
+  await expect(edgeRegions.last()).toBeVisible();
+  await expect(lens.locator('[data-lens-note="edge"]')).toContainText(
+    "Colour and Edge ↔ Edge"
+  );
+  await expect(lens.locator('[data-lens-note="edge"]')).toContainText(
+    "Sobel operator"
+  );
+  await expect(lens.getByRole("tab", { selected: true })).toBeFocused();
+
+  await page.keyboard.press("End");
+  await expect(lens).toHaveAttribute(
+    "data-active-lens-step",
+    "reconstruction"
+  );
+  await page.keyboard.press("Home");
+  await expect(lens).toHaveAttribute("data-active-lens-step", "input");
+
+  const colourAndEdgeDescriptor = {
+    left: "11.9%",
+    top: "33%",
+    width: "6.8%",
+    height: "22.6%"
+  } as const;
+  const intensityDescriptor = {
+    left: "11.8%",
+    top: "67.8%",
+    width: "7.6%",
+    height: "12.5%"
+  } as const;
+  const calibratedRegions = {
+    input: [
+      {
+        left: "0.8%",
+        top: "23.3%",
+        width: "7.8%",
+        height: "25.5%"
+      }
+    ],
+    edge: [
+      colourAndEdgeDescriptor,
+      {
+        left: "93.6%",
+        top: "46.8%",
+        width: "5%",
+        height: "16.5%"
+      }
+    ],
+    colour: [
+      colourAndEdgeDescriptor,
+      {
+        left: "93.7%",
+        top: "19.7%",
+        width: "4.8%",
+        height: "15.6%"
+      }
+    ],
+    histogram: [
+      intensityDescriptor,
+      {
+        left: "93.5%",
+        top: "76.7%",
+        width: "5.2%",
+        height: "12.9%"
+      }
+    ],
+    reconstruction: [
+      {
+        left: "67.3%",
+        top: "24.9%",
+        width: "7.8%",
+        height: "25.2%"
+      }
+    ]
+  } as const;
+
+  for (const [step, expectedRegions] of Object.entries(calibratedRegions)) {
+    await lens.locator(`[data-lens-step="${step}"]`).click();
+    await expect(lens).toHaveAttribute("data-active-lens-step", step);
+
+    const regionLocator = lens.locator(`[data-lens-region="${step}"]`);
+    await expect(regionLocator).toHaveCount(expectedRegions.length);
+    const renderedRegions = await regionLocator.evaluateAll((elements) =>
+      elements.map((element) => {
+        const region = element as HTMLElement;
+
+        return {
+          left: region.style.left,
+          top: region.style.top,
+          width: region.style.width,
+          height: region.style.height
+        };
+      })
+    );
+
+    expect(renderedRegions).toEqual(expectedRegions);
+  }
+
+  const figureA11y = await new AxeBuilder({ page })
+    .include('[data-lightbox-backdrop="true"]')
+    .withTags(["wcag2a", "wcag2aa"])
+    .analyze();
+  expect(
+    figureA11y.violations.filter(({ impact }) =>
+      impact === "serious" || impact === "critical"
+    )
+  ).toEqual([]);
+  await page.keyboard.press("Escape");
+  await expect(page.locator('[data-lightbox-backdrop="true"]')).toHaveCount(0);
+  await expect(page.locator("main [inert]")).toHaveCount(0);
+  await expect(figureButton).toBeFocused();
+});
+
+test("360+x lens exposes only the views and signals present in its figure", async ({
   page
 }) => {
-  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.goto("/#study-x360");
+  await page
+    .getByRole("link", { name: "Open figure: 360+x overview" })
+    .click();
+
+  const lens = page.locator('[data-research-lens="x360"]');
+  await expect(lens.getByRole("tab")).toHaveCount(5);
+  await expect(lens.getByRole("tab", { name: /Panorama/ })).toBeVisible();
+  await expect(lens.getByRole("tab", { name: /Egocentric/ })).toBeVisible();
+  await lens.getByRole("tab", { name: /Binaural delay/ }).click();
+  await expect(lens.locator('[data-lens-note="binaural-delay"]')).toContainText(
+    "Interaural time delay"
+  );
+});
+
+test("research threads connect inquiry, study, and publication", async ({ page }) => {
   await page.goto("/");
+  const threadLink = page.locator("#thread-interpretable-representations");
 
-  const publication = page.locator(
-    '[data-publication-slug="visualsplit"][data-publication-variant="full"]'
+  await threadLink.click();
+  await expect(page).toHaveURL(
+    /\?thread=interpretable-representations#study-visualsplit$/
   );
+  await expect(page.locator("#study-visualsplit")).toHaveAttribute(
+    "data-thread-active",
+    "true"
+  );
+  await expect(
+    page
+      .locator("#study-visualsplit [data-thread-context='study']")
+      .getByText("01 Interpretable image representations")
+  ).toBeVisible();
+
+  const rail = page.locator('[data-thread-rail][data-active-thread="interpretable-representations"]');
+  await expect(rail).toHaveCount(1);
+  await expect(rail.locator('[aria-current="location"]')).toContainText(
+    "VisualSplit"
+  );
+
+  await page
+    .locator("#study-visualsplit [data-thread-stage='publication']")
+    .click();
+  await expect(page).toHaveURL(
+    /\?thread=interpretable-representations#publication-visualsplit$/
+  );
+  await expect(publicationRow(page, "visualsplit")).toHaveAttribute(
+    "data-thread-active",
+    "true"
+  );
+  await expect(rail.locator('[aria-current="location"]')).toContainText(
+    "BMVC 2025"
+  );
+
+  await publicationRow(page, "visualsplit")
+    .locator('[data-open-publication-spotlight="visualsplit"]')
+    .click();
+  await expect(page).toHaveURL(/thread=interpretable-representations/);
+  await page.keyboard.press("Escape");
+  await expect(page).toHaveURL(/thread=interpretable-representations/);
+});
+
+test("a shared VisualSplit target restores the explicitly selected thread", async ({
+  page
+}) => {
+  await page.goto("/?thread=generative-vision#study-visualsplit");
+
+  await expect(page.locator("#thread-generative-vision")).toHaveAttribute(
+    "aria-current",
+    "location"
+  );
+  await expect(page.locator("#study-visualsplit")).toHaveAttribute(
+    "data-thread-active",
+    "true"
+  );
+  await expect(page.locator('[data-thread-rail]')).toHaveAttribute(
+    "data-active-thread",
+    "generative-vision"
+  );
+});
+
+test("publication actions expose citation copy and BibTeX", async ({ context, page }) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.goto("/#research");
+
+  const publication = publicationRow(page, "visualsplit");
   await publication.scrollIntoViewIfNeeded();
-
-  const copyButton = publication.getByRole("button", {
-    name: /copy citation/i
-  });
+  const copyButton = publication.getByRole("button", { name: /copy citation/i });
   await copyButton.hover();
+
   const preview = page.locator('[data-citation-preview="visualsplit"]');
-  await expect(preview).toBeVisible();
   await expect(preview).toContainText("Will copy citation text");
-  await expect(preview).toContainText(
-    "Exploring Image Representation with Decoupled Classical Visual Descriptors"
-  );
-
   await copyButton.click();
-  await expect(copyButton).toContainText("Copy citation");
-  await expect(preview).toHaveCount(0);
-
-  const toast = page.locator('[data-citation-toast="visualsplit"]');
-  await expect(toast).toBeVisible();
-  await expect(toast).toContainText("Citation copied to clipboard");
-  await expect(toast).toContainText(
-    "Exploring Image Representation with Decoupled Classical Visual Descriptors"
+  await expect(page.locator('[data-citation-toast="visualsplit"]')).toContainText(
+    "Citation copied to clipboard"
   );
 
   await publication.getByRole("button", { name: "BibTeX" }).click();
-  await expect(publication.locator("pre code")).toContainText(
-    "@inproceedings{Qu_2025_BMVC"
-  );
+  await expect(publication.locator("pre code")).toContainText("@inproceedings{Qu_2025_BMVC");
 });
 
-test("publication authors and timeline organisations expose reviewed links", async ({
-  page
-}) => {
-  await page.goto("/#publications");
+test("reviewed author and organisation links remain available", async ({ page }) => {
+  await page.goto("/#research");
 
-  const visualsplit = page.locator(
-    '[data-publication-slug="visualsplit"][data-publication-variant="full"]'
-  );
-  await visualsplit.scrollIntoViewIfNeeded();
+  const visualsplit = publicationRow(page, "visualsplit");
   await expect(visualsplit.getByRole("link", { name: "Hao Chen" })).toHaveAttribute(
     "href",
     "https://h-chen.com/"
   );
-  await expect(
-    visualsplit.getByRole("link", { name: "Jianbo Jiao" })
-  ).toHaveAttribute("href", "https://jianbojiao.com/");
-
-  const diff = page.locator(
-    '[data-publication-slug="diff"][data-publication-variant="full"]'
-  );
-  await diff.scrollIntoViewIfNeeded();
-  await expect(diff.getByRole("link", { name: "Yuxiang Ji" })).toHaveAttribute(
+  await expect(visualsplit.getByRole("link", { name: "Jianbo Jiao" })).toHaveAttribute(
     "href",
-    "https://yuxiang-ji.com/"
+    "https://jianbojiao.com/"
   );
-  await expect(diff.getByRole("link", { name: "Boyong He" })).toHaveCount(0);
-  await expect(diff.getByRole("link", { name: "Zhuoyue Tan" })).toHaveCount(0);
-  await expect(diff.getByRole("link", { name: "Chuan Qin" })).toHaveCount(0);
-  await expect(diff.getByRole("link", { name: "Liaoni Wu" })).toHaveCount(0);
-
-  const x360 = page.locator(
-    '[data-publication-slug="x360"][data-publication-variant="full"]'
-  );
-  await x360.scrollIntoViewIfNeeded();
-  await expect(x360.getByRole("link", { name: "UBIRA eData" })).toHaveAttribute(
+  await expect(publicationRow(page, "x360").getByRole("link", { name: "UBIRA eData" })).toHaveAttribute(
     "href",
     "https://edata.bham.ac.uk/1078/"
   );
 
-  await page.goto("/#experience");
-  await expect(
-    page.locator("#experience").getByRole("link", { name: "Allsee" })
-  ).toHaveAttribute("href", "https://www.allsee-tech.com/");
-  await expect(
-    page.locator("#experience").getByRole("link", { name: "Vieunite" })
-  ).toHaveAttribute("href", "https://vieunite.com/");
-});
-
-test("experience section splits the two Research Assistant roles", async ({
-  page
-}) => {
-  await page.goto("/#experience");
-
-  const experience = page.locator("#experience");
-
-  await expect(
-    experience.getByRole("heading", { level: 4, name: "Research Assistant" })
-  ).toHaveCount(2);
-  await expect(
-    experience.getByRole("heading", {
-      level: 3,
-      name: "University of Birmingham · MI X Group"
-    })
-  ).toBeVisible();
-
-  const researchAssistantRoles = experience.locator(
-    '[data-timeline-role="Research Assistant"]'
+  const journey = page.locator("#journey");
+  await expect(journey.getByRole("link", { name: "Allsee" })).toHaveAttribute(
+    "href",
+    "https://www.allsee-tech.com/"
   );
-
-  await expect(researchAssistantRoles.nth(0)).toContainText("Dec 2023 — Present");
-  await expect(researchAssistantRoles.nth(1)).toContainText("Feb 2023 — Dec 2023");
-  await expect(researchAssistantRoles.nth(0)).toContainText(
-    "Research on compositionality for foundation models"
+  await expect(journey.getByRole("link", { name: "Vieunite" })).toHaveAttribute(
+    "href",
+    "https://vieunite.com/"
   );
 });
 
-test("experience section groups the Allsee and Vieunite role progression", async ({
-  page
-}) => {
-  await page.goto("/#experience");
+test("journey preserves academic and industry role progression", async ({ page }) => {
+  await page.goto("/#journey");
+  const journey = page.locator("#journey");
 
-  const experience = page.locator("#experience");
-  const allseeGroup = experience
-    .getByRole("heading", { level: 3, name: "Allsee · Vieunite" })
-    .locator("xpath=ancestor::div[1]");
-
-  await expect(experience).toContainText("Sep 2022 — Present");
-  await expect(experience.locator('[data-timeline-role="Head of Technologies"]')).toContainText(
+  await expect(journey.getByRole("heading", { name: "Research appointments" })).toBeVisible();
+  await expect(journey.getByRole("heading", { name: "Industry experience" })).toBeVisible();
+  await expect(journey.locator('[data-timeline-role="Research Assistant"]')).toHaveCount(2);
+  await expect(journey.locator('[data-timeline-role="Head of Technologies"]')).toContainText(
     "Dec 2024 — Present"
   );
-  await expect(experience.locator('[data-timeline-role="Full-stack Engineer"]')).toContainText(
+  await expect(journey.locator('[data-timeline-role="Full-stack Engineer"]')).toContainText(
     "Dec 2023 — Dec 2024"
   );
-  await expect(experience.locator('[data-timeline-role="Algorithm Engineer"]')).toContainText(
-    "Sep 2022 — Dec 2023"
-  );
-  await expect(allseeGroup).toContainText("company-wide technology roadmap");
-  await expect(allseeGroup).toContainText("sales enablement");
-  await expect(allseeGroup).toContainText("structured delivery operating system");
-  await expect(allseeGroup).toContainText("Linear");
-  await expect(allseeGroup).toContainText("prioritised roadmaps");
-  await expect(allseeGroup).toContainText("one shared software architecture");
-  await expect(allseeGroup).toContainText("traditional software-engineering");
-  await expect(allseeGroup).toContainText("management visibility");
-  await expect(allseeGroup).toContainText("recommendation infrastructure");
-  await expect(allseeGroup).toContainText("Vieutopia AI art functionality");
+  await expect(journey.getByText("Master's Study", { exact: true })).toBeVisible();
 });
 
-test("contact section shows all email addresses while hero and structured data keep the primary academic email", async ({
-  page
-}) => {
-  await page.goto("/#contact");
+test("updates retain recent items and an earlier archive", async ({ page }) => {
+  await page.goto("/#updates");
+  const updates = page.locator("#updates");
 
-  const contact = page.locator("#contact");
+  await expect(updates.getByText("5 May 2026")).toBeVisible();
   await expect(
-    contact.getByRole("link", { name: "henry.qu@allsee-tech.com" })
-  ).toHaveAttribute("href", "mailto:henry.qu@allsee-tech.com");
+    updates.getByRole("heading", { name: "VisualSplit accepted to BMVC 2025" })
+  ).toBeVisible();
+
+  await updates.locator("details summary").click();
   await expect(
-    contact.getByRole("link", { name: "henry.qu@vieunite.com" })
-  ).toHaveAttribute("href", "mailto:henry.qu@vieunite.com");
-  await expect(
-    contact.getByRole("link", { name: "cxq134@student.bham.ac.uk" })
-  ).toHaveAttribute("href", "mailto:cxq134@student.bham.ac.uk");
-  await expect(
-    contact.getByRole("link", { name: "Chenyuan.Qu@outlook.com" })
-  ).toHaveAttribute("href", "mailto:Chenyuan.Qu@outlook.com");
-
-  const heroEmail = page.locator("#about").getByRole("link", { name: "Email" });
-  await expect(heroEmail).toHaveCount(1);
-  await expect(heroEmail).toHaveAttribute("href", "mailto:cxq134@student.bham.ac.uk");
-
-  const structuredDataText = await page
-    .locator('script[type="application/ld+json"]')
-    .first()
-    .textContent();
-
-  expect(structuredDataText).toContain('"email":"cxq134@student.bham.ac.uk"');
-  expect(structuredDataText).not.toContain("henry.qu@allsee-tech.com");
-  expect(structuredDataText).not.toContain("henry.qu@vieunite.com");
-  expect(structuredDataText).not.toContain("Chenyuan.Qu@outlook.com");
-});
-
-test("news section includes the Help To Grow course start", async ({ page }) => {
-  await page.goto("/#news");
-
-  const news = page.locator("#news");
-  await expect(news.getByText("5 May 2026")).toBeVisible();
-  await expect(
-    news.getByRole("heading", {
-      level: 3,
-      name: "Started Help To Grow: Management at BCU"
+    updates.getByRole("heading", {
+      name: "360+x selected for a CVPR 2024 oral presentation"
     })
   ).toBeVisible();
-  await expect(news).toContainText(
-    "I started the 12-week Help To Grow: Management Course at Birmingham City University Business School"
-  );
-
-  await expect(
-    news.locator(
-      'a[href="https://www.bcu.ac.uk/courses/help-to-grow-management-course"]'
-    )
-  ).toHaveText("Source");
+  await expect(updates.getByText("Started my PhD in the MI X group")).toBeVisible();
 });
 
-test("selected publication row opens spotlight and closes with Escape", async ({
+test("contact keeps personal, work, and university email routes", async ({ page }) => {
+  await page.goto("/#contact");
+  const contact = page.locator("#contact");
+
+  await expect(contact.getByRole("link", { name: "Chenyuan.Qu@outlook.com" })).toHaveAttribute(
+    "href",
+    "mailto:Chenyuan.Qu@outlook.com"
+  );
+  await expect(contact.getByRole("link", { name: "henry.qu@allsee-tech.com" })).toHaveAttribute(
+    "href",
+    "mailto:henry.qu@allsee-tech.com"
+  );
+  await expect(contact.getByRole("link", { name: "henry.qu@vieunite.com" })).toHaveAttribute(
+    "href",
+    "mailto:henry.qu@vieunite.com"
+  );
+  await expect(contact.getByRole("link", { name: "cxq134@student.bham.ac.uk" })).toHaveAttribute(
+    "href",
+    "mailto:cxq134@student.bham.ac.uk"
+  );
+
+  const structuredData = (await page.locator('script[type="application/ld+json"]').allTextContents()).join(" ");
+  expect(structuredData).toContain("Chenyuan.Qu@outlook.com");
+  expect(structuredData).not.toContain("henry.qu@allsee-tech.com");
+  expect(structuredData).not.toContain("cxq134@student.bham.ac.uk");
+});
+
+test("publication detail previews retain a functional fallback URL", async ({ page }) => {
+  await page.goto("/#research");
+  const detailLink = publicationRow(page, "visualsplit").locator(
+    '[data-open-publication-spotlight="visualsplit"]'
+  );
+
+  await expect(detailLink).toHaveAttribute(
+    "href",
+    "https://chenyuanqu.com/VisualSplit/"
+  );
+  await detailLink.click();
+  await expect(page.locator('[data-publication-spotlight="visualsplit"]')).toBeVisible();
+});
+
+test.describe("progressive fallbacks", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("time and research controls remain meaningful without hydration", async ({ page }) => {
+    await page.goto("/");
+
+    await expect(page.locator("#birmingham-local-time")).toHaveText(
+      "Birmingham · local time"
+    );
+    await expect(page.locator("#birmingham-local-time")).not.toContainText("--:--");
+    await expect(
+      page.getByRole("link", { name: "Open figure: VisualSplit overview" })
+    ).toHaveAttribute("href", "/images/projects/visualsplit-framework.webp");
+    await expect(
+      page.locator("#thread-interpretable-representations")
+    ).toHaveAttribute(
+      "href",
+      "/?thread=interpretable-representations#study-visualsplit"
+    );
+    await expect(
+      publicationRow(page, "visualsplit").locator(
+        '[data-open-publication-spotlight="visualsplit"]'
+      )
+    ).toHaveAttribute("href", "https://chenyuanqu.com/VisualSplit/");
+  });
+});
+
+test("publication spotlight opens from its explicit control and closes with Escape", async ({
   page
 }) => {
-  await page.goto("/");
-
-  const publication = page.locator(
-    '[data-publication-slug="x360"][data-publication-variant="selected"]'
-  );
-  await publication.click();
+  await page.goto("/#research");
+  const publication = publicationRow(page, "x360");
+  await expect(
+    publication.locator('[data-publication-recognition="x360"]')
+  ).toHaveText("Oral paper");
+  await publication.locator('[data-open-publication-spotlight="x360"]').click();
 
   await expect(page).toHaveURL(/spotlight=x360/);
-  await expect(page.locator('[data-publication-spotlight="x360"]')).toBeVisible();
-
+  const spotlight = page.locator('[data-publication-spotlight="x360"]');
+  await expect(spotlight).toBeVisible();
+  await expect(
+    spotlight.locator('[data-publication-recognition="x360"]')
+  ).toHaveText("Oral paper");
   await page.keyboard.press("Escape");
   await expect(page.locator('[data-publication-spotlight="x360"]')).toHaveCount(0);
+  await expect(page.locator('[data-modal-layer="1"]')).toHaveCount(0);
+  await expect(page.locator("main [inert]")).toHaveCount(0);
   await expect(page).not.toHaveURL(/spotlight=/);
+
+  await page.goBack();
+  await expect(page.locator('[data-modal-layer="1"]')).toHaveCount(0);
+  await expect(page).not.toHaveURL(/spotlight=/);
+
+  await page.getByRole("link", { name: "Experience", exact: true }).click();
+  await expect(page).toHaveURL(/#journey/);
 });
 
-test("full publication row and keyboard interaction open spotlight", async ({
-  page
-}) => {
-  await page.goto("/#publications");
-
-  const publication = page.locator(
-    '[data-publication-slug="med"][data-publication-variant="full"]'
+test("spotlight control supports keyboard interaction", async ({ page }) => {
+  await page.goto("/#research");
+  const openButton = publicationRow(page, "med").locator(
+    '[data-open-publication-spotlight="med"]'
   );
-  await publication.scrollIntoViewIfNeeded();
-  await publication.click();
-
-  await expect(page.locator('[data-publication-spotlight="med"]')).toBeVisible();
-  await page.keyboard.press("Escape");
-
-  await publication.locator('[role="button"]').focus();
+  await openButton.focus();
   await page.keyboard.press("Enter");
   await expect(page.locator('[data-publication-spotlight="med"]')).toBeVisible();
 });
 
-test("DIFF publication uses the official pipeline figure in archive and spotlight", async ({
-  page
-}) => {
-  await page.goto("/#publications");
-
-  const publication = page.locator(
-    '[data-publication-slug="diff"][data-publication-variant="full"]'
-  );
+test("DIFF keeps its official pipeline figure in the index and spotlight", async ({ page }) => {
+  await page.goto("/#research");
+  const publication = publicationRow(page, "diff");
   await publication.scrollIntoViewIfNeeded();
 
   const previewImage = publication.locator("img").first();
@@ -314,69 +500,65 @@ test("DIFF publication uses the official pipeline figure in archive and spotligh
     previewImage.evaluate((image) => (image as HTMLImageElement).naturalWidth > 0)
   ).resolves.toBeTruthy();
 
-  await publication.click();
-  await expect(page.locator('[data-publication-spotlight="diff"]')).toBeVisible();
+  await publication.locator('[data-open-publication-spotlight="diff"]').click();
   await expect(page.locator('[data-spotlight-media-id="diff-pipeline"]')).toBeVisible();
 });
 
-test("nested links remain clickable without opening spotlight", async ({
-  page
-}) => {
-  await page.goto("/#publications");
-
-  const publication = page.locator(
-    '[data-publication-slug="visualsplit"][data-publication-variant="full"]'
-  );
-  await publication.scrollIntoViewIfNeeded();
-
+test("nested publication links do not open the spotlight", async ({ page }) => {
+  await page.goto("/#research");
+  const publication = publicationRow(page, "visualsplit");
   const popupPromise = page.waitForEvent("popup");
-  await publication.getByRole("link", { name: "Project" }).click();
+  await publication.getByRole("link", { name: "Project", exact: true }).click();
   const popup = await popupPromise;
 
-  await popup.waitForLoadState("domcontentloaded");
   await expect(page.locator('[data-publication-spotlight="visualsplit"]')).toHaveCount(0);
   await popup.close();
 });
 
-test("lightbox opens local poster media and video media", async ({
-  page
-}) => {
+test("lightbox navigates local poster and video media", async ({ page }) => {
   await page.goto("/?spotlight=x360");
-
   await expect(page.locator('[data-publication-spotlight="x360"]')).toBeVisible();
+
   await page.getByRole("button", { name: /cvpr 2024 poster/i }).click();
-
-  await expect(page).toHaveURL(/media=x360-poster/);
   await expect(page.locator('[data-lightbox-media-id="x360-poster"]')).toBeVisible();
-
   await page.keyboard.press("ArrowLeft");
   await expect(page.locator('[data-lightbox-media-id="x360-overview"]')).toBeVisible();
-
   await page.keyboard.press("Escape");
-  await expect(page.locator('[data-lightbox-media-id="x360-overview"]')).toHaveCount(0);
-  await expect(page.locator('[data-publication-spotlight="x360"]')).toBeVisible();
 
+  await expect(page.locator('[data-publication-spotlight="x360"]')).toBeVisible();
   await page.getByRole("button", { name: /project teaser video/i }).click();
-  await expect(page).toHaveURL(/media=x360-video/);
   await expect(page.locator('[data-lightbox-media-id="x360-video"]')).toBeVisible();
-  await expect(page.locator('[data-lightbox-media-kind="video"] video')).toBeVisible();
+  const video = page.locator('[data-lightbox-media-kind="video"] video');
+  await expect(video).toBeVisible();
+  await video.focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.locator('[data-lightbox-media-id="x360-video"]')).toBeVisible();
+
+  await page
+    .locator('[data-lightbox-backdrop="true"]')
+    .getByRole("button", { name: /close media lightbox/i })
+    .focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.locator('[data-lightbox-media-id="x360-overview"]')).toBeVisible();
+  await expect(
+    page
+      .locator('[data-lightbox-backdrop="true"]')
+      .getByRole("button", { name: /close media lightbox/i })
+  ).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(page.locator('[data-lightbox-backdrop="true"]')).toHaveCount(0);
+  await expect(page.locator('[data-publication-spotlight="x360"]')).toBeVisible();
 });
 
-test("VisualSplit spotlight includes poster, presentation, and examples", async ({
-  page
-}) => {
+test("VisualSplit spotlight exposes project resources", async ({ page }) => {
   await page.goto("/?spotlight=visualsplit");
-
   const spotlight = page.locator('[data-publication-spotlight="visualsplit"]');
-  await expect(spotlight).toBeVisible();
 
   await expect(spotlight.getByRole("link", { name: "Poster" })).toHaveAttribute(
     "href",
     "https://chenyuanqu.com/VisualSplit/docs/posters/0873_poster.pdf"
   );
-  await expect(
-    spotlight.getByRole("link", { name: "Presentation" })
-  ).toHaveAttribute(
+  await expect(spotlight.getByRole("link", { name: "Presentation" })).toHaveAttribute(
     "href",
     "https://chenyuanqu.com/VisualSplit/videos/presentation/0873_presentation_1080p.mp4"
   );
@@ -384,135 +566,111 @@ test("VisualSplit spotlight includes poster, presentation, and examples", async 
     "href",
     "https://chenyuanqu.com/VisualSplit/colour-map-examples/"
   );
-
-  await page.getByRole("button", { name: /bmvc 2025 poster/i }).click();
-  await expect(page.locator('[data-lightbox-media-id="visualsplit-poster"]')).toBeVisible();
-
-  await page.keyboard.press("Escape");
-  await expect(spotlight).toBeVisible();
-
-  await page.getByRole("button", { name: /bmvc 2025 presentation/i }).click();
-  await expect(
-    page.locator('[data-lightbox-media-id="visualsplit-presentation"]')
-  ).toBeVisible();
-  await expect(page.locator('[data-lightbox-media-kind="video"] video')).toBeVisible();
 });
 
-test("image lightbox closes when clicking outside the visible media panel", async ({
+test("homepage has no serious or critical automated accessibility violations", async ({
   page
 }) => {
-  await page.goto("/?spotlight=x360");
+  await page.goto("/");
+  const results = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa"])
+    .analyze();
+  const blocking = results.violations.filter(({ impact }) =>
+    impact === "serious" || impact === "critical"
+  );
+  expect(blocking).toEqual([]);
+});
 
-  await expect(page.locator('[data-publication-spotlight="x360"]')).toBeVisible();
-  await page.getByRole("button", { name: /cvpr 2024 poster/i }).click();
+test("reduced-motion mode keeps offscreen content readable", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
 
-  const panel = page.locator('[data-lightbox-panel="image"]');
-  await expect(panel).toBeVisible();
-
-  const panelBox = await panel.boundingBox();
-  expect(panelBox).not.toBeNull();
-
-  const viewport = page.viewportSize();
-  expect(viewport).not.toBeNull();
-
-  const clickX = (panelBox?.x ?? 0) + (panelBox?.width ?? 0) / 2;
-  const clickY =
-    (panelBox?.y ?? 0) > 48
-      ? (panelBox?.y ?? 0) - 20
-      : Math.min(
-          (viewport?.height ?? 0) - 20,
-          (panelBox?.y ?? 0) + (panelBox?.height ?? 0) + 20
-        );
-
-  await page.mouse.click(clickX, clickY);
-
-  await expect(page.locator('[data-lightbox-media-id="x360-poster"]')).toHaveCount(0);
-  await expect(page.locator('[data-publication-spotlight="x360"]')).toBeVisible();
+  const researchTitle = page.locator("#research h2");
+  await expect(researchTitle).toBeVisible();
+  await expect(researchTitle).toHaveCSS("opacity", "1");
+  await expect(publicationRow(page, "med")).toHaveCSS("opacity", "1");
 });
 
 test.describe("mobile", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test("mobile menu toggles and layout avoids overflow", async ({ page }) => {
+  test("navigation supports Escape, anchors, and a no-overflow layout", async ({ page }) => {
     await page.goto("/");
+    const menuButton = page.getByRole("button", { name: "Open navigation menu" });
 
-    const menuButton = page.getByRole("button", {
-      name: "Open navigation menu"
-    });
     await menuButton.click();
+    const mobileDialog = page.getByRole("dialog", { name: "Navigation" });
+    await expect(mobileDialog).toBeVisible();
+    await expect(page.locator("main")).toHaveAttribute("inert", "");
     await expect(
-      page.getByRole("link", { name: "Publications & Datasets" })
-    ).toBeVisible();
-    await page.getByRole("link", { name: "Publications & Datasets" }).click();
-    await expect(page).toHaveURL(/#publications/);
+      mobileDialog.getByRole("button", { name: "Close navigation menu" })
+    ).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(mobileDialog).toHaveCount(0);
+    await expect(page.locator("main")).not.toHaveAttribute("inert", "");
+    await expect(menuButton).toBeFocused();
+
+    await menuButton.click();
+    await page.getByRole("dialog", { name: "Navigation" }).getByRole("link", { name: "Publications" }).click();
+    await expect(page).toHaveURL(/#research/);
 
     const overflow = await page.evaluate(() => ({
       body: document.body.scrollWidth,
       viewport: window.innerWidth,
       document: document.documentElement.scrollWidth
     }));
-
     expect(overflow.body).toBeLessThanOrEqual(overflow.viewport);
     expect(overflow.document).toBeLessThanOrEqual(overflow.viewport);
   });
 
-  test("mobile spotlight opens without horizontal overflow", async ({ page }) => {
-    await page.goto("/#publications");
-
-    const publication = page.locator(
-      '[data-publication-slug="med"][data-publication-variant="full"]'
-    );
+  test("spotlight and citation interactions fit the mobile viewport", async ({ context, page }) => {
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    await page.goto("/#research");
+    const publication = publicationRow(page, "visualsplit");
     await publication.scrollIntoViewIfNeeded();
-    await publication.click();
 
-    const dialog = page.locator('[data-publication-spotlight="med"]');
+    await publication.getByRole("button", { name: /copy citation/i }).click();
+    await expect(page.locator('[data-citation-toast="visualsplit"]')).toBeVisible();
+
+    await publication.locator('[data-open-publication-spotlight="visualsplit"]').click();
+    const dialog = page.locator('[data-publication-spotlight="visualsplit"]');
     await expect(dialog).toBeVisible();
 
-    const dialogBox = await dialog.boundingBox();
-    expect(dialogBox?.width ?? 0).toBeGreaterThan(340);
+    const overflow = await page.evaluate(() => ({
+      body: document.body.scrollWidth,
+      viewport: window.innerWidth,
+      document: document.documentElement.scrollWidth
+    }));
+    expect(overflow.body).toBeLessThanOrEqual(overflow.viewport);
+    expect(overflow.document).toBeLessThanOrEqual(overflow.viewport);
+  });
+
+  test("figure lens remains operable on touch-sized screens", async ({ page }) => {
+    await page.goto("/#work");
+    await page
+      .getByRole("link", { name: "Open figure: VisualSplit overview" })
+      .click();
+
+    const lens = page.locator('[data-research-lens="visualsplit"]');
+    await expect(lens).toBeVisible();
+    await lens.getByRole("tab", { name: /Colour/ }).click();
+    await expect(lens).toHaveAttribute("data-active-lens-step", "colour");
+    await expect(lens.locator('[data-lens-note="colour"]')).toContainText(
+      "Soft K-means"
+    );
 
     const overflow = await page.evaluate(() => ({
       body: document.body.scrollWidth,
       viewport: window.innerWidth,
       document: document.documentElement.scrollWidth
     }));
-
     expect(overflow.body).toBeLessThanOrEqual(overflow.viewport);
     expect(overflow.document).toBeLessThanOrEqual(overflow.viewport);
   });
 
-  test("datasets section includes the Hugging Face text-to-art dataset", async ({
-    page
-  }) => {
-    await page.goto("/#publications");
-    await expect(page.getByRole("heading", { level: 3, name: "Datasets" })).toBeVisible();
-    await expect(page.getByText("text-to-art-database")).toBeVisible();
-  });
-
-  test("mobile copy citation shows a detailed toast without requiring hover", async ({
-    context,
-    page
-  }) => {
-    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-    await page.goto("/#publications");
-
-    const publication = page.locator(
-      '[data-publication-slug="visualsplit"][data-publication-variant="full"]'
-    );
-    await publication.scrollIntoViewIfNeeded();
-
-    const copyButton = publication.getByRole("button", {
-      name: /copy citation/i
-    });
-    await copyButton.click();
-
-    await expect(page.locator('[data-citation-preview="visualsplit"]')).toHaveCount(0);
-
-    const toast = page.locator('[data-citation-toast="visualsplit"]');
-    await expect(toast).toBeVisible();
-    await expect(toast).toContainText("Citation copied to clipboard");
-    await expect(toast).toContainText(
-      "Exploring Image Representation with Decoupled Classical Visual Descriptors"
-    );
+  test("standalone datasets remain discoverable", async ({ page }) => {
+    await page.goto("/#research");
+    await expect(page.getByRole("heading", { name: "BinEgo-360" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "text-to-art-database" })).toBeVisible();
   });
 });

@@ -1,17 +1,24 @@
-import type { KeyboardEvent, MouseEvent } from "react";
 import Image from "next/image";
 
-import { Project, Publication } from "@/src/data/site";
-import { getPublicationProjectLinks } from "@/src/lib/publications";
+import { Project, Publication, ResearchThread } from "@/src/data/site";
+import {
+  getPrimaryPublicationHref,
+  getPublicationProjectLinks
+} from "@/src/lib/publications";
+import { withBasePath } from "@/src/lib/site-config";
+import {
+  getResearchThreadHref,
+  getResearchThreadTarget
+} from "@/src/lib/research-threads";
 
 import { LinkedAuthors } from "./linked-authors";
 import { PublicationActions } from "./publication-actions";
-import { Reveal } from "./reveal";
 import { TextLink } from "./text-link";
 
 type PublicationListItemProps = {
   publication: Publication;
   project?: Project;
+  researchThreads?: ResearchThread[];
   index: number;
   onOpenSpotlight?: (publication: Publication, trigger: HTMLElement | null) => void;
 };
@@ -19,11 +26,10 @@ type PublicationListItemProps = {
 export function PublicationListItem({
   publication,
   project,
-  index,
+  researchThreads = [],
   onOpenSpotlight
 }: PublicationListItemProps) {
   const extraProjectLinks = getPublicationProjectLinks(publication, project);
-  const isSpotlightEnabled = Boolean(onOpenSpotlight);
   const previewMedia =
     publication.spotlightMedia?.find((media) => media.kind !== "video") ??
     publication.spotlightMedia?.find((media) => Boolean(media.posterSrc));
@@ -32,155 +38,171 @@ export function PublicationListItem({
     : previewMedia?.kind === "video"
       ? previewMedia.posterSrc
       : previewMedia?.src;
-  const previewImageAlt = project?.title ?? previewMedia?.alt ?? publication.title;
+  const previewImageAlt =
+    previewMedia?.alt ??
+    (project
+      ? `Visual overview for ${project.title}`
+      : `Visual overview for ${publication.title}`);
   const previewImageFit = project?.imageFit ?? previewMedia?.fit;
+  const spotlightHref =
+    getPrimaryPublicationHref(publication) ??
+    `${withBasePath("/")}?spotlight=${encodeURIComponent(publication.slug)}#research`;
+  const spotlightFallbackIsExternal = /^(?:https?:)?\/\//i.test(spotlightHref);
+  const primaryThread =
+    researchThreads.find((thread) => thread.inferFromTarget) ??
+    researchThreads[0];
 
-  const openSpotlight = (trigger: HTMLElement | null) => {
-    onOpenSpotlight?.(publication, trigger);
-  };
-
-  const handleArticleClick = (event: MouseEvent<HTMLElement>) => {
-    if (!isSpotlightEnabled) {
-      return;
-    }
-
-    const target = event.target as HTMLElement | null;
-    if (target?.closest("a, button, input, textarea, select, summary")) {
-      return;
-    }
-
-    openSpotlight(event.currentTarget);
-  };
-
-  const handleArticleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
-    if (!isSpotlightEnabled || event.target !== event.currentTarget) {
-      return;
-    }
-
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      openSpotlight(event.currentTarget);
-    }
-  };
+  const preview = (
+    <>
+      <div className="relative aspect-[16/10] overflow-hidden rounded-[0.35rem] border border-line bg-surface/55">
+        {previewImageSrc ? (
+          <Image
+            src={withBasePath(previewImageSrc)}
+            alt={previewImageAlt}
+            fill
+            sizes="(max-width: 1024px) 100vw, 14rem"
+            className={previewImageFit === "contain" ? "object-contain p-4" : "object-cover"}
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center font-display text-3xl text-muted">
+            {publication.year}
+          </div>
+        )}
+      </div>
+      <span className="mt-2 flex items-center justify-between gap-4 text-xs text-muted">
+        <span>
+          {publication.shortVenue}
+          {publication.recognition ? ` · ${publication.recognition}` : ""}
+        </span>
+        <span className="underline decoration-ink/20 underline-offset-4">View details</span>
+      </span>
+    </>
+  );
 
   return (
-    <Reveal delay={index * 0.04}>
-      <li
-        id={`publication-${publication.slug}`}
-        data-publication-slug={publication.slug}
-        data-publication-variant="full"
-        className="border-t border-line py-8"
-      >
-        <article
-          role={isSpotlightEnabled ? "button" : undefined}
-          tabIndex={isSpotlightEnabled ? 0 : undefined}
-          aria-haspopup={isSpotlightEnabled ? "dialog" : undefined}
-          aria-label={
-            isSpotlightEnabled ? `Open spotlight for ${publication.title}` : undefined
-          }
-          className="group grid cursor-pointer gap-6 text-left focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-line/80 lg:grid-cols-[18rem_minmax(0,1fr)] lg:items-start lg:gap-10"
-          onClick={handleArticleClick}
-          onKeyDown={handleArticleKeyDown}
-        >
-          {isSpotlightEnabled ? (
-            <div className="pointer-events-none relative overflow-hidden rounded-[1.2rem] bg-stone/60 sm:rounded-[1.35rem]">
-              {previewImageSrc ? (
-                <div className="relative aspect-[5/4]">
-                  <Image
-                    src={previewImageSrc}
-                    alt={previewImageAlt}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 18rem"
-                    className={
-                      previewImageFit === "contain"
-                        ? "object-contain p-4 transition-transform duration-300 group-hover:scale-[1.02] sm:p-5"
-                        : "object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                    }
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink/18 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                  <div className="absolute inset-x-4 bottom-4 flex items-center justify-between text-[0.76rem] uppercase tracking-[0.18em] text-ink/72 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <span>{publication.shortVenue}</span>
-                    <span>Spotlight</span>
-                  </div>
-                </div>
-              ) : (
-                <div className="paper-grid hero-shadow flex aspect-[5/4] flex-col items-start justify-between rounded-[1.35rem] border border-white/60 px-6 py-5">
-                  <span className="meta-label text-accent">{publication.shortVenue}</span>
-                  <p className="font-display text-[2.6rem] leading-none text-ink/88">
-                    {publication.year}
-                  </p>
-                  <span className="text-[0.76rem] uppercase tracking-[0.18em] text-ink/72">
-                    Spotlight
-                  </span>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="pointer-events-none relative overflow-hidden rounded-[1.2rem] bg-stone/60 sm:rounded-[1.35rem]">
-              {previewImageSrc ? (
-                <div className="relative aspect-[5/4]">
-                  <Image
-                    src={previewImageSrc}
-                    alt={previewImageAlt}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 18rem"
-                    className={
-                      previewImageFit === "contain"
-                        ? "object-contain p-4 sm:p-5"
-                        : "object-cover"
-                    }
-                  />
-                </div>
-              ) : (
-                <div className="paper-grid hero-shadow flex aspect-[5/4] flex-col items-start justify-between rounded-[1.35rem] border border-white/60 px-6 py-5">
-                  <span className="meta-label text-accent">{publication.shortVenue}</span>
-                  <p className="font-display text-[2.6rem] leading-none text-ink/88">
-                    {publication.year}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-          <div>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-              <p className="meta-label">{publication.shortVenue}</p>
-              <p className="text-sm text-muted">{publication.year}</p>
-              {project ? (
-                <p className="text-sm text-muted">{project.title}</p>
-              ) : null}
-            </div>
-            <h3 className="mt-4 font-display text-[1.9rem] leading-tight text-ink sm:text-[2.15rem]">
-              {publication.title}
-            </h3>
-            <LinkedAuthors
-              publication={publication}
-              className="mt-3 text-sm leading-7 text-muted"
-            />
-            <p className="mt-2 text-sm leading-7 text-ink/78">{publication.venue}</p>
-            <p className="mt-4 max-w-reading text-base leading-8 text-ink/84">
-              {publication.summary}
-            </p>
-            <PublicationActions
-              publication={publication}
-              idPrefix={`publication-${publication.slug}`}
-              onOpenSpotlight={(trigger) => onOpenSpotlight?.(publication, trigger)}
-            />
-            {extraProjectLinks.length > 0 ? (
-              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-3 sm:gap-x-5">
-                {extraProjectLinks.map((link) => (
-                  <TextLink
-                    key={`${publication.slug}-${link.kind}-${link.label}`}
-                    href={link.href}
-                    external={link.external ?? true}
-                  >
-                    {link.label}
-                  </TextLink>
-                ))}
-              </div>
+    <li
+      id={`publication-${publication.slug}`}
+      data-publication-slug={publication.slug}
+      data-publication-variant="full"
+      data-thread-observer
+      data-thread-target={`publication-${publication.slug}`}
+      data-thread-stage="publication"
+      data-research-threads={researchThreads
+        .map((thread) => thread.slug)
+        .join(" ")}
+      data-primary-research-thread={primaryThread?.slug}
+      className="border-t border-line py-8 transition-[background-color,box-shadow] duration-200 motion-reduce:transition-none sm:py-10"
+    >
+      <article className="grid gap-7 text-left lg:grid-cols-[13rem_minmax(0,1fr)] lg:items-start lg:gap-10">
+        {onOpenSpotlight ? (
+          <a
+            href={spotlightHref}
+            target={spotlightFallbackIsExternal ? "_blank" : undefined}
+            rel={spotlightFallbackIsExternal ? "noreferrer" : undefined}
+            data-open-publication-spotlight={publication.slug}
+            aria-haspopup="dialog"
+            aria-label={`Open spotlight for ${publication.title}`}
+            className="group block w-full text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal focus-visible:ring-offset-4 focus-visible:ring-offset-paper"
+            onClick={(event) => {
+              if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+                return;
+              }
+
+              event.preventDefault();
+              onOpenSpotlight(publication, event.currentTarget);
+            }}
+          >
+            {preview}
+          </a>
+        ) : (
+          <div>{preview}</div>
+        )}
+
+        <div>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <p className="meta-label">{publication.shortVenue}</p>
+            <p className="text-sm text-muted">{publication.year}</p>
+            {publication.recognition ? (
+              <p
+                data-publication-recognition={publication.slug}
+                className="meta-label text-signal"
+              >
+                {publication.recognition}
+              </p>
             ) : null}
           </div>
-        </article>
-      </li>
-    </Reveal>
+          <h3 className="mt-3 max-w-4xl font-display text-[1.8rem] font-normal leading-[1.08] tracking-[-0.02em] text-ink sm:text-[2.15rem]">
+            {publication.title}
+          </h3>
+          <LinkedAuthors
+            publication={publication}
+            className="mt-3 text-sm leading-7 text-muted"
+          />
+          <p className="mt-2 text-sm leading-7 text-ink/78">{publication.venue}</p>
+          <p className="mt-4 max-w-reading text-base leading-8 text-ink/84">
+            {publication.summary}
+          </p>
+          {researchThreads.length > 0 ? (
+            <nav
+              data-thread-context="publication"
+              aria-label={`Research threads related to ${publication.title}`}
+              className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-4"
+            >
+              <span className="meta-label">Related inquiry</span>
+              {researchThreads.map((thread) => {
+                const interestTarget = getResearchThreadTarget(
+                  thread,
+                  "interest"
+                );
+                return (
+                  <a
+                    key={thread.slug}
+                    href={getResearchThreadHref(thread, "interest")}
+                    data-set-research-thread={thread.slug}
+                    data-thread-target={interestTarget}
+                    data-thread-stage="interest"
+                    className="text-xs text-ink/76 underline decoration-ink/20 underline-offset-4 transition-colors hover:text-accent"
+                  >
+                    {thread.index} {thread.title}
+                  </a>
+                );
+              })}
+              {primaryThread ? (
+                <a
+                  href={getResearchThreadHref(primaryThread, "study")}
+                  data-set-research-thread={primaryThread.slug}
+                  data-thread-target={getResearchThreadTarget(
+                    primaryThread,
+                    "study"
+                  )}
+                  data-thread-stage="study"
+                  className="text-xs text-signal underline decoration-signal/25 underline-offset-4"
+                >
+                  Selected study: {primaryThread.study.label}
+                </a>
+              ) : null}
+            </nav>
+          ) : null}
+          <PublicationActions
+            publication={publication}
+            idPrefix={`publication-${publication.slug}`}
+            showSpotlightButton={false}
+          />
+          {extraProjectLinks.length > 0 ? (
+            <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
+              {extraProjectLinks.map((link) => (
+                <TextLink
+                  key={`${publication.slug}-${link.kind}-${link.label}`}
+                  href={link.href}
+                  external={link.external ?? true}
+                >
+                  {link.label}
+                </TextLink>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      </article>
+    </li>
   );
 }
