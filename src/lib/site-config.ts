@@ -4,13 +4,16 @@ const cleanedBasePath =
 
 export const siteConfig = {
   name: "Chenyuan Qu",
-  title: "Chenyuan Qu — Computer Vision Researcher",
+  title: "Chenyuan Qu — Applied AI & Computer Vision",
   shortTitle: "Chenyuan Qu",
   description:
-    "Personal academic website of Chenyuan Qu, a PhD student at the University of Birmingham working on computer vision, multimodal learning, and generative models.",
+    "Chenyuan Qu builds practical AI tools for businesses and researches how computers understand and create visual content.",
   primaryEmail: "Chenyuan.Qu@outlook.com",
   keywords: [
     "visual intelligence",
+    "applied AI",
+    "enterprise AI",
+    "AI agents",
     "computer vision",
     "multimodal learning",
     "generative AI",

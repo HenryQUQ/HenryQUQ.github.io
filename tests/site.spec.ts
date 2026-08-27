@@ -6,7 +6,7 @@ const publicationRow = (page: Page, slug: string) =>
     `[data-publication-slug="${slug}"][data-publication-variant="full"]`
   );
 
-test("homepage presents the personal academic profile without overflow", async ({
+test("homepage presents the professional and academic profile without overflow", async ({
   page
 }) => {
   await page.goto("/");
@@ -19,7 +19,7 @@ test("homepage presents the personal academic profile without overflow", async (
   ).toBeVisible();
   await expect(
     page.getByText(
-      "I am a PhD student at the University of Birmingham and Head of Technologies at Allsee and Vieunite."
+      "I build AI tools that help people get real work done, and I research new ways for computers to understand and create visual content."
     )
   ).toBeVisible();
   await expect(page.getByText("Start a conversation")).toHaveCount(0);
@@ -53,6 +53,40 @@ test("homepage presents the personal academic profile without overflow", async (
   expect(overflow.document).toBeLessThanOrEqual(overflow.viewport);
 });
 
+test("subtle interactions respond to pointer, keyboard, and scroll", async ({
+  page
+}) => {
+  await page.goto("/");
+
+  const portrait = page.locator("[data-hero-portrait]");
+  const initialPortraitTransform = await portrait.evaluate(
+    (element) => getComputedStyle(element).transform
+  );
+  await portrait.hover({ position: { x: 240, y: 70 } });
+  await expect
+    .poll(() =>
+      portrait.evaluate((element) =>
+        getComputedStyle(element).transform
+      )
+    )
+    .not.toBe(initialPortraitTransform);
+
+  const flow = page.locator("[data-case-flow]").first();
+  await flow.scrollIntoViewIfNeeded();
+  const steps = flow.getByRole("button");
+  await expect(steps).toHaveCount(4);
+  await steps.nth(1).focus();
+  await expect(steps.nth(1)).toHaveAttribute("aria-pressed", "true");
+  await page.keyboard.press("ArrowRight");
+  await expect(steps.nth(2)).toBeFocused();
+  await expect(steps.nth(2)).toHaveAttribute("aria-pressed", "true");
+
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expect
+    .poll(() => page.locator("[data-scroll-progress]").getAttribute("style"))
+    .toMatch(/scaleX\(0\.[1-9]|scaleX\(1/);
+});
+
 test("primary navigation reaches the publication list below the header", async ({
   page
 }) => {
@@ -70,7 +104,7 @@ test("selected research contains two factual project summaries", async ({ page }
   await page.goto("/#work");
   const work = page.locator("#work");
 
-  await expect(work.locator('[data-case-study="visualsplit"]')).toContainText("first-author work");
+  await expect(work.locator('[data-case-study="visualsplit"]')).toContainText("As first author");
   await expect(work.locator('[data-case-study="x360"]')).toContainText("one of six authors");
   await expect(work.locator('[data-case-study="x360"]')).toContainText(
     "CVPR 2024 · Oral paper"
@@ -79,10 +113,10 @@ test("selected research contains two factual project summaries", async ({ page }
   await expect(work.locator("[data-case-study-takeaway]")).toHaveCount(2);
   await expect(
     work.locator('[data-case-study-takeaway="visualsplit"]')
-  ).toContainText("Separating geometry, colour, and illumination");
+  ).toContainText("shape, colour, and brightness stay separate");
   await expect(
     work.locator('[data-case-study-takeaway="x360"]')
-  ).toContainText("beyond single-view recognition");
+  ).toContainText("connect what is visible from different viewpoints");
 
   const figureButton = work.getByRole("link", {
     name: "Open figure: VisualSplit overview"
@@ -230,7 +264,7 @@ test("360+x lens exposes only the views and signals present in its figure", asyn
   await expect(lens.getByRole("tab", { name: /Egocentric/ })).toBeVisible();
   await lens.getByRole("tab", { name: /Binaural delay/ }).click();
   await expect(lens.locator('[data-lens-note="binaural-delay"]')).toContainText(
-    "Interaural time delay"
+    "interaural time delay"
   );
 });
 
@@ -249,7 +283,7 @@ test("research threads connect inquiry, study, and publication", async ({ page }
   await expect(
     page
       .locator("#study-visualsplit [data-thread-context='study']")
-      .getByText("01 Interpretable image representations")
+      .getByText("01 Making image features easier to understand")
   ).toBeVisible();
 
   const rail = page.locator('[data-thread-rail][data-active-thread="interpretable-representations"]');
@@ -309,7 +343,7 @@ test("publication actions expose citation copy and BibTeX", async ({ context, pa
   await copyButton.hover();
 
   const preview = page.locator('[data-citation-preview="visualsplit"]');
-  await expect(preview).toContainText("Will copy citation text");
+  await expect(preview).toContainText("Citation preview");
   await copyButton.click();
   await expect(page.locator('[data-citation-toast="visualsplit"]')).toContainText(
     "Citation copied to clipboard"
@@ -353,14 +387,18 @@ test("journey preserves academic and industry role progression", async ({ page }
 
   await expect(journey.getByRole("heading", { name: "Research appointments" })).toBeVisible();
   await expect(journey.getByRole("heading", { name: "Industry experience" })).toBeVisible();
-  await expect(journey.locator('[data-timeline-role="Research Assistant"]')).toHaveCount(2);
+  await expect(journey.locator('[data-timeline-role="Research Assistant (part-time)"]')).toHaveCount(2);
   await expect(journey.locator('[data-timeline-role="Head of Technologies"]')).toContainText(
     "Dec 2024 — Present"
   );
   await expect(journey.locator('[data-timeline-role="Full-stack Engineer"]')).toContainText(
     "Dec 2023 — Dec 2024"
   );
-  await expect(journey.getByText("Master's Study", { exact: true })).toBeVisible();
+  await expect(
+    journey.getByText("Master's in Artificial Intelligence and Machine Learning", {
+      exact: true
+    })
+  ).toBeVisible();
 });
 
 test("updates retain recent items and an earlier archive", async ({ page }) => {
@@ -457,7 +495,10 @@ test("publication spotlight opens from its explicit control and closes with Esca
   await expect(
     publication.locator('[data-publication-recognition="x360"]')
   ).toHaveText("Oral paper");
-  await publication.locator('[data-open-publication-spotlight="x360"]').click();
+  const spotlightTrigger = publication.locator(
+    '[data-open-publication-spotlight="x360"]'
+  );
+  await spotlightTrigger.click();
 
   await expect(page).toHaveURL(/spotlight=x360/);
   const spotlight = page.locator('[data-publication-spotlight="x360"]');
@@ -470,6 +511,7 @@ test("publication spotlight opens from its explicit control and closes with Esca
   await expect(page.locator('[data-modal-layer="1"]')).toHaveCount(0);
   await expect(page.locator("main [inert]")).toHaveCount(0);
   await expect(page).not.toHaveURL(/spotlight=/);
+  await expect(spotlightTrigger).toBeFocused();
 
   await page.goBack();
   await expect(page.locator('[data-modal-layer="1"]')).toHaveCount(0);

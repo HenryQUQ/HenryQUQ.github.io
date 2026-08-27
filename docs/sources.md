@@ -1,16 +1,18 @@
 # Sources for Chenyuan Qu Personal Website
 
-Research pass completed on April 16, 2026.
+Initial public-source research was completed on April 16, 2026. The career narrative and current profile were audited again on August 27, 2026.
 
-## Narrative restructure
+## Narrative and source update — August 27, 2026
 
-On July 10, 2026, the site was reframed as a personal academic record. The homepage now leads with Chenyuan Qu's name, research interests, and current appointments; VisualSplit and 360+x appear as selected research, while industry work is kept within the experience timeline. This is a presentation and wording change, not a new fact-finding pass.
+The site now presents Enterprise AI and academic research as two equal parts of one practice. This update was based on the user-provided **Career Evidence Master Record, version 26 August 2026**, an authenticated review of the user's newly updated LinkedIn profile on August 27, 2026, the public sources below, and direct user confirmation that both practices should be emphasised.
 
 - VisualSplit and 360+x summaries paraphrase the same official paper, project, code, dataset, and media sources documented below.
 - The 360+x contribution is deliberately described as collaborative co-authorship; the site does not assign unverified individual ownership of the team output.
-- Industry summaries use the user-confirmed CMS, ERP, recommendation-system, and Vieutopia AI work already recorded in the Experience section.
-- No private interface, confidential architecture, performance metric, customer claim, or new factual result was added.
-- The profile introduction is a concise summary of the documented research areas, roles, and affiliations.
+- Nexus, ERP AI, and COMPaD descriptions use user-confirmed facts and wording controls from the Career Evidence Master Record. No customer names, private interfaces, confidential implementation detail, or planning estimates are published.
+- The `200,000+` figure means devices managed by Nexus; it does not mean all devices are online at once.
+- The ERP `≈80%` and `≈99%` figures apply only to the day-to-day tasks evaluated, and the error figure refers to observed human mistakes.
+- COMPaD is described as being in first-stage alpha testing. Commercial planning estimates are not presented as realised results.
+- All new prose was rewritten for a broad audience: the problem, personal role, and result appear before optional technical terms.
 
 ## Source priority
 
@@ -22,20 +24,37 @@ Academic facts were verified in this order:
 4. Official paper and project pages
 5. Current personal website
 
-Industry and experience facts were checked against the current personal website first. LinkedIn was consulted but is behind an authwall and could not be used as a reliable structured source in this pass.
+In the April pass, industry and experience facts were checked against the personal website because LinkedIn was behind an authwall.
+
+For the August 27 update, industry and current-profile facts were checked in this order:
+
+1. User-provided Career Evidence Master Record, version 26 August 2026
+2. Authenticated LinkedIn profile review completed with the user signed in on August 27, 2026
+3. Direct user confirmation in the website-upgrade task
+4. Official organisation and product pages where available
+
+The earlier authwall limitation no longer applies to the August 27 review.
 
 ## Verified profile facts
 
 | Fact | Value used on site | Sources |
 | --- | --- | --- |
 | Name | Chenyuan Qu | Google Scholar, ORCID, Birmingham profile |
-| Current role line | PhD Student · Head of Technologies | User-confirmed current Allsee / Vieunite title wording, plus Birmingham profile and MI X people page for PhD status |
+| Current role line | Applied AI Engineer · Head of Technologies · PhD Researcher | Career Evidence Master Record, authenticated LinkedIn review, Birmingham profile, and MI X people page |
 | Affiliation line | University of Birmingham · Allsee · Vieunite | User-confirmed affiliations, Birmingham profile, and public Allsee / Vieunite association from the current personal website and BinEgo-360 site |
 | Primary email | `Chenyuan.Qu@outlook.com` | User-provided contact information; selected as the primary public contact in the July 2026 narrative restructure |
 | Additional contact emails | `henry.qu@allsee-tech.com`, `henry.qu@vieunite.com`, `cxq134@student.bham.ac.uk` | User-provided contact information and Birmingham profile |
 | Short research areas | Computer vision, multimodal learning, generative AI, AI for science | Birmingham profile, MI X people page, Google Scholar interests |
 | Public links | Google Scholar, GitHub, Hugging Face, LinkedIn, ORCID | Seed URLs supplied by user, Hugging Face public profile, ORCID |
-| Short bio basis | Research in computer vision, multimodal learning, and generative models, together with work on backend services, internal software, and applied machine-learning systems | Birmingham profile, MI X people page, current personal website, and user-confirmed engineering experience |
+| Short bio basis | Customer-facing and internal AI systems, Python/FastAPI and Java engineering, together with part-time research in computer vision and generative AI | Career Evidence Master Record, authenticated LinkedIn review, Birmingham profile, MI X people page, and user-confirmed engineering experience |
+
+## Enterprise AI work used
+
+| Work | Facts presented on site | Source and wording controls |
+| --- | --- | --- |
+| Nexus MySignagePortal | Led customer discovery and delivery; wrote most of the Python/FastAPI backend; contributed to Java device software; five-person team; roughly ten implementations consolidated; 200,000+ managed devices; 1,000+ organisations; 50,000+ users; feature and bug improvements; at least £50,000 directly attributable sales | Career Evidence Master Record §§6, 24, 30. Device count always uses “manages”; no concurrency claim. Customer names are omitted. |
+| ERP AI | Natural-language order, warehouse, and repair tasks; permission checks; confirmations; audit record; reusable MCP tools; ≈80% less completion time and ≈99% fewer observed human mistakes in tested tasks | Career Evidence Master Record §§8, 24, 29. Figures are never generalised to the whole company or every type of error. |
+| COMPaD | Joint Allsee–University of Birmingham programme; editable poster output; text-and-image model using an open-source Qwen2.5 backbone; agent workflow; first-stage alpha testing | Career Evidence Master Record §§14, 24, 29. The model is not described as trained from scratch. Planning estimates and unreconciled commercial figures are omitted. |
 
 ## Publications used
 
@@ -181,13 +200,7 @@ Industry and experience facts were checked against the current personal website 
 
 ### Experience
 
-The current personal site is the only accessible public source with structured experience entries:
-
-- Full-Stack Engineer (Machine Learning), Allsee Technologies Limited, August 2022 to present
-- Research Assistant, University of Birmingham, February 2023 to present
-- Algorithm Engineer Intern, Nanjing AsiaInfo Software Co. Ltd, July 2020 to September 2020
-
-Because LinkedIn redirects to an authwall, the site only uses high-level role, organisation, and date information derived from the current personal website. Performance claims and detailed product metrics from the old site were intentionally omitted.
+The August 27, 2026 experience record uses the role chronology from the authenticated, newly updated LinkedIn profile and the fuller project evidence in the Career Evidence Master Record. Dates, company relationships, part-time research status, internal project scope, and measured outcomes are user-confirmed professional self-description. Public organisation and product pages support the affiliations and public project surfaces but do not independently verify every internal metric.
 
 The current `Head of Technologies` wording shown in the hero and experience section is user-confirmed. Publicly accessible sources support the Allsee / Vieunite association and engineering scope, but not that exact title string.
 
@@ -215,23 +228,13 @@ Public search on 2026-06-24 confirmed the University of Birmingham / MI X affili
 
 ### Education
 
-Sources conflict on the Birmingham degree title:
-
-- Birmingham profile: `MSci Computer Science, University of Birmingham`
-- Current personal website: `M.S. in Artificial Intelligence and Machine Learning`, `2021 - 2022`
-- MI X people page lists Chenyuan Qu under the group's MSc alumni
-
-To avoid overstating an uncertain programme title, the site uses a conservative phrasing:
-
-- Master's study, University of Birmingham
-- BSc in Physics, University of Southampton
-
-The Southampton degree is consistent across the Birmingham profile and the current personal website.
+The authenticated LinkedIn profile reviewed on August 27, 2026 identifies the 2021–2022 Birmingham qualification as a **Master's in Artificial Intelligence and Machine Learning**, completed with **Distinction**. This newer user-maintained record resolves the earlier conservative placeholder used on the site. The BSc in Physics at the University of Southampton remains consistent across the Birmingham profile and personal records.
 
 ## News items used
 
 | Item | Sources |
 | --- | --- |
+| COMPaD entered first-stage alpha testing | Career Evidence Master Record, version 26 August 2026, and direct user confirmation |
 | Started Help To Grow: Management at BCU on 5 May 2026 | Participation is user-provided; course title, start date, 12-week duration, hybrid delivery, Birmingham City University Business School delivery, and curriculum themes come from the BCU Help To Grow: Management Course page: `https://www.bcu.ac.uk/courses/help-to-grow-management-course` |
 | VisualSplit presented as BMVC 2025 work | VisualSplit project page |
 | DIFF published at ICASSP 2025 | Google Scholar citation page, arXiv |
@@ -241,9 +244,9 @@ The Southampton degree is consistent across the Birmingham profile and the curre
 
 ## Blocked or unresolved items
 
-- LinkedIn profile content is behind an authwall and could not be used beyond confirming the public URL.
 - Google Scholar citation counts were visible during research, but they are volatile and were not surfaced in the final UI.
-- The University of Birmingham degree title conflicts with the current personal site and MI X page; the final site uses a neutral master's-level phrasing instead of a possibly incorrect programme title.
+- ERP evaluation sample size and adoption volume are not published; the site therefore scopes the time and error figures to the tasks tested.
+- Nexus device concurrency is not published; the site says the platform “manages” 200,000+ devices.
+- COMPaD remains in first-stage alpha testing; no launch, revenue, labour-saving, or sales-uplift estimate is presented as an achieved result.
 - No CV file is linked in the new site because a current, independently verified CV was not available.
 - The production site URL is treated as `https://chenyuanqu.com` for canonical metadata, Open Graph, and the GitHub Pages `CNAME`.
-- The current personal domain `https://chenyuanqu.com/` did not resolve during a later verification pass on April 16, 2026, so historical facts from that site remain based on the earlier research pass recorded above.

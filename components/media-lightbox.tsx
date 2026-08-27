@@ -216,6 +216,7 @@ export function MediaLightbox({
       initial={reducedMotion ? false : { opacity: 0 }}
       animate={reducedMotion ? undefined : { opacity: 1 }}
       exit={reducedMotion ? undefined : { opacity: 0 }}
+      transition={{ duration: reducedMotion ? 0 : 0.18 }}
       onClick={(event) => {
         if (event.target === event.currentTarget) {
           onClose();
@@ -235,7 +236,7 @@ export function MediaLightbox({
           {previousMedia ? (
         <button
           type="button"
-          className="absolute left-3 top-1/2 z-[101] inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/12 bg-[#181b17]/72 text-paper/82 transition-colors hover:text-paper motion-reduce:transition-none sm:left-5"
+          className="absolute left-3 top-1/2 z-[101] inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/12 bg-[#181b17]/72 text-paper/82 transition-[background-color,color,transform] duration-150 hover:bg-[#181b17]/88 hover:text-paper active:scale-[0.92] motion-reduce:transition-none sm:left-5"
           aria-label={`Show previous media for ${publicationTitle}`}
           onClick={() => onSelectMedia(previousMedia.id)}
         >
@@ -246,7 +247,7 @@ export function MediaLightbox({
           {nextMedia ? (
         <button
           type="button"
-          className="absolute right-3 top-1/2 z-[101] inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/12 bg-[#181b17]/72 text-paper/82 transition-colors hover:text-paper motion-reduce:transition-none sm:right-5"
+          className="absolute right-3 top-1/2 z-[101] inline-flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/12 bg-[#181b17]/72 text-paper/82 transition-[background-color,color,transform] duration-150 hover:bg-[#181b17]/88 hover:text-paper active:scale-[0.92] motion-reduce:transition-none sm:right-5"
           aria-label={`Show next media for ${publicationTitle}`}
           onClick={() => onSelectMedia(nextMedia.id)}
         >
@@ -262,7 +263,11 @@ export function MediaLightbox({
           initial={reducedMotion ? false : { opacity: 0, scale: 0.985 }}
           animate={reducedMotion ? undefined : { opacity: 1, scale: 1 }}
           exit={reducedMotion ? undefined : { opacity: 0, scale: 0.985 }}
-          transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+          transition={
+            reducedMotion
+              ? { duration: 0 }
+              : { type: "spring", bounce: 0, duration: 0.34 }
+          }
           onClick={(event) => event.stopPropagation()}
         >
           <div className="flex items-center justify-between gap-4 border-b border-white/10 px-4 py-4 sm:px-6">
@@ -280,7 +285,7 @@ export function MediaLightbox({
             <button
               ref={closeButtonRef}
               type="button"
-              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/12 text-paper/82 transition-colors hover:text-paper motion-reduce:transition-none"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/12 text-paper/82 transition-[background-color,color,transform] duration-150 hover:bg-white/8 hover:text-paper active:scale-[0.92] motion-reduce:transform-none motion-reduce:transition-none"
               aria-label={`Close media lightbox for ${publicationTitle}`}
               onClick={onClose}
             >
@@ -335,13 +340,17 @@ export function MediaLightbox({
           initial={reducedMotion ? false : { opacity: 0, scale: 0.985 }}
           animate={reducedMotion ? undefined : { opacity: 1, scale: 1 }}
           exit={reducedMotion ? undefined : { opacity: 0, scale: 0.985 }}
-          transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+          transition={
+            reducedMotion
+              ? { duration: 0 }
+              : { type: "spring", bounce: 0, duration: 0.34 }
+          }
           onClick={(event) => event.stopPropagation()}
         >
           <button
             ref={closeButtonRef}
             type="button"
-            className="absolute right-3 top-3 z-[101] inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-[#181b17]/76 text-paper/82 transition-colors hover:text-paper motion-reduce:transition-none"
+            className="absolute right-3 top-3 z-[101] inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-[#181b17]/76 text-paper/82 transition-[background-color,color,transform] duration-150 hover:bg-[#181b17]/92 hover:text-paper active:scale-[0.92] motion-reduce:transform-none motion-reduce:transition-none"
             aria-label={`Close media lightbox for ${publicationTitle}`}
             onClick={onClose}
           >

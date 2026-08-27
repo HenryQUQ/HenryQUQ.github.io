@@ -155,7 +155,7 @@ export function PublicationSpotlight({
       data-modal-obscured={isObscured ? "true" : undefined}
       aria-hidden={isObscured ? "true" : undefined}
       inert={isObscured ? true : undefined}
-      className="fixed inset-0 z-[90] overflow-y-auto bg-ink/42 px-4 py-4 backdrop-blur-sm sm:px-6 sm:py-8"
+      className="fixed inset-0 z-[90] overflow-y-auto bg-ink/36 px-4 py-4 backdrop-blur-sm sm:px-6 sm:py-8"
       initial={reducedMotion ? false : { opacity: 0 }}
       animate={reducedMotion ? undefined : { opacity: 1 }}
       exit={reducedMotion ? undefined : { opacity: 0 }}
@@ -172,20 +172,24 @@ export function PublicationSpotlight({
           aria-modal="true"
           aria-labelledby={`spotlight-title-${publication.slug}`}
           data-publication-spotlight={publication.slug}
-          className={`relative w-full overflow-hidden rounded-[1.8rem] border border-line bg-paper shadow-[0_28px_80px_rgba(29,32,28,0.18)] ${
+          className={`publication-spotlight-surface relative w-full overflow-hidden rounded-[1.8rem] border border-white/55 bg-paper/94 shadow-[0_28px_80px_rgba(29,32,28,0.20)] backdrop-blur-2xl ${
             mediaItems.length > 0 ? "max-w-6xl" : "max-w-4xl"
           }`}
-          initial={reducedMotion ? false : { opacity: 0, y: 24, scale: 0.985 }}
+          initial={reducedMotion ? false : { opacity: 0, y: 18, scale: 0.985 }}
           animate={reducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
           exit={reducedMotion ? undefined : { opacity: 0, y: 18, scale: 0.985 }}
-          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          transition={
+            reducedMotion
+              ? { duration: 0 }
+              : { type: "spring", bounce: 0, duration: 0.38 }
+          }
           onClick={(event) => event.stopPropagation()}
         >
           <button
             ref={closeButtonRef}
             type="button"
             data-spotlight-close
-            className="absolute right-4 top-4 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper/92 text-ink/82 transition-colors hover:text-ink motion-reduce:transition-none sm:right-5 sm:top-5"
+            className="absolute right-4 top-4 z-10 inline-flex h-11 w-11 items-center justify-center rounded-full border border-line bg-paper/92 text-ink/82 transition-[background-color,color,transform] duration-150 hover:bg-paper hover:text-ink active:scale-[0.92] motion-reduce:transform-none motion-reduce:transition-none sm:right-5 sm:top-5"
             aria-label={`Close spotlight for ${publication.title}`}
             onClick={onClose}
           >
@@ -204,7 +208,7 @@ export function PublicationSpotlight({
                 {primaryMedia ? (
                   <button
                     type="button"
-                    className="group block w-full text-left"
+                    className="group block w-full text-left transition-transform duration-150 active:scale-[0.995] motion-reduce:transform-none motion-reduce:transition-none"
                     aria-label={`Open ${primaryMedia.label} for ${publication.title}`}
                     data-spotlight-media-id={primaryMedia.id}
                     onClick={(event) =>
@@ -255,7 +259,7 @@ export function PublicationSpotlight({
                       <button
                         key={media.id}
                         type="button"
-                        className="group overflow-hidden rounded-[1.1rem] border border-line bg-paper/70 text-left transition-colors hover:border-line"
+                        className="group overflow-hidden rounded-[1.1rem] border border-line bg-paper/70 text-left transition-[border-color,transform] duration-150 hover:border-ink/25 active:scale-[0.985] motion-reduce:transform-none motion-reduce:transition-none"
                         aria-label={`Open ${media.label} for ${publication.title}`}
                         data-spotlight-media-id={media.id}
                         onClick={(event) =>

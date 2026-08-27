@@ -148,7 +148,7 @@ export function PublicationListItem({
               aria-label={`Research threads related to ${publication.title}`}
               className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-line pt-4"
             >
-              <span className="meta-label">Related inquiry</span>
+              <span className="meta-label">Related question</span>
               {researchThreads.map((thread) => {
                 const interestTarget = getResearchThreadTarget(
                   thread,
@@ -178,7 +178,7 @@ export function PublicationListItem({
                   data-thread-stage="study"
                   className="text-xs text-signal underline decoration-signal/25 underline-offset-4"
                 >
-                  Selected study: {primaryThread.study.label}
+                  Read about {primaryThread.study.label}
                 </a>
               ) : null}
             </nav>

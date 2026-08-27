@@ -72,7 +72,6 @@ export type ResearchLensStep = {
 export type ResearchLens = {
   id: string;
   label: string;
-  unitLabel: string;
   steps: ResearchLensStep[];
 };
 
@@ -146,6 +145,30 @@ export type ResearchThread = {
   inferFromTarget?: boolean;
 };
 
+export type ProfileEvidence = {
+  track: "enterprise" | "research";
+  value: string;
+  label: string;
+  detail: string;
+};
+
+export type EnterpriseCaseStudy = {
+  slug: string;
+  index: string;
+  eyebrow: string;
+  title: string;
+  summary: string;
+  contribution: string;
+  outcomeLabel: string;
+  outcome: string;
+  system: string[];
+  capabilities: string[];
+  source?: {
+    label: string;
+    href: string;
+  };
+};
+
 export type NewsItem = {
   date: string;
   title: string;
@@ -194,21 +217,21 @@ export type Profile = {
 };
 
 export const sections = [
+  { id: "enterprise", label: "Enterprise AI" },
   { id: "work", label: "Research" },
   { id: "research", label: "Publications" },
   { id: "journey", label: "Experience" },
-  { id: "updates", label: "News" },
   { id: "contact", label: "Contact" }
 ];
 
 export const profile: Profile = {
   name: "Chenyuan Qu",
-  role: "PhD Student · Head of Technologies",
+  role: "Applied AI Engineer · Head of Technologies · PhD Researcher",
   affiliation: "University of Birmingham · Allsee · Vieunite",
-  positioning: "Computer vision, multimodal learning, and software systems.",
+  positioning: "Enterprise AI · Computer vision research",
   shortBio:
-    "I am a PhD student at the University of Birmingham and Head of Technologies at Allsee and Vieunite.",
-  bio: "My research focuses on computer vision, multimodal learning, and generative models. Alongside my doctoral work, I work on backend services, internal software, and applied machine-learning systems at Allsee and Vieunite.",
+    "I build AI tools that help people get real work done, and I research new ways for computers to understand and create visual content.",
+  bio: "At Allsee, I work with customers and teams to turn business problems into software used across the company and by customers around the world. I still spend much of my time building—from Python services and device software to AI tools for everyday operations. Alongside this, I am a part-time PhD researcher at the University of Birmingham.",
   email: "Chenyuan.Qu@outlook.com",
   primaryContact: {
     label: "Personal",
@@ -274,6 +297,128 @@ export const profile: Profile = {
     }
   ]
 };
+
+export const profileEvidence: ProfileEvidence[] = [
+  {
+    track: "enterprise",
+    value: "200,000+",
+    label: "managed devices",
+    detail: "Serving 1,000+ organisations and 50,000+ users around the world."
+  },
+  {
+    track: "enterprise",
+    value: "≈80%",
+    label: "less time per task",
+    detail: "Less time needed to complete the ERP tasks that were tested."
+  },
+  {
+    track: "enterprise",
+    value: "≈99%",
+    label: "fewer human errors",
+    detail: "Fewer human mistakes in the ERP tasks that were tested."
+  },
+  {
+    track: "research",
+    value: "BMVC 2025",
+    label: "first author",
+    detail: "VisualSplit explores image representations people can understand and edit."
+  },
+  {
+    track: "research",
+    value: "CVPR 2024",
+    label: "oral paper",
+    detail: "Co-author of 360+x, selected for an oral presentation."
+  },
+  {
+    track: "research",
+    value: "4 papers",
+    label: "peer reviewed",
+    detail: "Published at BMVC, CVPR, ICASSP, and ICCV."
+  }
+];
+
+export const enterpriseCaseStudies: EnterpriseCaseStudy[] = [
+  {
+    slug: "nexus",
+    index: "01",
+    eyebrow: "Customer platform · Live worldwide",
+    title: "Nexus MySignagePortal",
+    summary:
+      "Allsee's previous platform had grown into around ten different versions. Nexus replaced them with one shared platform that is easier for customers to use and for the team to improve.",
+    contribution:
+      "I began by visiting customers and watching how they worked. I then led the redesign, wrote most of the Python/FastAPI backend, contributed to the Java software on the devices, and guided a five-person team.",
+    outcomeLabel: "What changed",
+    outcome:
+      "Nexus now manages more than 200,000 devices for 1,000+ organisations and 50,000+ users worldwide. Larger features that used to take about a month can often be delivered in a few days, monthly reported bugs fell from dozens to low single digits, and the platform helped win at least £50,000 in directly attributable sales.",
+    system: [
+      "Listen to customers",
+      "Design one shared platform",
+      "Build the online services",
+      "Connect the device software"
+    ],
+    capabilities: [
+      "Customer research",
+      "Python / FastAPI",
+      "Java",
+      "AWS",
+      "Device software",
+      "Team leadership"
+    ]
+  },
+  {
+    slug: "erp-ai",
+    index: "02",
+    eyebrow: "Everyday operations · In use",
+    title: "An AI assistant for everyday ERP work",
+    summary:
+      "Employees can describe an order, warehouse, or repair task in everyday language and let the system complete the approved steps inside the company's ERP.",
+    contribution:
+      "I built the AI layer. It checks what each person is allowed to do, asks for confirmation before sensitive changes, and records every action. Behind the scenes, reusable MCP tools connect the model to the ERP without allowing it to bypass normal business rules.",
+    outcomeLabel: "What changed",
+    outcome:
+      "In the day-to-day tasks we tested, employees completed the work around 80% faster and made around 99% fewer manual mistakes.",
+    system: [
+      "An employee describes the task",
+      "The system checks permission",
+      "The approved task is carried out",
+      "Important actions are confirmed and recorded"
+    ],
+    capabilities: [
+      "AI agents",
+      "MCP",
+      "Permissions",
+      "Safeguards",
+      "Human approval"
+    ]
+  },
+  {
+    slug: "compad",
+    index: "03",
+    eyebrow: "Joint research project · Early testing",
+    title: "COMPaD",
+    summary:
+      "Most image generators leave a finished picture that is hard to change. COMPaD aims to create a real design file, so text, product images, logos, shapes, and QR codes can still be edited.",
+    contribution:
+      "I started and lead this joint project between Allsee and the University of Birmingham. I designed and trained a model that works with both text and images, built on open-source Qwen2.5. I also built the agents and online services that break a brief into smaller tasks and keep the design information organised as the system works.",
+    outcomeLabel: "Where it is now",
+    outcome:
+      "The system is in first-stage alpha testing. We check whether the poster looks right, whether each element is placed correctly, and whether the final result is genuinely editable.",
+    system: [
+      "Understand the brief",
+      "Plan the design",
+      "Create and arrange the elements",
+      "Return an editable file"
+    ],
+    capabilities: [
+      "Model training",
+      "Qwen2.5",
+      "AI agents",
+      "Editable output",
+      "Testing",
+      "Deployment"
+    ]
+  }
+];
 
 export const personLinks: PersonLink[] = [
   {
@@ -341,9 +486,9 @@ export const researchThreads: ResearchThread[] = [
   {
     slug: "interpretable-representations",
     index: "01",
-    title: "Interpretable image representations",
+    title: "Making image features easier to understand",
     detail:
-      "Separating visual information into structures such as edges, colour regions, and intensity.",
+      "I separate shape, colour, and brightness so we can see—and edit—what an AI model is using.",
     study: { slug: "visualsplit", label: "VisualSplit" },
     publication: { slug: "visualsplit", label: "BMVC 2025" },
     inferFromTarget: true
@@ -351,9 +496,9 @@ export const researchThreads: ResearchThread[] = [
   {
     slug: "multimodal-scenes",
     index: "02",
-    title: "Multimodal scene understanding",
+    title: "Understanding a scene from more than one viewpoint",
     detail:
-      "Learning across viewpoints, images, audio, text, location, and spatial context.",
+      "I combine panoramic and first-person views with sound, text, and location to give AI a fuller picture of a place.",
     study: { slug: "x360", label: "360+x" },
     publication: { slug: "x360", label: "CVPR 2024 Oral" },
     inferFromTarget: true
@@ -361,9 +506,9 @@ export const researchThreads: ResearchThread[] = [
   {
     slug: "generative-vision",
     index: "03",
-    title: "Generative computer vision",
+    title: "Giving people more control over generated images",
     detail:
-      "Using generative models for representation learning, reconstruction, restoration, and editing.",
+      "I explore how generative models can rebuild, restore, and edit images without hiding every decision from the user.",
     study: { slug: "visualsplit", label: "VisualSplit" },
     publication: { slug: "visualsplit", label: "BMVC 2025" }
   }
@@ -382,9 +527,9 @@ export const publications: Publication[] = [
     shortVenue: "BMVC",
     year: 2025,
     summary:
-      "VisualSplit learns image representations from decoupled edges, colour segmentation, and grey-level histograms, enabling descriptor-to-image reconstruction, controllable editing, and diffusion-based restoration.",
+      "VisualSplit breaks an image into three familiar parts—edges, colour regions, and overall brightness—and learns to rebuild the image from them. Keeping those parts separate makes the result easier to understand and edit.",
     abstract:
-      "VisualSplit decomposes each image into three classical descriptors: edges for geometry, segmented colours for regional chroma, and a grey-level histogram for global illumination. It then learns to reconstruct images from those cues alone, yielding an explicitly interpretable representation that supports descriptor-level illumination and colour editing while transferring naturally to restoration and descriptor-guided image generation with diffusion models.",
+      "Most neural networks store visual information in features that are difficult to inspect. VisualSplit instead represents an image through edges, colour regions, and a brightness histogram. The model learns to reconstruct the image from those three inputs. Because each input has a clear meaning, it can also be changed directly—for example, to adjust colour or lighting—and reused for image restoration and generation.",
     citationText:
       "Qu, Chenyuan, Hao Chen, and Jianbo Jiao. \"Exploring Image Representation with Decoupled Classical Visual Descriptors.\" 36th British Machine Vision Conference (BMVC), 2025.",
     bibtex: `@inproceedings{Qu_2025_BMVC,
@@ -498,9 +643,9 @@ export const publications: Publication[] = [
     shortVenue: "ICASSP",
     year: 2025,
     summary:
-      "DIFF leverages diffusion-model features to improve cross-domain semantic segmentation by extracting and fusing semantically rich representations across the diffusion process.",
+      "DIFF uses information already learned by image-generation models to help a segmentation system label images from visual domains it did not see during training.",
     abstract:
-      "DIFF uses diffusion-model features as a representation backbone for cross-domain semantic segmentation. By extracting and fusing semantic information across the diffusion process, the method improves generalisation to unseen domains without relying on target-domain supervision.",
+      "A model trained to label every pixel in one visual domain can struggle when the style or environment changes. DIFF draws on features from several stages of a diffusion model and combines them into a richer representation. This helps the segmentation model work better on new domains without needing labelled examples from each one.",
     citationText:
       "Ji, Yuxiang, Boyong He, Chenyuan Qu, Zhuoyue Tan, Chuan Qin, and Liaoni Wu. \"Diffusion Features to Bridge Domain Gap for Semantic Segmentation.\" ICASSP 2025, 1-5.",
     bibtex: `@inproceedings{DBLP:conf/icassp/JiHQTQW25,
@@ -577,9 +722,9 @@ export const publications: Publication[] = [
     recognition: "Oral paper",
     year: 2024,
     summary:
-      "A CVPR 2024 oral paper introducing a panoptic multimodal dataset that combines panoramic, frontal, and egocentric viewpoints with audio, location, and textual signals.",
+      "360+x brings together panoramic, front-facing, and first-person views with sound, location, and text, so researchers can study how AI understands the same place from several perspectives.",
     abstract:
-      "360+x introduces a multimodal scene-understanding dataset that combines panoramic, frontal, and egocentric views together with audio, location, and textual context. It is designed to support richer benchmarks for scene understanding across viewpoints, modalities, and real-world environments.",
+      "Many datasets show a scene through one camera. 360+x records the same environment through panoramic, front-facing, and first-person views, then aligns them with sound, location, and written context. This lets researchers test whether a model can connect information across viewpoints and data types in real-world settings.",
     citationText:
       "Chen, Hao, Yuqi Hou, Chenyuan Qu, Irene Testini, Xiaohan Hong, and Jianbo Jiao. \"360+x: A Panoptic Multi-modal Scene Understanding Dataset.\" Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, 2024.",
     bibtex: `@inproceedings{chen2024x360,
@@ -686,9 +831,9 @@ export const publications: Publication[] = [
     shortVenue: "ICCV",
     year: 2023,
     summary:
-      "A self-supervised denoising framework that disentangles clean image structure from corruption by comparing multiple noisy views of the same latent scene.",
+      "MeD learns to remove image noise without needing a clean target image. It compares several noisy versions of the same scene to separate the shared image content from the changing noise.",
     abstract:
-      "MeD approaches image denoising through self-supervised disentanglement across multiple corrupted views of the same scene. Instead of learning from clean targets, it separates shared clean structure from noise and shows strong performance on both synthetic and real-noise settings.",
+      "Training an image-cleaning model usually requires pairs of noisy and clean images, which can be hard to collect. MeD learns from several noisy views of the same scene instead. The visual structure shared by those views is treated as the underlying image, while the differences help the model identify noise. The method was tested on both simulated and real image noise.",
     citationText:
       "Chen, Hao, Chenyuan Qu, Yu Zhang, Chen Chen, and Jianbo Jiao. \"Multi-view Self-supervised Disentanglement for General Image Denoising.\" Proceedings of the IEEE/CVF International Conference on Computer Vision, 2023.",
     bibtex: `@InProceedings{MeD_ICCV23,
@@ -765,15 +910,15 @@ export const caseStudies: CaseStudy[] = [
     title: "VisualSplit",
     eyebrow: "BMVC 2025 · Image representation",
     thesis:
-      "VisualSplit studies image representations based on three classical visual descriptors: edges, colour segmentation, and grey-level histograms.",
+      "VisualSplit asks whether an AI model can understand and rebuild an image using three simple parts: edges, colour regions, and overall brightness.",
     takeaway:
-      "Separating geometry, colour, and illumination into explicit descriptors provides an interpretable representation that can also be edited at the descriptor level.",
+      "When shape, colour, and brightness stay separate, it becomes easier to understand what the model sees and to change one part without changing everything else.",
     challenge:
-      "Learned image features are often difficult to interpret because geometry, colour, and illumination information are represented together.",
+      "Modern vision models often mix shape, colour, and lighting into features that people cannot easily inspect or control.",
     contribution:
-      "In this first-author work, we use the three descriptors as separate inputs for image reconstruction and examine their use in editing, restoration, and diffusion-guided generation.",
+      "As first author, I developed and evaluated the approach with my co-authors. We tested how the three inputs could rebuild images and support editing, restoration, and image generation.",
     outcome:
-      "The work was published at BMVC 2025. The paper, supplementary material, presentation, code, model weights, and examples are publicly available.",
+      "The work was published at BMVC 2025. The paper, talk, code, model weights, and working examples are all public.",
     year: "2025",
     context: "BMVC · First-author research",
     media: {
@@ -785,19 +930,18 @@ export const caseStudies: CaseStudy[] = [
       lens: {
         id: "visualsplit",
         label: "VisualSplit figure explorer",
-        unitLabel: "stages",
         steps: [
           {
             id: "input",
             label: "Input",
-            note: "The source image from which the visual descriptors are extracted.",
+            note: "The original image before it is separated into simpler visual parts.",
             regions: [{ x: 0.8, y: 23.3, width: 7.8, height: 25.5 }]
           },
           {
             id: "edge",
             label: "Edge",
             focusLabel: "Colour and Edge ↔ Edge",
-            note: "The combined colour-and-edge descriptor is used on the left; a Sobel operator extracts the reconstructed image's edge descriptor on the right.",
+            note: "The model receives a map of the original edges, then uses a Sobel operator to extract edges from the rebuilt image for comparison.",
             regions: [
               { x: 11.9, y: 33, width: 6.8, height: 22.6 },
               { x: 93.6, y: 46.8, width: 5, height: 16.5 }
@@ -807,7 +951,7 @@ export const caseStudies: CaseStudy[] = [
             id: "colour",
             label: "Colour",
             focusLabel: "Colour and Edge ↔ Colour",
-            note: "The combined colour-and-edge descriptor is used on the left; Soft K-means extracts the reconstructed image's colour descriptor on the right.",
+            note: "Colour regions are kept separate from brightness. Soft K-means extracts matching regions from the rebuilt image for comparison.",
             regions: [
               { x: 11.9, y: 33, width: 6.8, height: 22.6 },
               { x: 93.7, y: 19.7, width: 4.8, height: 15.6 }
@@ -817,7 +961,7 @@ export const caseStudies: CaseStudy[] = [
             id: "histogram",
             label: "Intensity",
             focusLabel: "Intensity ↔ Intensity",
-            note: "The input intensity histogram is used on the left; a smooth histogram extracts the reconstructed image's intensity descriptor on the right.",
+            note: "A brightness histogram describes the overall lighting and is matched in the rebuilt image.",
             regions: [
               { x: 11.8, y: 67.8, width: 7.6, height: 12.5 },
               { x: 93.5, y: 76.7, width: 5.2, height: 12.9 }
@@ -826,7 +970,7 @@ export const caseStudies: CaseStudy[] = [
           {
             id: "reconstruction",
             label: "Reconstruction",
-            note: "The decoder reconstructs the image from the descriptor representation.",
+            note: "The model rebuilds the image using only the separated shape, colour, and brightness information.",
             regions: [{ x: 67.3, y: 24.9, width: 7.8, height: 25.2 }]
           }
         ]
@@ -861,15 +1005,15 @@ export const caseStudies: CaseStudy[] = [
     title: "360+x",
     eyebrow: "CVPR 2024 · Oral paper",
     thesis:
-      "360+x is a dataset for studying scene understanding across multiple viewpoints and aligned sensory modalities.",
+      "360+x lets researchers study the same scene through several camera views, together with sound, location, and text.",
     takeaway:
-      "Aligning panoramic, frontal, and egocentric views with audio, location, and text supports scene-understanding research beyond single-view recognition.",
+      "A scene makes more sense when an AI system can connect what is visible from different viewpoints with what can be heard and where it happened.",
     challenge:
-      "Many scene-understanding datasets focus on a single camera view or modality. 360+x records panoramic, frontal, and egocentric views together with spatial, audio, location, and textual signals.",
+      "Most datasets show a place through one camera or one type of data. That makes it difficult to study how different views and signals relate to one another.",
     contribution:
-      "I was one of six authors on the project. The dataset, benchmark resources, and publication were produced collaboratively by the research team.",
+      "I was one of six authors. We built the dataset, research benchmarks, and publication together as a team.",
     outcome:
-      "The work was selected for an oral presentation at CVPR 2024. The project site provides the paper, supplementary material, code, dataset access, poster, and teaser video.",
+      "The paper was selected for an oral presentation at CVPR 2024. The paper, code, dataset, poster, and project video are public.",
     year: "2024",
     context: "CVPR Oral · Collaborative research",
     media: {
@@ -881,36 +1025,35 @@ export const caseStudies: CaseStudy[] = [
       lens: {
         id: "x360",
         label: "360+x figure explorer",
-        unitLabel: "views and signals",
         steps: [
           {
             id: "panorama",
             label: "Panorama",
-            note: "A stitched equirectangular projection provides the 360° panoramic view.",
+            note: "A 360° image shows the whole scene around the recording point.",
             regions: [{ x: 2.2, y: 1.5, width: 23.5, height: 26 }]
           },
           {
             id: "front-view",
             label: "Front view",
-            note: "The third-person front view is projected from the spherical panorama.",
+            note: "A normal front-facing view is taken from the wider panorama.",
             regions: [{ x: 1.8, y: 64.5, width: 18.4, height: 22 }]
           },
           {
             id: "egocentric",
             label: "Egocentric",
-            note: "A stereo camera captures the binocular egocentric view.",
+            note: "A stereo camera records what a person would see from a first-person viewpoint.",
             regions: [{ x: 74.2, y: 1.8, width: 24.2, height: 24 }]
           },
           {
             id: "audio",
             label: "Audio",
-            note: "Left and right audio channels are represented as Mel spectrograms.",
+            note: "The left and right audio channels show what could be heard at the same moment.",
             regions: [{ x: 41.1, y: 68.2, width: 19.2, height: 22 }]
           },
           {
             id: "binaural-delay",
             label: "Binaural delay",
-            note: "Interaural time delay provides a directional binaural cue.",
+            note: "The small timing difference between the two ears—known as interaural time delay—helps indicate where a sound came from.",
             regions: [{ x: 74.1, y: 71, width: 24.2, height: 18 }]
           }
         ]
@@ -951,7 +1094,7 @@ export const projects: Project[] = [
     imageFit: "contain",
     relatedPublicationSlug: "visualsplit",
     summary:
-      "A descriptor-driven project that reconstructs images from edges, colour segmentation, and grey-level histograms, then reuses those interpretable controls for restoration and prompt-free editing.",
+      "A model that rebuilds images from separate shape, colour, and brightness information, then uses those clear controls for restoration and editing.",
     links: [
       {
         kind: "project",
@@ -983,7 +1126,7 @@ export const projects: Project[] = [
     imageFit: "contain",
     relatedPublicationSlug: "x360",
     summary:
-      "A multimodal scene-understanding dataset spanning panoramic, frontal, and egocentric video, with aligned audio, location, and textual signals for benchmarking perception across viewpoints.",
+      "A dataset that records the same scene through panoramic, front-facing, and first-person views, with matching sound, location, and text.",
     links: [
       {
         kind: "dataset",
@@ -1035,7 +1178,7 @@ export const projects: Project[] = [
     imageFit: "contain",
     relatedPublicationSlug: "med",
     summary:
-      "A multi-view self-supervised denoising framework that learns latent clean structure by contrasting different noisy observations of the same image.",
+      "A method that learns to clean an image by comparing several noisy views of the same scene, without requiring a clean training image.",
     links: [
       {
         kind: "project",
@@ -1061,7 +1204,7 @@ export const projects: Project[] = [
     image: "/images/projects/x360-main.webp",
     imageFit: "cover",
     summary:
-      "A binocular egocentric and 360° panoramic multimodal dataset and challenge surface for scene understanding, aligned with spatial audio, text, and geo-metadata.",
+      "A research dataset and challenge combining stereo first-person video, 360° views, spatial sound, text, and location information.",
     links: [
       {
         kind: "workshop",
@@ -1080,7 +1223,7 @@ export const projects: Project[] = [
     category: "dataset",
     year: 2026,
     summary:
-      "A privacy-safe text-to-image dataset released on Hugging Face, repacked into Parquet shards with embedded image bytes and organised into samples and iterations splits.",
+      "A privacy-safe text-to-image dataset on Hugging Face, organised so researchers can load and work with the images more easily.",
     links: [
       {
         kind: "dataset",
@@ -1093,45 +1236,51 @@ export const projects: Project[] = [
 
 export const newsItems: NewsItem[] = [
   {
-    date: "5 May 2026",
-    title: "Started Help To Grow: Management at BCU",
+    date: "2026",
+    title: "COMPaD entered first-stage alpha testing",
     detail:
-      "I started the 12-week Help To Grow: Management Course at Birmingham City University Business School, with sessions spanning strategy, digital transformation, marketing, operations, finance, and growth planning.",
+      "The current tests look at three things: whether the generated poster works visually, whether its layout is understood correctly, and whether the final file remains editable."
+  },
+  {
+    date: "5 May 2026",
+    title: "Began Help to Grow: Management at BCU",
+    detail:
+      "I joined the 12-week course at Birmingham City University Business School to strengthen my practical knowledge of strategy, digital change, marketing, operations, finance, and growth.",
     href: "https://www.bcu.ac.uk/courses/help-to-grow-management-course"
   },
   {
     date: "2025",
     title: "VisualSplit accepted to BMVC 2025",
     detail:
-      "Project page, paper, supplementary material, code, and model weights are publicly available.",
+      "I released the paper, talk, code, model weights, and examples so the work can be read, tested, and reused.",
     href: "https://chenyuanqu.com/VisualSplit/"
   },
   {
     date: "2025",
     title: "DIFF presented at ICASSP 2025",
     detail:
-      "Collaborative work on diffusion features for cross-domain semantic segmentation.",
+      "Our team showed how features from image-generation models can help a segmentation system work across different visual domains.",
     href: "https://arxiv.org/abs/2406.00777"
   },
   {
     date: "2024",
     title: "360+x selected for a CVPR 2024 oral presentation",
     detail:
-      "Dataset paper with accompanying benchmark resources, code, and public dataset access.",
+      "The paper, code, research benchmarks, and dataset are available through the public project page.",
     href: "https://x360dataset.github.io/"
   },
   {
     date: "2023",
     title: "Started my PhD in the MI X group",
     detail:
-      "I began doctoral research in 2023 on computer vision and multimodal learning in the MI X Group.",
+      "I began my part-time PhD in the University of Birmingham's MI X Group, studying how AI can understand images, sound, text, and different viewpoints together.",
     href: "https://mix.jianbojiao.com/people/"
   },
   {
     date: "2023",
     title: "MeD published at ICCV 2023",
     detail:
-      "An early project on self-supervised image denoising using multi-view disentanglement.",
+      "This collaborative project learns to remove image noise by comparing several noisy views, without relying on clean target images.",
     href: "https://chqwer2.github.io/MeD/"
   }
 ];
@@ -1146,22 +1295,22 @@ export const experience: TimelineGroup[] = [
     period: "Feb 2023 — Present",
     roles: [
       {
-        title: "PhD Student",
-        period: "2023 — Present",
+        title: "PhD Researcher (part-time)",
+        period: "Sep 2023 — Expected 2028",
         detail:
-          "Doctoral research in computer vision, multimodal learning, and generative AI within the School of Computer Science."
+          "I study how AI can understand and create visual content in ways that are easier to interpret, combine, and control."
       },
       {
-        title: "Research Assistant",
+        title: "Research Assistant (part-time)",
         period: "Dec 2023 — Present",
         detail:
-          "Research on compositionality for foundation models, with a focus on representation, reasoning, and generative computer-vision systems."
+          "I research how foundation models represent and combine visual ideas. This work includes COMPaD, the joint Allsee–University of Birmingham project for editable poster generation."
       },
       {
-        title: "Research Assistant",
+        title: "Research Assistant (part-time)",
         period: "Feb 2023 — Dec 2023",
         detail:
-          "Research on interpretable hydrological modelling and machine-learning methods for scientific analysis."
+          "I worked with domain researchers to apply machine learning to hydrology while keeping the results understandable to scientific users."
       }
     ]
   },
@@ -1177,34 +1326,34 @@ export const experience: TimelineGroup[] = [
         title: "Head of Technologies",
         period: "Dec 2024 — Present",
         detail:
-          "Responsible for technology planning across backend architecture, internal software, AI development, and operational systems.",
+          "I lead the company's technology work while continuing to build software myself. My focus includes customer platforms, device software, the ERP, and practical AI tools for everyday work.",
         highlights: [
-          "Coordinate technical priorities across hardware, software, and internal workflows, with attention to maintainability and delivery requirements.",
-          "Use Linear to organise requests from sales, product, operations, and engineering into roadmaps, assigned work, and progress tracking.",
-          "Evaluate and implement machine-learning, generative-AI, and automation use cases in internal and product-facing workflows.",
-          "Translate requirements discussed with leadership, operations, and sales into technical designs and implementation plans."
+          "Led Nexus from customer visits and early design through launch, while writing most of its Python/FastAPI backend and contributing to the Java device software.",
+          "Led the replacement of the company's ERP and built an AI layer that lets staff complete approved tasks in everyday language.",
+          "Started and lead COMPaD, a joint industry–university project for creating editable commercial posters with AI.",
+          "Work directly with customers, sales, operations, and engineers to decide what should be built and to explain the trade-offs clearly."
         ]
       },
       {
         title: "Full-stack Engineer",
         period: "Dec 2023 — Dec 2024",
         detail:
-          "Worked on the CMS and ERP platforms, including consolidating board-specific CMS code into a shared architecture for multiple hardware boards and operating systems.",
+          "I worked across the customer platform, ERP, cloud services, and device software, helping replace a collection of hardware-specific systems with one shared product.",
         highlights: [
-          "Refactored the CMS so a shared codebase could support multiple boards, deployment targets, and system environments.",
-          "Developed the internal ERP system, including its core workflows, data structures, and interfaces.",
-          "Worked across frontend, backend, deployment, and device constraints in response to product requirements."
+          "Helped turn around ten separate platform versions into one codebase that could still work with the existing device range.",
+          "Built core parts of the replacement ERP and connected it with the CMS, Salesforce, and QuickBooks.",
+          "Worked across the user interface, online services, software releases, and device constraints instead of treating them as separate problems."
         ]
       },
       {
         title: "Algorithm Engineer",
         period: "Sep 2022 — Dec 2023",
         detail:
-          "Worked on backend services, recommendation components, and Vieutopia AI art features for Allsee and Vieunite.",
+          "I built backend services, recommendation features, and generative-AI tools for Allsee and Vieunite, including features used in the Vieutopia AI art product.",
         highlights: [
-          "Implemented backend services for AI-related product features and internal workflows.",
-          "Developed recommendation components for content and product discovery.",
-          "Developed Vieutopia AI art functionality using generative models."
+          "Connected AI features to the online services and day-to-day processes needed by the product.",
+          "Built recommendation features for content and product discovery.",
+          "Developed image-generation features that people could use through Vieutopia."
         ]
       }
     ]
@@ -1221,7 +1370,7 @@ export const experience: TimelineGroup[] = [
         title: "Algorithm Engineer Intern",
         period: "Jul 2020 — Sep 2020",
         detail:
-          "Developed and optimised machine-learning components for a visual customer-service anchor in a mobile deployment setting."
+          "I built and improved machine-learning features for a virtual customer-service presenter designed to run on mobile devices."
       }
     ]
   }
@@ -1229,14 +1378,14 @@ export const experience: TimelineGroup[] = [
 
 export const education: TimelineItem[] = [
   {
-    title: "Master's Study",
+    title: "Master's in Artificial Intelligence and Machine Learning",
     organisation: "University of Birmingham",
     organisationLinks: organisationLinks.filter(
       (organisation) => organisation.label === "University of Birmingham"
     ),
     period: "2021 — 2022",
     detail:
-      "Postgraduate study completed at Birmingham before beginning doctoral research."
+      "Graduated with Distinction, then continued at Birmingham for research work and a part-time PhD."
   },
   {
     title: "BSc in Physics",
@@ -1246,6 +1395,6 @@ export const education: TimelineItem[] = [
     ),
     period: "2018 — 2021",
     detail:
-      "Undergraduate training in physics, which continues to shape how I think about machine learning and computer vision."
+      "Physics gave me a strong base in mathematics, modelling, and experimental thinking that I still use in engineering and research."
   }
 ];

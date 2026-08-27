@@ -55,10 +55,10 @@ export const metadata: Metadata = {
     siteName: siteConfig.shortTitle,
     images: [
       {
-        url: absoluteUrl("/images/social/chenyuan-qu-og.png"),
+        url: absoluteUrl("/og.png"),
         width: 1200,
         height: 630,
-        alt: "Chenyuan Qu — computer vision researcher"
+        alt: "Chenyuan Qu — Enterprise AI and computer vision research"
       }
     ]
   },
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteConfig.title,
     description: siteConfig.description,
-    images: [absoluteUrl("/images/social/chenyuan-qu-og.png")]
+    images: [absoluteUrl("/og.png")]
   },
   robots: {
     index: true,

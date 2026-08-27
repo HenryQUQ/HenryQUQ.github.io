@@ -83,7 +83,7 @@ export function ResearchFigure({
         aria-haspopup="dialog"
         aria-expanded={isOpen}
         data-open-research-figure
-        className={`group relative block aspect-[16/10] w-full cursor-zoom-in overflow-hidden rounded-[0.45rem] border border-line bg-white/55 text-left transition-[border-color,background-color] duration-200 hover:border-ink/25 hover:bg-white/70 focus-visible:border-signal motion-reduce:transition-none ${className}`}
+        className={`group relative block aspect-[16/10] w-full cursor-zoom-in overflow-hidden rounded-[0.45rem] border border-line bg-white/55 text-left transition-[border-color,background-color,transform] duration-150 hover:border-ink/25 hover:bg-white/70 active:scale-[0.995] focus-visible:border-signal motion-reduce:transform-none motion-reduce:transition-none ${className}`}
         onClick={(event) => {
           if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
             return;
@@ -108,9 +108,7 @@ export function ResearchFigure({
 
         <span className="pointer-events-none absolute bottom-2.5 right-2.5 inline-flex items-center gap-1.5 border border-line bg-paper/95 px-2 py-1 font-mono text-[0.58rem] font-medium uppercase tracking-[0.09em] text-ink opacity-90 shadow-sm transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none">
           <Maximize2 aria-hidden="true" className="h-3 w-3" />
-          {researchLens
-            ? `Explore ${researchLens.steps.length} ${researchLens.unitLabel}`
-            : "Open figure"}
+          {researchLens ? "Explore figure" : "Open figure"}
         </span>
       </a>
 

@@ -223,7 +223,12 @@ export function ResearchThreadExperience({
         className="border-b border-line bg-surface/45"
       >
         <div className="site-container grid gap-8 py-14 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-10 sm:py-16">
-          <h2 className="section-kicker">Research interests</h2>
+          <div>
+            <h2 className="section-kicker">Research questions</h2>
+            <p className="mt-3 max-w-[9rem] text-xs leading-5 text-muted">
+              The ideas that connect my current work.
+            </p>
+          </div>
           <div className="border-t border-line">
             {threads.map((thread) => {
               const active = activeThreadSlug === thread.slug;
@@ -262,7 +267,7 @@ export function ResearchThreadExperience({
                     {thread.detail}
                   </p>
                   <span className="inline-flex items-center gap-2 whitespace-nowrap text-xs text-accent">
-                    {active ? "Tracing" : thread.study.label}
+                    Read {thread.study.label}
                     <ArrowRight aria-hidden="true" className="h-3.5 w-3.5" />
                   </span>
                 </a>
@@ -285,7 +290,7 @@ export function ResearchThreadExperience({
           }}
         >
           <p className="font-mono text-[0.58rem] uppercase tracking-[0.1em] text-signal">
-            Thread {activeThread.index}
+            Topic {activeThread.index}
           </p>
           <p className="mt-2 text-xs leading-5 text-ink/72">
             {activeThread.title}
@@ -296,7 +301,7 @@ export function ResearchThreadExperience({
             ).map((stage) => {
               const label =
                 stage === "interest"
-                  ? "Inquiry"
+                  ? "Question"
                   : stage === "study"
                     ? activeThread.study.label
                     : activeThread.publication.label;

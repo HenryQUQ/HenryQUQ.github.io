@@ -67,9 +67,8 @@ function RoleSegment({ role }: { role: TimelineRole }) {
       </p>
       {role.highlights?.length ? (
         <details className="group mt-4 border-t border-line pt-3">
-          <summary className="flex min-h-9 cursor-pointer list-none items-center justify-between text-sm text-muted marker:content-none hover:text-ink">
-            Details
-            <span>{role.highlights.length} items</span>
+          <summary className="flex min-h-9 cursor-pointer list-none items-center text-sm text-muted marker:content-none hover:text-ink">
+            More about this role
           </summary>
           <ul className="mt-3 max-w-reading space-y-2 pb-1 text-sm leading-7 text-ink/72">
             {role.highlights.map((highlight) => (

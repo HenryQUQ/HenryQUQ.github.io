@@ -57,6 +57,8 @@ export function PublicationsExperience({
   const [spotlightSlug, setSpotlightSlug] = useState<Publication["slug"] | null>(null);
   const [activeMediaId, setActiveMediaId] = useState<string | null>(null);
   const spotlightTriggerRef = useRef<HTMLElement | null>(null);
+  const spotlightReturnSlugRef = useRef<string | null>(null);
+  const spotlightFocusFrameRef = useRef<number | null>(null);
   const mediaTriggerRef = useRef<HTMLElement | null>(null);
 
   const publicationGroups = groupPublicationsByYear(publications);
@@ -79,6 +81,53 @@ export function PublicationsExperience({
   const activeProject = activePublication
     ? projectsByPublicationSlug.get(activePublication.slug)
     : undefined;
+
+  const restoreSpotlightFocus = () => {
+    if (spotlightFocusFrameRef.current !== null) {
+      window.cancelAnimationFrame(spotlightFocusFrameRef.current);
+    }
+
+    let attemptsRemaining = 45;
+    const attemptFocus = () => {
+      const fallbackSelector = spotlightReturnSlugRef.current
+        ? `[data-open-publication-spotlight="${spotlightReturnSlugRef.current}"]`
+        : null;
+      const trigger =
+        spotlightTriggerRef.current ??
+        (fallbackSelector
+          ? document.querySelector<HTMLElement>(fallbackSelector)
+          : null);
+
+      if (!trigger?.isConnected) {
+        spotlightFocusFrameRef.current = null;
+        return;
+      }
+
+      if (!trigger.closest("[inert]")) {
+        trigger.focus({ preventScroll: true });
+        spotlightFocusFrameRef.current = null;
+        return;
+      }
+
+      attemptsRemaining -= 1;
+      if (attemptsRemaining > 0) {
+        spotlightFocusFrameRef.current = window.requestAnimationFrame(attemptFocus);
+      } else {
+        spotlightFocusFrameRef.current = null;
+      }
+    };
+
+    spotlightFocusFrameRef.current = window.requestAnimationFrame(attemptFocus);
+  };
+
+  useEffect(
+    () => () => {
+      if (spotlightFocusFrameRef.current !== null) {
+        window.cancelAnimationFrame(spotlightFocusFrameRef.current);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
     const syncFromLocation = () => {
@@ -139,6 +188,7 @@ export function PublicationsExperience({
     trigger: HTMLElement | null = null
   ) => {
     spotlightTriggerRef.current = trigger;
+    spotlightReturnSlugRef.current = publication.slug;
     setSpotlightSlug(publication.slug);
     setActiveMediaId(null);
     updateUrl(publication.slug, null);
@@ -148,12 +198,7 @@ export function PublicationsExperience({
     setActiveMediaId(null);
     setSpotlightSlug(null);
     updateUrl(null, null, "replace");
-
-    window.requestAnimationFrame(() => {
-      if (spotlightTriggerRef.current?.isConnected) {
-        spotlightTriggerRef.current.focus();
-      }
-    });
+    restoreSpotlightFocus();
   };
 
   const openMedia = (mediaId: string, trigger: HTMLElement | null = null) => {
@@ -200,11 +245,12 @@ export function PublicationsExperience({
       <section id="research" className="border-t border-line bg-paper">
         <div className="site-container section-shell">
           <header className="grid gap-5 border-b border-line pb-10 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-10 lg:pb-12">
-            <p className="section-kicker">Research output</p>
+            <p className="section-kicker">Papers &amp; datasets</p>
             <div>
               <h2 className="section-title">Publications</h2>
               <p className="mt-5 max-w-2xl text-base leading-7 text-muted sm:text-lg sm:leading-8">
-                Peer-reviewed papers with links to the paper, code, datasets, citation text, and available project media.
+                My peer-reviewed papers, with the code, datasets, figures, talks,
+                and citation details available for anyone who wants to go deeper.
               </p>
             </div>
           </header>
@@ -271,7 +317,7 @@ export function PublicationsExperience({
         </div>
       </section>
 
-      <AnimatePresence>
+      <AnimatePresence onExitComplete={restoreSpotlightFocus}>
         {activePublication ? (
           <PublicationSpotlight
             publication={activePublication}

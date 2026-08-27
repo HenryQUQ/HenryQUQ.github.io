@@ -153,9 +153,9 @@ export function PublicationActions({
                 animate={reducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
                 exit={reducedMotion ? undefined : { opacity: 0, y: 4, scale: 0.985 }}
                 transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
-                className="pointer-events-none absolute left-0 top-full z-20 mt-3 w-[min(28rem,calc(100vw-3rem))] rounded-[1rem] border border-line bg-paper/96 p-4 text-left shadow-[0_18px_36px_rgba(29,32,28,0.16)] backdrop-blur-sm"
+                className="pointer-events-none absolute right-0 top-full z-20 mt-3 w-[min(28rem,calc(100vw-3rem))] rounded-[1rem] border border-line bg-paper/96 p-4 text-left shadow-[0_18px_36px_rgba(29,32,28,0.16)] backdrop-blur-sm sm:left-0 sm:right-auto"
               >
-                <p className="meta-label text-accent">Will copy citation text</p>
+                <p className="meta-label text-accent">Citation preview</p>
                 <p className="mt-3 text-sm leading-7 text-ink/84">
                   {publication.citationText}
                 </p>

@@ -34,8 +34,6 @@ export function ResearchLensPanel({
     return null;
   }
 
-  const activeStepNumber = String(activeIndex + 1).padStart(2, "0");
-
   const selectAndFocus = (nextIndex: number) => {
     const normalizedIndex = (nextIndex + lens.steps.length) % lens.steps.length;
     setActiveIndex(normalizedIndex);
@@ -82,8 +80,7 @@ export function ResearchLensPanel({
       <header className="flex items-start justify-between gap-4 border-b border-line px-4 py-4 sm:px-6 sm:py-5">
         <div className="min-w-0">
           <p className="meta-label text-signal">
-            Figure explorer · {activeStepNumber}/
-            {String(lens.steps.length).padStart(2, "0")}
+            Figure explorer
           </p>
           <h2
             id={`lightbox-title-${media.id}`}
@@ -173,15 +170,6 @@ export function ResearchLensPanel({
                   height: `${region.height}%`
                 }}
               >
-                <span
-                  className={`absolute -left-px inline-flex min-h-5 min-w-5 items-center justify-center bg-signal px-1 font-mono text-[0.58rem] font-semibold text-white ${
-                    activeStep.regions.length > 1
-                      ? "top-full"
-                      : "-top-px -translate-y-full"
-                  }`}
-                >
-                  {activeStepNumber}
-                </span>
               </div>
             ))}
           </div>
