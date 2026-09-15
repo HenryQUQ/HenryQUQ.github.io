@@ -1,225 +1,70 @@
-# Dual-Practice Editorial Profile — Design Spec
+# Chenyuan Qu — a personal collection
 
-This document defines the visual, editorial, and interaction direction for Chenyuan Qu's personal website. The site gives equal weight to enterprise AI work and academic research. It is a personal profile, not a product landing page or company website. Its purpose is to help a broad audience understand what Chenyuan builds, what he studies, what changed because of the work, and where the claims can be checked.
+## Visual thesis
 
-## Design intent
+A personal folio on warm paper: an oversized name, a layered portrait, generous image-led spreads and a cinematic photographic pause. Ink and rust carry the composition; the artwork supplies the colour.
 
-The site should feel like a carefully typeset personal profile: quiet, precise, approachable, and current.
+## Content plan
 
-- Use a warm-white reading surface, ink-coloured text, restrained academic blue, fine rules, and generous but not theatrical whitespace.
-- Let real work and published research establish credibility. Use measured outcomes only with enough context to understand what was measured; avoid slogans, inflated claims, and sales-led calls to action.
-- Use the display serif to introduce editorial character; use the sans serif for comfortable reading and interface clarity.
-- Prefer a continuous document structure over panels, dashboards, feature grids, or interchangeable cards.
-- Treat the portrait and research figures as documentary material. They should support the record rather than act as cinematic decoration.
-- Use lightly rounded frames and restrained shadows where they explain elevation. Floating navigation and dialogs may use a warm translucent material, while the reading surface remains solid and editorial.
-- Keep colour and motion subordinate to typography, evidence, and source links.
+1. Introduction: meet Chenyuan through his name and curiosity about images. One paragraph and one invitation; professional roles move to the biography.
+2. Selected projects: COMPaD first, then Nexus and Everyday tools. Give each interactive canvas more room and accompany it with a short human description. Keep roles, engineering detail and qualified outcomes in the project disclosure. Alpha status remains visible.
+3. Research: VisualSplit opens with a generous interactive comparison, followed by an immersive 360+x spread. The paper library keeps complete authorship, references, figures and citations available on request.
+4. About: an existing night photograph spans the page, followed by a personal account of the route from physics to computer vision. Experience, education and earlier updates remain available without taking over the page.
+5. Contact: an invitation to compare notes, followed by the email address and public profiles.
 
-The guiding idea is **one person, two connected practices, presented as an editorial record**.
+## Interaction thesis
 
-## Content voice
+- The portrait's depth and three compositions make the opening feel like a living printed page. Preserve its manual controls, 4.5-second rotation and discreet progress toggle.
+- COMPaD's three independently editable posters cycle every 4.5 seconds inside the first project. Work tabs remain manual. A short project story stays beside the large canvas while scrolling on desktop.
+- Quiet entrance and section reveals lead to a second hands-on moment: a 360+x panorama viewed from inside the scene, ready to look around on arrival.
 
-Copy is factual, specific, and written in clear first-person English.
+## Voice
 
-- State the current degree, role, affiliations, and research topics directly.
-- Write first for an intelligent general reader. Start with the problem, the work, and the result; introduce technical terms only when they add useful precision.
-- Avoid internal language such as “follow the evidence”, “system path”, “orchestration”, or “production outcome” in reader-facing copy. Prefer ordinary phrases such as “see my work”, “how it works”, and “what changed”.
-- Describe research through questions, methods, contributions, publication venues, and available evidence.
-- Describe industry work through the people affected, the original problem, Chenyuan's role, and measured change.
-- Use plain labels such as `Enterprise AI`, `Research`, `Publications`, `Experience`, and `Contact`.
-- Prefer “My research focuses on…” to positioning slogans such as “building the future of…” or “at the intersection of…”.
-- Do not imply commercial impact, deployment scale, leadership scope, or research outcomes beyond the sourced facts in `src/data/site.ts` and `docs/sources.md`.
-- Calls to action are informational links: paper, code, dataset, citation, profile, source, or email. Avoid conversion-oriented language.
+Use concise, natural English in the first person. Lead with interests and the work itself. Avoid an applied-engineer pitch, business-results headlines, tools-and-skills inventories and repeated slogans. Keep AI terminology where it explains the actual work, rather than using it as a personal label. Preserve the verified research and technology roles in the biography and structured identity metadata.
 
-## Information architecture
+Nexus manages 200,000+ devices; ERP estimates apply only to tasks evaluated; COMPaD is in first-stage alpha testing; 360+x is a collaborative paper with an oral presentation. Do not invent clients, released interfaces, testimonials, hobbies or accomplishments.
 
-The site is an English-language single-page personal profile with a fixed, compact header and conventional anchor navigation.
+## Composition and accessibility
 
-1. **Introduction** — name, a concise description of both practices, short biography, profile links, affiliation, portrait, and location, followed by a balanced six-point proof ledger.
-2. **Enterprise AI** — three real projects covering a global customer platform, an AI-enabled ERP, and an industry–university generative-AI programme. Each explains the problem, Chenyuan's role, what changed, and how the work fits together.
-3. **Research questions** — three plain-English questions connecting the academic work.
-4. **Research** — two selected projects shown as complete, static editorial entries with a research image, question, contribution, publication outcome, and source links.
-5. **Publications** — the complete scholarly record grouped by year, with authorship, venue, summary, paper resources, citation tools, media, and related datasets.
-6. **Experience** — research appointments, education, and industry experience, with optional detailed role notes.
-7. **Recent updates** — current work, research, and professional-development milestones, followed by a native expandable archive.
-8. **Contact** — a short contact note, one primary email address, profile links, and copyright.
+- Two fonts: DM Sans for reading and Newsreader for display type.
+- Warm paper, charcoal ink and rust, with full-width photographic and colour changes between sections. Keep controls understated and the imagery generous.
+- Fit the introduction inside common desktop and mobile viewports, with the fixed header included in the height budget.
+- Visible keyboard focus, native disclosures, meaningful links and image alternatives. Preserve anchor and shared paper URLs.
+- Reduced motion disables initial automatic playback, parallax and reveals. Portrait and poster timers pause offscreen and in background tabs; reading remains possible without JavaScript.
+- Keep static export and base-path support; site imagery stays local under public/.
 
-The persistent navigation labels are `Enterprise AI`, `Research`, `Publications`, `Experience`, and `Contact`. The active location is indicated with a fine underline. Navigation should orient the reader; no item is styled as a sales-oriented primary action.
+## Verification
 
-## Layout system
+Run lint, strict typechecking, a production export and the browser suite. Inspect desktop and narrow mobile layouts. Cover navigation, portrait and poster playback, independent edits, manual project selection, the immersive panorama, publication links/citations, disclosures, reduced motion, no-JavaScript reading, metadata and overflow.
 
-- The shared container is fluid and capped at `78rem`, with horizontal padding of `1.25rem`, `2rem`, and `2.5rem` as the viewport grows.
-- Standard content sections use vertical padding of `4rem`, `5rem`, and `6rem` across the main breakpoints.
-- Fine horizontal rules are the primary method of grouping headings, records, timelines, and actions.
-- Section introductions use a narrow label column and a wider heading-and-description column from medium screens upward. They become a single readable column on small screens.
-- Reading copy is generally capped around `68ch`; long prose should not span the full container.
-- Grid columns are asymmetric where useful, but the page should still read as one continuous document.
-- Avoid minimum full-viewport sections. Section height is determined by content.
-- Avoid card walls, floating glass panels, oversized empty stages, sticky narrative chapters, and alternating dark feature bands.
-- Anchor targets include fixed-header clearance through the document-level `scroll-padding`.
+## Project visuals — September 2026 refinement
 
-### Introduction
+Nexus uses the product's own Campaigns and content-scheduling previews and logo, arranged on a pale blue field. These are the publicly served feature images from the supplied Nexus site, selected after inspecting the authenticated workspace. COMPaD is a working poster canvas with three original compositions and independent editable lettering and photographic layers. The artwork remains explicitly credited as an interactive concept, not a screenshot of the alpha product.
 
-- The opening section is a compact two-column editorial composition on desktop: identity and biography on the left, portrait on the right.
-- The name is the primary typographic element, set in Newsreader at a normal weight. It should feel like a masthead, not an advertising headline.
-- Positioning, biography, academic profiles, affiliation, portrait caption, and Birmingham local time remain immediately visible without promotional badges or animated graphics.
-- A ruled two-column ledger gives Enterprise AI and Research equal visual weight. Each side contains three short, sourced proof points and a plain link to the relevant work.
-- The portrait uses a simple `4:5` framed crop, a fine border, and a small corner radius. On a fine pointer it may respond by a few pixels and degrees, then return with a critically damped spring; this must never become a decorative parallax scene.
-- On mobile, text precedes the portrait in the same semantic order; links wrap naturally with no horizontal overflow.
+### VisualSplit, through actual examples
 
-### Enterprise AI
+Visual thesis: a photographic study on warm paper, with a large before-and-after image and small, tangible visual ingredients beside it.
 
-- Enterprise work appears as three ruled editorial records, not product cards.
-- Each record answers four ordinary questions: what was difficult, what Chenyuan did, what changed, and how the work happens in broad steps.
-- Outcomes must retain their scope. ERP figures refer only to the day-to-day tasks tested; the device figure means managed devices, not simultaneous connections; COMPaD remains in first-stage alpha testing.
-- Technical tools appear as small secondary labels after the explanation. A reader should understand the project without knowing FastAPI, MCP, Qwen2.5, or agent terminology.
-- The visual treatment stays within the warm-paper editorial system so enterprise work and academic work feel like parts of one practice.
+Content plan: introduce VisualSplit in one sentence, then let three published examples explain colour editing, relighting and reconstruction. Start with the white-to-red egret, show the edited colour map beside it, and let the reader compare the actual result. A mountain scene demonstrates three published lighting choices; the dog reconstruction shows the actual edge map, colour map and brightness histogram. Keep the lower-resolution reconstruction honest, and link to the source rather than expanding the section into a methods report.
 
-### Research questions
+Interaction thesis: a draggable comparison reveals the result directly beneath the original; three quiet manual tabs change the story, and the lighting choices swap real published outputs. Keep the tabs reachable while reading, and bring the new image into view when switching from the lower notes. Use brief entry fades only when motion is allowed. No timed cycling, synthetic filters or live-inference claims. Preserve the full source images, including their framing, with a readable static comparison before hydration and without JavaScript.
 
-- Research questions appear as three concise ruled rows, not service cards or feature tiles.
-- Each row pairs a precise topic with one explanatory sentence.
-- Each row begins a factual research thread linking the inquiry to its selected study and publication. Native URLs remain usable without JavaScript.
-- The active thread may add a fine blue rule, a pale annotation wash, and a compact contextual rail on very wide screens. The relationship is also written in the study and publication records so colour is never the only cue.
-- This section functions as a plain-language index of current research and must not introduce unsourced claims.
+### An immersive 360+x window
 
-### Selected research
+The scene fills a wide photographic frame, with the camera at the centre of the panorama. The reader arrives inside the museum and can immediately look around; there is no exterior globe or globe-mode switch. Keep only a discreet drag hint and reset control over the image, then the existing project description below. Mouse dragging and arrow keys turn the view, Home resets it, and vertical touch gestures keep the page scrollable. Load the renderer near the viewport, render only on interaction or resize, and retain a full-frame still image when JavaScript or WebGL is unavailable.
 
-- Selected research is a static sequence of editorial articles on the warm paper surface.
-- Each article pairs one real research figure with a written account. At large widths, image and text share a two-column row; at smaller widths they stack.
-- Entries expose the same factual structure: research question, personal contribution, publication outcome, year, context, and relevant links.
-- Scroll position never changes media or replaces, hides, or crossfades content. An `IntersectionObserver` may update only the location reported by the research-thread rail; it does not write history, move focus, or hijack scrolling.
-- There is no sticky media stage, chapter counter, page-progress indicator, or dark scrollytelling surface.
-- Images use restrained borders and light backgrounds. Research figures that require their full composition use `object-contain`; photographic or full-bleed material may use `object-cover`.
-- Selected-research figures may open in the existing accessible media lightbox for detailed inspection. Figures with sourced annotations expose a keyboard-operable Lens with labelled regions, roving tab focus, an original-image fallback, and focus restoration on dismissal.
+### An illustrated reading list
 
-### Publication list
+Visual thesis: four generous, image-led reading entries on the same warm paper, with a distinctive visual for each study and quiet rules between them.
 
-- Publications are grouped by year and presented as ruled editorial rows, never as a card grid.
-- Each row places a modest preview beside bibliographic information on desktop and stacks the same content on mobile.
-- Title, authors, full venue, summary, and resource actions remain readable in the page itself. Opening a spotlight is optional enrichment, not the only way to access the record.
-- The year column may remain sticky at large widths as a quiet navigational aid; publication content itself remains static.
-- Paper, author, code, dataset, project, citation, BibTeX, poster, and video links are independent controls.
-- A publication spotlight may provide the abstract and larger media. Figures, posters, and videos may open in a focused media lightbox. URL query parameters preserve direct links into these states.
-- Standalone datasets follow the publication record as compact ruled rows.
+Content plan: show a recognisable example before opening a paper—VisualSplit colour editing, DIFF street imagery and segmentation labels, a 360+x scene, and a real MeD noisy/denoised pair. Keep the short plain-language titles, authorship and citations. Opening an entry brings its original overview figure directly into view beside the reading, with posters and presentations still available below.
 
-### Experience and news
+Interaction thesis: hover or keyboard focus gently reveals the paired image; the panorama preview shifts across the scene. Opening a native disclosure exposes more visual detail. Use no automatic loop, no nested controls inside the summary, and no invented research results. Reduced motion retains a clear static comparison, and the list remains useful without JavaScript. Mobile gives each image a full-width position above its title.
 
-- Experience is split into research appointments and education on one side and industry experience on the other at extra-large widths. It becomes one linear reading sequence on narrower screens.
-- Entries lead with role, organisation, period, and concise factual detail.
-- Optional role highlights use native `details` and `summary`; collapsed detail should not hide essential identity or dates.
-- News uses dated ruled rows. The three most recent entries are visible, and earlier entries are available through a native expandable archive.
-- Dates and archive counts use small monospaced metadata, while titles retain the editorial serif hierarchy.
+### Direct editing
 
-### Contact and footer
+The work selector opens on COMPaD. Its three poster designs cycle within the canvas, with a small progress control beside the invitation to edit and no timing labels. Hold the poster while hovered, offscreen, on a different work tab or in a hidden browser tab; manual design selection, focus and editing stop rotation until explicitly resumed. Respect reduced motion by starting paused. Preserve each design's edits and undo history through every rotation.
 
-- Contact is a compact closing section on a lightly differentiated warm surface, not a full-screen finale.
-- It contains one short sentence and one clearly visible personal email address, followed by lower-emphasis work and university addresses.
-- Do not use a photographic background, gradient overlay, oversized closing slogan, multiple competing primary email buttons, or collaboration pitch.
-- A fine rule separates the footer, which contains copyright and secondary profile links.
+Let the posters demonstrate the idea before the controls do. In bloom pairs oversized lettering with a photographic specimen and a field-guide hierarchy. Form & space uses cobalt, an aluminium ribbon sculpture, and contrasting display type. City in flux sets acid-yellow lettering against a tightly cropped architectural photograph. Small edition marks, captions and rules make each composition feel like a considered printed piece. Concept copy belongs in `src/data/compad-designs.ts`, separate from career facts.
 
-## Typography
-
-The type system combines an editorial display face with a highly readable interface face.
-
-- **Display:** `Newsreader`, loaded through `next/font` as a variable optical-size font with normal and italic styles. Use it for the name, section titles, research and publication titles, update titles, and the contact address.
-- **Body and interface:** `Source Sans 3`, loaded through `next/font`. Use it for biographies, descriptions, navigation, timelines, actions, captions, and controls.
-- **Metadata:** `IBM Plex Mono` in weights 400, 500, and 600. Reserve it for short dates, years, labels, identifiers, counters, and compact bibliographic metadata.
-- **Name:** fluid sizing from about `3.5rem` on mobile to `7.75rem` on wide screens, normal weight, approximately `0.9` line height, and restrained negative tracking.
-- **Section titles:** fluid sizing from about `2.6rem` to `4.8rem`, normal weight, approximately `1.02` line height.
-- **Record titles:** generally `1.8rem` to `2.15rem` with enough line height for long paper titles.
-- **Body copy:** normally `1rem` to `1.125rem`, with line heights around `1.75` to `2` for sustained reading.
-- **Labels:** small but legible. Monospaced metadata may be uppercase with moderate tracking; ordinary section kickers remain sentence case in the sans serif.
-
-Hierarchy should come from typeface, size, line length, rules, and whitespace. Do not rely on extreme scale, ultra-tight line height, all-caps display copy, ornamental italics, or excessive weight.
-
-## Colour and surfaces
-
-The normative palette is warm white, ink, and academic blue.
-
-| Token | Value | Primary use |
-| --- | --- | --- |
-| `paper` | `#f7f5ef` | Main reading background |
-| `surface` | `#efebe2` | Quiet alternate section surface |
-| `stone` | `#e9e5dc` | Image backing and subtle separation |
-| `ink` | `#111419` | Primary text and strong controls |
-| `muted` | `#60635f` | Secondary copy and metadata |
-| `line` | `rgba(17, 20, 25, 0.14)` | Rules and restrained borders |
-| `accent` / `signal` | `#234b8e` | Academic links, focus, and active details |
-| `signal-soft` | `#e2e8f2` | Very light blue interaction feedback |
-
-- Most sections stay on `paper`; low-opacity `surface` variants provide only gentle rhythm.
-- Blue is an academic annotation colour, not a branding spectacle. Use it sparingly for links, focus, selection, and small active states.
-- Do not introduce near-black feature sections, coloured case-study chapters, technical grids, noise textures, stacked glass panels, or large decorative gradients. A single translucent layer is allowed when it communicates that navigation or a dialog is floating above the document.
-- Maintain WCAG AA contrast for all text and interactive states. Opacity is not a substitute for a properly chosen secondary text colour.
-
-## Interaction and motion
-
-The baseline reading experience is calm and immediately legible. Interaction exists only where it reveals useful information, clarifies the current location, or makes a control feel responsive.
-
-- The fixed header becomes a compact warm translucent surface only after scrolling. Its blur, border, and shadow communicate elevation; reduced-transparency and increased-contrast modes use an opaque paper surface instead.
-- Controls respond on pointer down, not after the full click. Press feedback is subtle and under `150ms`; the interface must never feel as if it is waiting for an animation.
-- Active navigation uses a shared underline that travels between destinations. The reading-progress rule belongs inside the header surface and acts as quiet wayfinding, not a score or counter.
-- Spatial transitions preserve origin: the mobile menu opens from the header and closes along the same path; dialogs enter and leave from the same offset and scale.
-- Positional movement uses short, interruptible, critically damped springs with no bounce. Bouncy motion is reserved for a future interaction only if the gesture itself creates physical momentum.
-- Native anchors retain immediate browser scrolling; do not add scroll hijacking or global smooth scrolling.
-- Research-thread cross-references use native anchors. Explicit selection adds a shareable `thread` query parameter; scroll observation only reports location and never changes history. The portrait caption may show the current `Europe/London` time, updated once per minute without animation.
-- Research figures provide a restrained hover/focus affordance and open a high-resolution viewer with `Escape` dismissal and focus restoration. Lens region changes are user-controlled and use short positional transitions only.
-- Research entries, publication rows, timelines, and news are visible on initial render. Do not add scroll-triggered reveals, full-page pointer effects, animated diagrams, counters, confetti, or ambient loops.
-- Spotlight and lightbox transitions should be short and functional. They must never delay access to content or dismissal.
-- Media never autoplays with sound, and motion is not required to understand any research item.
-
-All transitions respect `prefers-reduced-motion`. In reduced-motion mode, non-essential animation durations collapse to effectively zero while content and controls remain fully available. `prefers-reduced-transparency` removes backdrop blur, and `prefers-contrast: more` strengthens boundaries and secondary text.
-
-## Responsive behaviour
-
-The implementation follows the default Tailwind breakpoints: `sm` 640px, `md` 768px, `lg` 1024px, and `xl` 1280px.
-
-- Mobile is a complete linear personal record, not a compressed desktop layout.
-- The desktop navigation becomes a modal-style menu below `lg`.
-- Introduction, section headers, selected research, publication rows, experience columns, news rows, and contact stack without changing semantic order.
-- Research figures remain legible and preserve their intended fit when stacked.
-- Actions wrap into multiple lines rather than shrinking below comfortable reading or touch sizes.
-- Menu rows and important controls maintain at least a `44px` interactive target where practical.
-- No section, dialog, figure, table-like row, email address, or external link may create horizontal overflow at a `390px` viewport.
-
-## Accessibility
-
-- Preserve semantic landmarks and heading order: header and labelled navigation, `main`, named sections, articles and lists, and footer.
-- Every meaningful portrait, research figure, poster, and media item has contextual alternative text. Purely decorative styling remains outside the accessibility tree.
-- Interactive publication previews use progressive-enhancement links with `aria-haspopup="dialog"`; without hydration they lead to the corresponding project or paper. Nested author and resource links remain separate controls; an article itself must not masquerade as a button.
-- Mobile navigation, publication spotlights, and media lightboxes provide predictable initial focus, a contained tab sequence, `Escape` dismissal, scroll locking, and focus restoration. Background content becomes inert while a modal is active.
-- The active navigation item exposes `aria-current="location"`.
-- Focus indicators use a visible two-pixel academic-blue outline with adequate offset.
-- Native `details` and `summary` retain their keyboard behaviour for optional role detail and older news.
-- Body text, muted text, links, controls, and focus states meet WCAG AA contrast on every used surface.
-- The complete professional and academic record remains readable and operable with reduced motion, JavaScript-delayed visual effects disabled, or a keyboard as the only input.
-
-## Component and content rules
-
-- Factual profile, research, publication, project, news, experience, and education content belongs in `src/data/site.ts`, not inline in page composition.
-- Public claims must be traceable in `docs/sources.md`. Keep dates and qualifications conservative when a more precise description is not sourced.
-- Use real research figures, posters, and project assets where rights and provenance are clear.
-- The publication list is the durable scholarly record. Selected research is a concise editorial subset. Enterprise examples use the same editorial grammar and must not become a separate marketing-card system.
-- Keep one primary personal contact route. Organisation and university addresses remain visible as compact secondary routes without competing with it.
-- Structured metadata should describe the person and scholarly articles accurately through `Person` and `ScholarlyArticle` schema.
-- Legacy component names must not dictate the visual behaviour: a component may retain an implementation name while rendering a static editorial section.
-
-## Acceptance criteria
-
-Review the page at desktop and `390 × 844` mobile sizes. Before handoff, verify:
-
-- the page reads unmistakably as one person's professional and academic profile rather than a product or company website;
-- Enterprise AI and Research receive equal weight in the introduction, and both are easy to find from the header;
-- the introduction, enterprise work, research questions, selected research, publications, experience, recent updates, and contact sections appear in the documented order;
-- descriptions use ordinary English that a non-specialist can follow; technical terms sit inside clear explanations instead of replacing them;
-- no dark scrollytelling section, signal field, full-viewport contact treatment, promotional CTA, or scroll-driven case transition remains;
-- typography resolves to Newsreader for display text and Source Sans 3 for body and interface text;
-- selected research entries and the complete publication record are present without depending on animation or dialogs;
-- research-thread cross-references, the local-time caption, and keyboard-operable Figure Lens work without disturbing the reading flow;
-- anchor navigation clears the fixed header and reports the correct active location;
-- mobile navigation, spotlight, lightbox, citation, BibTeX, and disclosure controls work by keyboard and restore focus correctly;
-- all meaningful images have useful alternative text and decorative elements are ignored by assistive technology;
-- there is no horizontal overflow, including at `390px` and with long paper titles or the email address;
-- reduced-motion mode retains all information and removes non-essential movement;
-- automated Axe checks report no serious or critical WCAG A/AA violations;
-- `npm run lint`, `npm run typecheck`, `npm run build`, and `npm run test:e2e` pass against a fresh static export.
+The inspector follows the selected object, with no Text/Image picker or type badges. Every word on the poster is editable. Text exposes wording and typography; the photograph exposes scale, rotation, opacity and flip. Selection outlines and drag feedback explain the action; undo/redo and layer ordering make experimentation reversible. Each design retains its own edits and undo history while switching in the current page session. On phones, place the larger poster above a compact inspector with room for touch controls.

@@ -2,6 +2,39 @@
 
 Initial public-source research was completed on April 16, 2026. The career narrative and current profile were audited again on August 27, 2026.
 
+## Personal collection — September 15, 2026
+
+The user confirmed that his English name is **Henry**. The introduction now says “You can call me Henry.”, and the footer, page metadata and Person schema include this name. Publication authorship and citations retain Chenyuan Qu.
+
+At the user's request, the site now gives less prominence to an Applied AI Engineer identity. The introduction describes visual curiosity, work summaries are shorter, project roles and qualified outcomes live inside disclosures, and the biography keeps the verified technology and research roles. The third project is labelled “Everyday tools”; it remains the same ERP assistant. Page metadata uses “A personal collection”. This changes presentation, not the underlying career or research record.
+
+No new employment, travel, hobby, project-status or impact claims were added. The large photograph is the same existing night scene and is not assigned a new location. Nexus figures, the evaluated scope of ERP results, COMPaD's alpha status and publication authorship are preserved. The previous source audits below remain the basis for these facts.
+
+## Project visuals — September 15, 2026
+
+- The “A little more reading.” list now has a visual preview for every publication. VisualSplit reuses the verified egret original/result, and 360+x reuses the existing official panorama. DIFF pairs the street photograph and **reference segmentation labels** from its published pipeline figure; the preview does not claim these labels are a separately evaluated prediction. MeD pairs the original stairwell photograph with the published denoised image. The original overview figure is visible as soon as each paper is expanded, with posters and videos retained below.
+- New reading-list sources, copied without altering the source files into `public/images/publications/studies/`:
+  - `diff-pipeline.jpg`: [official DIFF pipeline figure](https://raw.githubusercontent.com/Yux1angJi/DIFF/main/resources/pipeline.jpg), 8181 × 3300. CSS frames the input photograph at `(62, 1293, 566, 565)` and reference labels at `(62, 275, 566, 565)`; the complete overview remains linked in the paper entry.
+  - `med-noisy.jpg`: [MeD original stairwell image](https://chqwer2.github.io/MeD/static/images/PolyU/data30.JPG), 3680 × 2456.
+  - `med-denoised.jpg`: [MeD published denoised stairwell image](https://chqwer2.github.io/MeD/static/images/PolyU/data30_denoised.jpg), 3680 × 2456. Both previews use the same CSS framing `(1660, 510, 1040, 720)` to show the tile and pipe detail. No noise was added and no browser filter was used to simulate denoising.
+  - Preview mappings, alternatives and captions live in `src/data/paper-visuals.ts`. Native image loading is deferred, and every asset uses the configured static base path.
+- VisualSplit now presents three actual published experiments in a manual comparison viewer, replacing the decorative beach photograph. The egret example edits the colour map; the mountain valley changes the brightness histogram in the downstream diffusion application; the dog demonstrates descriptor-to-image reconstruction. These are precomputed research results, not live browser inference or synthetic CSS effects. The original paper, authorship and venue are unchanged. Asset mapping is recorded below.
+- Nexus was inspected at the user's supplied test portal, including its existing layout editor. No layouts were saved or published. The new portfolio image uses the portal's publicly served feature previews for Campaigns (`/images/login/feature-campaigns.png`) and content scheduling (`/images/login/feature-content-scheduling.png`), plus its `/images/login/msp-logo.svg` logo. These were acquired through the rendered login page at [Nexus](https://nexus-test.mysignageportal.com/), exported as local `nexus-campaigns.webp`, `nexus-schedule.webp` and `nexus-logo.svg` assets under `public/images/projects/`, and composed with CSS. They are product-provided examples, not a new customer deployment, customer endorsement or live account data. No credentials or authenticated account screenshots are included in the site.
+- COMPaD now uses three working, local interactive poster concepts: In bloom, Form & space, and City in flux. All words, typography, paper colours, image transforms and separate layer positions can be edited. The flower, silver sculpture and architectural photograph are original artworks generated with the built-in image tool, stored under `public/images/projects/` as `compad-flower.webp`, `compad-sculpture.webp` and `compad-city.webp`; the first two retain their transparency. They are not claimed outputs of the COMPaD model. [Artwork provenance and complete prompts](compad-artwork.md).
+- The 360+x image retains the original 2880 × 1440 panorama resolution. Following the user's clarification, the camera now starts inside the scene and the panorama fills the frame; the external globe and its mode switch have been removed. The source, existing face blurring, attribution and CC BY-NC-SA 4.0 terms documented below are unchanged. It falls back to a full-frame photograph if JavaScript or WebGL is unavailable. The renderer follows the projection approach documented in the [Three.js equirectangular panorama example](https://threejs.org/examples/webgl_panorama_equirectangular.html).
+- These visuals replace the Nexus and COMPaD HTML/CSS illustrations and the sliding 360+x photo crop described in the September 14 entry. All career, project-status and authorship facts are unchanged.
+
+## Personal portfolio redesign — September 14, 2026
+
+The introduction, selected work, research summaries, about section and contact invitation were rewritten in concise first-person English. This is a presentation update using the existing verified record, not a new audit of employment, paper status or business results. The scope of Nexus and ERP figures, COMPaD's alpha status, publication authorship, career dates and contact details is unchanged.
+
+- The layered portrait uses the original `/public/images/portrait.webp` photograph. The face and clothing are not regenerated. `/public/images/portrait/person-matte.webp` is the generated luminance mask applied to that original photograph; `/public/images/portrait/street-background.webp` is the separately generated inpainted background made for the approved portrait concept. Reconstructed scenery is an artistic completion of the obscured area, not documentary evidence of it.
+- The candid photograph in About is the existing `/public/images/hero/home-hero-desktop.webp` asset. No new location or travel claims were added.
+- The beach image comes from the official VisualSplit project hero, already documented below. Its palette swatches are decorative colour studies, not claimed model outputs.
+- The 360+x preview uses the official project's panorama at `https://x360dataset.github.io/static/images/image_base64.txt`, linked by `https://x360dataset.github.io/`. The embedded PNG was decoded and resized to an 1800-pixel-wide WebP in `/public/images/projects/x360-panorama.webp`; existing face blurring is preserved. Attribution: 360+x authors, official 360+x project, [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). The research preview links to the source project.
+- The Nexus, Everyday AI and COMPaD visuals are original HTML/CSS project illustrations using the above photography. Each is labelled “Project illustration”. They are not customer screenshots or evidence of a released interface.
+- Formal publication titles, author order, DOI/arXiv identifiers, resource links, citation text, BibTeX and original figures remain available through the expandable paper library. Existing `?spotlight=` and `#publication-` links open the matching paper.
+
 ## Narrative and source update — August 27, 2026
 
 The site now presents Enterprise AI and academic research as two equal parts of one practice. This update was based on the user-provided **Career Evidence Master Record, version 26 August 2026**, an authenticated review of the user's newly updated LinkedIn profile on August 27, 2026, the public sources below, and direct user confirmation that both practices should be emphasised.
@@ -40,7 +73,8 @@ The earlier authwall limitation no longer applies to the August 27 review.
 | Fact | Value used on site | Sources |
 | --- | --- | --- |
 | Name | Chenyuan Qu | Google Scholar, ORCID, Birmingham profile |
-| Current role line | Applied AI Engineer · Head of Technologies · PhD Researcher | Career Evidence Master Record, authenticated LinkedIn review, Birmingham profile, and MI X people page |
+| English name | Henry | Direct user confirmation on September 15, 2026 |
+| Current structured role line | Head of Technologies · PhD Researcher | Career Evidence Master Record, authenticated LinkedIn review, Birmingham profile, and MI X people page |
 | Affiliation line | University of Birmingham · Allsee · Vieunite | User-confirmed affiliations, Birmingham profile, and public Allsee / Vieunite association from the current personal website and BinEgo-360 site |
 | Primary email | `Chenyuan.Qu@outlook.com` | User-provided contact information; selected as the primary public contact in the July 2026 narrative restructure |
 | Additional contact emails | `henry.qu@allsee-tech.com`, `henry.qu@vieunite.com`, `cxq134@student.bham.ac.uk` | User-provided contact information and Birmingham profile |
@@ -77,6 +111,19 @@ The earlier authwall limitation no longer applies to the August 27 review.
 - Local spotlight figure: `/public/images/projects/visualsplit-framework.webp`, matched to the framework overview visual used on the official VisualSplit project page.
 - Local poster preview: `/public/images/publications/visualsplit-poster.webp`, generated from the official poster PDF `https://chenyuanqu.com/VisualSplit/docs/posters/0873_poster.pdf`
 - Local video poster preview: `/public/images/projects/visualsplit-hero.webp`, derived from the official VisualSplit hero image `https://chenyuanqu.com/VisualSplit/images/hero/visualsplit_hero.jpg`
+- Interactive case assets: copied from the matching public assets in the local VisualSplit project-page repository, with lossless WebP encoding and original dimensions and pixels preserved. No cropping, retouching, sharpening, colour correction or generated replacements. Local names below are relative to `public/images/projects/visualsplit/`; source paths are relative to `https://chenyuanqu.com/VisualSplit/images/`.
+
+  | Local asset(s) | Published source path(s) |
+  | --- | --- |
+  | `egret-original.webp`, `egret-result.webp` | `editing/apps/apps_editing_colour_original.png`, `editing/apps/apps_editing_colour_output.png` |
+  | `egret-colour-before.webp`, `egret-colour-after.webp` | `editing/apps/apps_editing_colour_seg_original.png`, `editing/apps/apps_editing_colour_seg_edited.png` |
+  | `valley-original.webp` | `editing/apps/apps_editing_original.png` |
+  | `valley-dark.webp`, `valley-balanced.webp`, `valley-bright.webp` | `editing/apps/apps_editing_output_-2.png`, `editing/apps/apps_editing_output_0.png`, `editing/apps/apps_editing_output_2.png` |
+  | `valley-histogram-dark.webp`, `valley-histogram-balanced.webp`, `valley-histogram-bright.webp` | `editing/apps/apps_editing_hist_after_-2.png`, `editing/apps/apps_editing_hist_after_0.png`, `editing/apps/apps_editing_hist_after_2.png` |
+  | `dog-original.webp`, `dog-result.webp` | `experiments/descriptor/exp_original.png`, `experiments/descriptor/exp_output.png` |
+  | `dog-edges.webp`, `dog-colour.webp`, `dog-light.webp` | `experiments/descriptor/exp_edge.png`, `experiments/descriptor/exp_segmentation.png`, `experiments/descriptor/exp_histogram.png` |
+
+  The dog's published reconstruction is 224 × 224, as is the valley's original input; their softer details remain visible when enlarged by the layout. The egret original/result are 1024 × 1024 and the valley outputs are 512 × 512. All 16 selected source PNGs were verified byte-for-byte against the official public site on September 15, 2026. No human illustration or competitor result is used. Presentation copy and mappings live in `src/data/visualsplit-examples.ts`; each case links to the official project page.
 - Project links:
   - Project page: `https://chenyuanqu.com/VisualSplit/`
   - Paper PDF: `https://chenyuanqu.com/VisualSplit/docs/papers/VisualSplit_BMVC2025.pdf`

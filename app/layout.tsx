@@ -1,15 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, Newsreader, Source_Sans_3 } from "next/font/google";
+import { DM_Sans, Newsreader } from "next/font/google";
 
 import { profile } from "@/src/data/site";
 import { absoluteUrl, siteConfig, withBasePath } from "@/src/lib/site-config";
 
 import "./globals.css";
 
-const sans = Source_Sans_3({
+const sans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
-  display: "swap"
+  display: "swap",
 });
 
 const display = Newsreader({
@@ -19,14 +19,7 @@ const display = Newsreader({
   style: ["normal", "italic"],
   axes: ["opsz"],
   adjustFontFallback: false,
-  display: "swap"
-});
-
-const mono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-  weight: ["400", "500", "600"],
-  display: "swap"
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -37,14 +30,14 @@ export const metadata: Metadata = {
   authors: [
     {
       name: profile.name,
-      url: siteConfig.siteUrl
-    }
+      url: siteConfig.siteUrl,
+    },
   ],
   creator: profile.name,
   publisher: profile.name,
   keywords: [siteConfig.name, ...siteConfig.keywords],
   alternates: {
-    canonical: withBasePath("/")
+    canonical: withBasePath("/"),
   },
   openGraph: {
     type: "website",
@@ -55,18 +48,18 @@ export const metadata: Metadata = {
     siteName: siteConfig.shortTitle,
     images: [
       {
-        url: absoluteUrl("/og.png"),
-        width: 1200,
-        height: 630,
-        alt: "Chenyuan Qu — Enterprise AI and computer vision research"
-      }
-    ]
+        url: absoluteUrl("/og.jpg"),
+        width: 1170,
+        height: 614,
+        alt: "Chenyuan Qu — A personal collection of projects and research",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: siteConfig.title,
     description: siteConfig.description,
-    images: [absoluteUrl("/og.png")]
+    images: [absoluteUrl("/og.jpg")],
   },
   robots: {
     index: true,
@@ -76,29 +69,33 @@ export const metadata: Metadata = {
       follow: true,
       "max-image-preview": "large",
       "max-snippet": -1,
-      "max-video-preview": -1
-    }
+      "max-video-preview": -1,
+    },
   },
   icons: {
-    icon: withBasePath("/icon.svg")
-  }
+    icon: withBasePath("/icon.svg"),
+  },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f7f5ef",
-  colorScheme: "light"
+  themeColor: "#f5f2eb",
+  colorScheme: "light",
 };
 
 export default function RootLayout({
-  children
+  children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${sans.variable} ${display.variable} ${mono.variable}`}
-    >
+    <html lang="en" className={`${sans.variable} ${display.variable}`}>
+      <head>
+        <link
+          rel="preload"
+          as="image"
+          href={withBasePath("/images/portrait/person-matte.webp")}
+        />
+      </head>
       <body className="antialiased">{children}</body>
     </html>
   );

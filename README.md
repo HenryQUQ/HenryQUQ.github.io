@@ -1,15 +1,17 @@
-# Chenyuan Qu — Personal Academic Website
+# Chenyuan Qu (Henry) — A personal collection
 
-The source for [chenyuanqu.com](https://chenyuanqu.com): a personal academic website for Chenyuan Qu, a PhD student working on computer vision, multimodal learning, and generative models.
+The source for [chenyuanqu.com](https://chenyuanqu.com): Chenyuan's personal collection of projects, research and things in progress. A warm, visual introduction to the person and the work.
 
-![Homepage preview](docs/readme-preview.png)
+![Homepage preview](docs/screenshots/henry-introduction-desktop.jpg)
 
 ## What is here
 
-- Selected research projects with original figures and an accessible high-resolution viewer
-- A complete publication list with media, citation, and BibTeX tools
-- Research appointments, industry experience, education, news, and contact details
-- Responsive, keyboard-accessible interaction and GitHub Pages static export
+- A layered portrait with three poster compositions, manual selection and a discreet pause/resume control
+- Selected work with Nexus product imagery and three editable COMPaD poster designs
+- A VisualSplit comparison study with published colour editing, lighting and reconstruction examples
+- A 360+x panorama that opens inside the scene, with drag and keyboard controls, alongside the complete paper library and citations
+- A personal introduction, career and education details, updates and contact routes
+- Keyboard navigation, reduced-motion support, native reading without JavaScript and GitHub Pages static export
 
 The site is built with Next.js 14, React, TypeScript, Tailwind CSS, and Framer Motion. Public facts and structured content live in `src/data/site.ts`; source provenance is tracked in `docs/sources.md`.
 

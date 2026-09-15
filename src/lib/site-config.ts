@@ -1,37 +1,37 @@
+import { profile } from "@/src/data/site";
+
 const rawBasePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const cleanedBasePath =
   rawBasePath === "/" ? "" : rawBasePath.replace(/\/+$/, "");
 
 export const siteConfig = {
-  name: "Chenyuan Qu",
-  title: "Chenyuan Qu — Applied AI & Computer Vision",
-  shortTitle: "Chenyuan Qu",
+  name: profile.name,
+  title: `${profile.name} (${profile.englishName}) — A personal collection`,
+  shortTitle: `${profile.name} (${profile.englishName})`,
   description:
-    "Chenyuan Qu builds practical AI tools for businesses and researches how computers understand and create visual content.",
+    `Projects, research and a few things in progress. The personal website of ${profile.name}, also known as ${profile.englishName}, based in Birmingham.`,
   primaryEmail: "Chenyuan.Qu@outlook.com",
   keywords: [
     "visual intelligence",
-    "applied AI",
-    "enterprise AI",
-    "AI agents",
     "computer vision",
     "multimodal learning",
     "generative AI",
-    "AI systems",
-    "technology leadership",
-    "research engineering",
+    "visual representation",
+    "image generation",
+    "COMPaD",
+    "VisualSplit",
     "University of Birmingham",
-    "MI X Group"
+    "MI X Group",
   ],
   profiles: [
     "https://scholar.google.com/citations?hl=en&user=MrHJXYcAAAAJ",
     "https://github.com/HenryQUQ",
     "https://huggingface.co/quchenyuan",
     "https://uk.linkedin.com/in/henry-qu-436621195",
-    "https://orcid.org/0009-0000-4814-2022"
+    "https://orcid.org/0009-0000-4814-2022",
   ],
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "https://chenyuanqu.com",
-  basePath: cleanedBasePath
+  basePath: cleanedBasePath,
 };
 
 export function withBasePath(path = "/") {
