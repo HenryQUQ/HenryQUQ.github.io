@@ -219,11 +219,12 @@ export type Profile = {
   links: LinkItem[];
 };
 
+// Chapter numerals are print devices for structure only; they carry no facts.
 export const sections = [
-  { id: "enterprise", label: "Work" },
-  { id: "research", label: "Research" },
-  { id: "journey", label: "About" },
-  { id: "contact", label: "Say hello" },
+  { id: "enterprise", label: "Work", folio: "I" },
+  { id: "research", label: "Research", folio: "II" },
+  { id: "journey", label: "About", folio: "III" },
+  { id: "contact", label: "Say hello", folio: "IV" },
 ];
 
 export const homeContent = {
@@ -253,6 +254,7 @@ export const homeContent = {
       "These days, I study computer vision as a part-time PhD researcher at the University of Birmingham and lead technology at Allsee. I like being able to follow an idea through a paper, a prototype, and the conversations it starts.",
     ],
     image: "/images/hero/home-hero-desktop.webp",
+    imageMobile: "/images/hero/home-hero-mobile.webp",
     imageAlt: "Chenyuan looking across a busy city crossing at night",
     caption: "A different point of view.",
   },
@@ -262,6 +264,7 @@ export const homeContent = {
     intro:
       "A question about the work, an idea to explore together, or just something you’d like to share. I’d be glad to hear from you.",
   },
+  colophon: "Set in Newsreader & DM Sans.",
 };
 
 export type WorkStory = {
@@ -333,7 +336,6 @@ export const researchStories = [
     title: "Take a picture apart.",
     description:
       "I wanted to give image models controls we can see and understand. VisualSplit starts with three familiar things: shape, colour and light.",
-    note: "BMVC 2025 · First author",
     image: "/images/projects/visualsplit/egret-original.webp",
     imageAlt:
       "Original white egret photograph from the VisualSplit colour-editing example",
@@ -345,7 +347,6 @@ export const researchStories = [
     title: "There’s more than one view.",
     description:
       "A place is more than the view in front of you. We brought different viewpoints and sound together to study how they add up to a scene. Take a look around.",
-    note: "CVPR 2024 · Oral paper · Co-author",
     image: "/images/projects/x360-panorama.webp",
     imageAlt:
       "A panoramic museum scene from the official 360+x dataset preview",

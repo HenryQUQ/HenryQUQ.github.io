@@ -13,6 +13,8 @@ export function VisualSplitStudy() {
   const [active, setActive] = useState(0);
   const [light, setLight] = useState(2);
   const [comparison, setComparison] = useState(40);
+  // Eases the divider back to its starting point when a new example opens.
+  const [settling, setSettling] = useState(false);
   const [ready, setReady] = useState(false);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const tabListRef = useRef<HTMLDivElement>(null);
@@ -27,6 +29,7 @@ export function VisualSplitStudy() {
 
   function selectExample(index: number) {
     setActive(index);
+    setSettling(comparison !== 40);
     setComparison(40);
     const panel = panelRef.current?.getBoundingClientRect();
     const tabs = tabListRef.current?.getBoundingClientRect();
@@ -79,7 +82,7 @@ export function VisualSplitStudy() {
               tabRefs.current[next]?.focus({ preventScroll: true });
             }}
           >
-            <span aria-hidden="true">0{index + 1}</span> {item.label}
+            {item.label}
           </button>
         ))}
       </div>
@@ -92,12 +95,15 @@ export function VisualSplitStudy() {
         className="visualsplit-example"
         tabIndex={0}
       >
-        <figure className="visualsplit-comparison">
-          <div
-            className="visualsplit-images"
-            key={example.id}
-            style={{ "--comparison": `${comparison}%` } as CSSProperties}
-          >
+        <figure
+          className="visualsplit-comparison"
+          data-settling={settling}
+          style={{ "--comparison": `${comparison}%` } as CSSProperties}
+          onTransitionEnd={(event) => {
+            if (event.propertyName === "--comparison") setSettling(false);
+          }}
+        >
+          <div className="visualsplit-images" key={example.id}>
             <Image
               src={withBasePath(example.original.src)}
               alt={example.original.alt}
@@ -129,7 +135,10 @@ export function VisualSplitStudy() {
               max={100}
               value={comparison}
               disabled={!ready}
-              onChange={(event) => setComparison(Number(event.target.value))}
+              onChange={(event) => {
+                setSettling(false);
+                setComparison(Number(event.target.value));
+              }}
               aria-label="Compare original and VisualSplit result"
               aria-valuetext={`${comparison}% original, ${100 - comparison}% ${resultLabel.toLowerCase()}`}
               aria-describedby="visualsplit-drag-hint"

@@ -1,15 +1,30 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ArrowUpRight, X } from "lucide-react";
+import { ArrowDown, X } from "lucide-react";
 import { profile } from "@/src/data/site";
 
-type SiteHeaderProps = { sections: { id: string; label: string }[] };
+type SiteHeaderProps = {
+  sections: { id: string; label: string; folio: string }[];
+};
+
+type Tone = "paper" | "stone" | "night" | "photo" | "rust";
+
+// Browser chrome follows the surface beneath the masthead.
+const themeColours: Record<Tone, string> = {
+  paper: "#f5f2eb",
+  stone: "#e4ddcf",
+  night: "#111a1c",
+  photo: "#0c191b",
+  rust: "#994028",
+};
 
 export function SiteHeader({ sections }: SiteHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeId, setActiveId] = useState("");
+  const [tone, setTone] = useState<Tone>("paper");
+  const headerRef = useRef<HTMLElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDialogElement>(null);
 
@@ -28,6 +43,17 @@ export function SiteHeader({ sections }: SiteHeaderProps) {
           current = id;
       });
       setActiveId(current);
+      // The deepest surface under the middle of the header sets its tone.
+      const probe = (headerRef.current?.offsetHeight ?? 0) / 2;
+      let surface: Tone = "paper";
+      document
+        .querySelectorAll<HTMLElement>("main [data-surface]")
+        .forEach((element) => {
+          const box = element.getBoundingClientRect();
+          if (box.top <= probe && box.bottom > probe)
+            surface = element.dataset.surface as Tone;
+        });
+      setTone(surface);
     };
     const onScroll = () => {
       cancelAnimationFrame(frame);
@@ -42,6 +68,13 @@ export function SiteHeader({ sections }: SiteHeaderProps) {
       window.removeEventListener("resize", onScroll);
     };
   }, [sections]);
+
+  useEffect(() => {
+    const meta = document.querySelector<HTMLMetaElement>(
+      'meta[name="theme-color"]',
+    );
+    if (meta) meta.content = themeColours[scrolled ? tone : "paper"];
+  }, [scrolled, tone]);
 
   useEffect(() => {
     const dialog = menuRef.current;
@@ -76,7 +109,12 @@ export function SiteHeader({ sections }: SiteHeaderProps) {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <header className="site-header" data-scrolled={scrolled}>
+      <header
+        ref={headerRef}
+        className="site-header"
+        data-scrolled={scrolled}
+        data-tone={scrolled ? tone : "paper"}
+      >
         <div className="site-container header-inner">
           <a
             className="site-mark"
@@ -94,7 +132,7 @@ export function SiteHeader({ sections }: SiteHeaderProps) {
               >
                 {section.label}
                 {section.id === "contact" && (
-                  <ArrowUpRight size={15} aria-hidden="true" />
+                  <ArrowDown size={14} aria-hidden="true" />
                 )}
               </a>
             ))}
@@ -111,7 +149,7 @@ export function SiteHeader({ sections }: SiteHeaderProps) {
             Menu <span aria-hidden="true">+</span>
           </button>
           <noscript>
-            <style>{`.menu-toggle{display:none!important}`}</style>
+            <style>{`.menu-toggle{display:none!important}.site-header{background-color:var(--header-bg);box-shadow:0 1px 0 var(--rule)}.site-header .header-inner{border-color:transparent}`}</style>
             <nav className="no-script-nav" aria-label="Navigation">
               {sections.map((section) => (
                 <a key={section.id} href={`#${section.id}`}>
@@ -149,7 +187,9 @@ export function SiteHeader({ sections }: SiteHeaderProps) {
         }}
       >
         <div className="mobile-nav-top">
-          <span className="site-mark">cq.</span>
+          <span className="site-mark">
+            cq<span>.</span>
+          </span>
           <button
             type="button"
             aria-label="Close navigation menu"
@@ -159,15 +199,16 @@ export function SiteHeader({ sections }: SiteHeaderProps) {
           </button>
         </div>
         <nav aria-label="Mobile primary">
-          {sections.map((section, index) => (
+          {sections.map((section) => (
             <a
               key={section.id}
               href={`#${section.id}`}
               onClick={() => setMenuOpen(false)}
             >
-              <span className="mobile-nav-index">0{index + 1}</span>
+              <span className="mobile-nav-index" aria-hidden="true">
+                {section.folio}
+              </span>
               {section.label}
-              <ArrowUpRight size={24} aria-hidden="true" />
             </a>
           ))}
         </nav>

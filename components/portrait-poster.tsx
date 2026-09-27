@@ -8,9 +8,9 @@ import {
   useRef,
   useState,
 } from "react";
-import { useReducedMotion } from "framer-motion";
 import { profile } from "@/src/data/site";
 import { withBasePath } from "@/src/lib/site-config";
+import { useReducedMotion } from "@/src/lib/use-reduced-motion";
 
 const styles = ["Editorial", "Gallery", "Cinema"] as const;
 const duration = 4500;
@@ -153,59 +153,61 @@ export function PortraitPoster() {
       data-playing={playing}
       style={maskStyle}
     >
-      <div
-        ref={posterRef}
-        className="cq-poster"
-        role="img"
-        aria-label={`Portrait of ${profile.name}, ${styles[active]} composition`}
-        onPointerMove={moveDepth}
-        onPointerLeave={resetDepth}
-        onPointerCancel={resetDepth}
-      >
-        <div className="cq-poster-top" aria-hidden="true">
-          <span>{profile.name.toUpperCase()}</span>
-          <span>0{active + 1}</span>
+      <div className="cq-plate">
+        <div
+          ref={posterRef}
+          className="cq-poster"
+          role="img"
+          aria-label={`Portrait of ${profile.name}, ${styles[active]} composition`}
+          onPointerMove={moveDepth}
+          onPointerLeave={resetDepth}
+          onPointerCancel={resetDepth}
+        >
+          <div className="cq-poster-top" aria-hidden="true">
+            <span>{profile.name.toUpperCase()}</span>
+            <span>0{active + 1}</span>
+          </div>
+          <div className="cq-plinth" aria-hidden="true" />
+          <div className="cq-scene-frame" aria-hidden="true">
+            <Image
+              className="cq-scene"
+              src={withBasePath("/images/portrait/street-background.webp")}
+              width={1254}
+              height={1254}
+              alt=""
+              priority
+              sizes="(max-width: 600px) 85vw, 42vw"
+            />
+          </div>
+          <p className="cq-backtype" aria-hidden="true">
+            {active === 1 ? "QU." : "Qu."}
+          </p>
+          <div className="cq-person" aria-hidden="true">
+            <Image
+              src={withBasePath(profile.heroImage)}
+              width={1800}
+              height={1800}
+              alt=""
+              priority
+              sizes="(max-width: 600px) 130vw, 65vw"
+            />
+          </div>
+          <div className="cq-shade" aria-hidden="true" />
+          <p className="cq-caption" aria-hidden="true">
+            Research
+            <br />
+            &amp; practice.
+          </p>
+          <p className="cq-side-caption" aria-hidden="true">
+            Visual studies
+          </p>
+          <p className="cq-edition" aria-hidden="true">
+            {(active === 1
+              ? profile.location.split(",")[0]
+              : profile.location.replace(",", " ·")
+            ).toUpperCase()}
+          </p>
         </div>
-        <div className="cq-plinth" aria-hidden="true" />
-        <div className="cq-scene-frame" aria-hidden="true">
-          <Image
-            className="cq-scene"
-            src={withBasePath("/images/portrait/street-background.webp")}
-            width={1254}
-            height={1254}
-            alt=""
-            priority
-            sizes="(max-width: 600px) 85vw, 42vw"
-          />
-        </div>
-        <p className="cq-backtype" aria-hidden="true">
-          {active === 1 ? "QU." : "Qu."}
-        </p>
-        <div className="cq-person" aria-hidden="true">
-          <Image
-            src={withBasePath(profile.heroImage)}
-            width={1800}
-            height={1800}
-            alt=""
-            priority
-            sizes="(max-width: 600px) 130vw, 65vw"
-          />
-        </div>
-        <div className="cq-shade" aria-hidden="true" />
-        <p className="cq-caption" aria-hidden="true">
-          Research
-          <br />
-          &amp; practice.
-        </p>
-        <p className="cq-side-caption" aria-hidden="true">
-          Visual studies
-        </p>
-        <p className="cq-edition" aria-hidden="true">
-          {(active === 1
-            ? profile.location.split(",")[0]
-            : profile.location.replace(",", " ·")
-          ).toUpperCase()}
-        </p>
       </div>
       <figcaption className="cq-art-controls">
         <div

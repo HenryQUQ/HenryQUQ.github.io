@@ -10,7 +10,6 @@ import {
   type PointerEvent,
 } from "react";
 import { Redo2, RotateCcw, Undo2 } from "lucide-react";
-import { useReducedMotion } from "framer-motion";
 import { CompadInspector } from "@/components/compad-inspector";
 import { posterDesigns } from "@/src/data/compad-designs";
 import {
@@ -21,6 +20,7 @@ import {
   type PosterLayer,
 } from "@/src/lib/compad-editor";
 import { withBasePath } from "@/src/lib/site-config";
+import { useReducedMotion } from "@/src/lib/use-reduced-motion";
 
 const rotationDuration = 4500;
 
@@ -55,6 +55,8 @@ export function CompadPlayground() {
   const history = histories[designId];
   const [selectedId, setSelectedId] = useState<string | null>("headline");
   const [interactive, setInteractive] = useState(false);
+  // Only a paper colour chosen by the reader fades; a new design is laid down.
+  const [toneFade, setToneFade] = useState(false);
   const poster = history.present;
   const selected =
     poster.layers.find((layer) => layer.id === selectedId) ?? null;
@@ -111,6 +113,7 @@ export function CompadPlayground() {
       timer = window.setTimeout(() => {
         timer = 0;
         remaining.current = rotationDuration;
+        setToneFade(false);
         setDesignId(
           (current) =>
             posterDesigns[
@@ -145,6 +148,7 @@ export function CompadPlayground() {
     endGesture();
     resetRequested.current = true;
     setPlaying(false);
+    setToneFade(false);
     setDesignId(id);
     setSelectedId("headline");
     if (progress.current) progress.current.style.transform = "scaleX(0)";
@@ -329,6 +333,7 @@ export function CompadPlayground() {
         ref={paper}
         className="compad-paper"
         data-tone={poster.tone}
+        data-tone-fade={toneFade}
         data-design={poster.design}
         role="group"
         aria-label="Poster canvas"
@@ -430,9 +435,10 @@ export function CompadPlayground() {
         onChange={(change, group) => {
           if (selectedId) editLayer(selectedId, change, group);
         }}
-        onTone={(tone) =>
-          dispatch({ type: "edit", change: (poster) => ({ ...poster, tone }) })
-        }
+        onTone={(tone) => {
+          setToneFade(true);
+          dispatch({ type: "edit", change: (poster) => ({ ...poster, tone }) });
+        }}
         onOrder={reorder}
         onEndGroup={() => dispatch({ type: "end-group" })}
       />
@@ -473,7 +479,7 @@ export function CompadPlayground() {
         </button>
       </div>
       <noscript>
-        <style>{`.compad-tools,.compad-history,.compad-designs,.compad-cycle-toggle{display:none}.compad-layer[data-selected=true]{outline:none}@media(min-width:761px){.compad-paper{left:22%}}`}</style>
+        <style>{`.compad-tools,.compad-history,.compad-designs,.compad-cycle-toggle{display:none}.compad-layer[data-selected=true]{outline:none}@media(min-width:760px){.compad-paper{left:22%}}`}</style>
       </noscript>
     </div>
   );

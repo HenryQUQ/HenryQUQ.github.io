@@ -15,7 +15,7 @@ function PreviewImage({ image }: { image: PaperVisualImage }) {
           width={image.width}
           height={image.height}
           alt=""
-          sizes="(max-width: 759px) 90vw, 280px"
+          sizes="(max-width: 759px) 100vw, 360px"
           style={{
             position: "absolute",
             width: `${(image.width / crop.width) * 100}%`,
@@ -34,7 +34,7 @@ function PreviewImage({ image }: { image: PaperVisualImage }) {
       src={withBasePath(image.src)}
       alt=""
       fill
-      sizes="(max-width: 759px) 90vw, 280px"
+      sizes="(max-width: 759px) 100vw, 360px"
     />
   );
 }

@@ -14,8 +14,10 @@ export type PaperVisual = {
   labels: [string, string];
 };
 
-// These previews use published imagery. Crop coordinates only frame the original
-// source in CSS; the source files and the full figures remain unchanged.
+// These previews use published imagery. DIFF and MeD use lossless crops of the
+// original figures, with MeD resampled once to its preview size (see
+// docs/sources.md); the source files remain unchanged.
+// An optional crop frames a source in CSS without creating a derivative.
 export const paperVisuals: Record<string, PaperVisual> = {
   visualsplit: {
     kind: "comparison",
@@ -38,16 +40,14 @@ export const paperVisuals: Record<string, PaperVisual> = {
     alt: "A street photograph and its reference segmentation labels from the DIFF overview figure",
     caption: "Image and reference labels · figure detail",
     before: {
-      src: "/images/publications/studies/diff-pipeline.jpg",
-      width: 8181,
-      height: 3300,
-      crop: { x: 62, y: 1293, width: 566, height: 565 },
+      src: "/images/publications/studies/previews/diff-scene.webp",
+      width: 566,
+      height: 565,
     },
     after: {
-      src: "/images/publications/studies/diff-pipeline.jpg",
-      width: 8181,
-      height: 3300,
-      crop: { x: 62, y: 275, width: 566, height: 565 },
+      src: "/images/publications/studies/previews/diff-labels.webp",
+      width: 566,
+      height: 565,
     },
     labels: ["Scene", "Labels"],
   },
@@ -67,16 +67,14 @@ export const paperVisuals: Record<string, PaperVisual> = {
     alt: "A noisy stairwell photograph and the published MeD denoising result",
     caption: "Denoising · published example",
     before: {
-      src: "/images/publications/studies/med-noisy.jpg",
-      width: 3680,
-      height: 2456,
-      crop: { x: 1660, y: 510, width: 1040, height: 720 },
+      src: "/images/publications/studies/previews/med-noisy.webp",
+      width: 760,
+      height: 526,
     },
     after: {
-      src: "/images/publications/studies/med-denoised.jpg",
-      width: 3680,
-      height: 2456,
-      crop: { x: 1660, y: 510, width: 1040, height: 720 },
+      src: "/images/publications/studies/previews/med-denoised.webp",
+      width: 760,
+      height: 526,
     },
     labels: ["Noisy", "Denoised"],
   },

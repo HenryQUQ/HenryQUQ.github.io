@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { ArrowUpRight, Check, Plus } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import { workStories } from "@/src/data/site";
 import { CompadPlayground } from "@/components/compad-playground";
 import { NexusVisual } from "@/components/nexus-visual";
@@ -86,7 +86,6 @@ export function WorkShowcase() {
           >
             <span>0{index + 1}</span>
             {story.name}
-            <ArrowUpRight aria-hidden="true" size={17} />
           </button>
         ))}
       </div>

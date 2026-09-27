@@ -67,12 +67,12 @@ export function PublicationActions({
           <TextLink href={getPublicationDoiUrl(publication.doi)}>DOI</TextLink>
         )}
         <button
-          className="copy-citation"
+          className="copy-citation text-link"
           type="button"
           onClick={() => void copyCitation()}
           aria-label={`Copy citation for ${publication.title}`}
         >
-          Copy citation
+          <span>Copy citation</span>
         </button>
       </div>
       <p className="citation-status" role="status">
