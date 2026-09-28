@@ -1,6 +1,13 @@
-import { Project, Publication } from "@/src/data/site";
+import { Project, Publication, profile } from "@/src/data/site";
 
-const primaryLinkOrder = ["project", "paper", "arxiv", "doi", "code", "dataset"];
+const primaryLinkOrder = [
+  "project",
+  "paper",
+  "arxiv",
+  "doi",
+  "code",
+  "dataset",
+];
 
 export function groupPublicationsByYear(publications: Publication[]) {
   const grouped = new Map<number, Publication[]>();
@@ -11,7 +18,16 @@ export function groupPublicationsByYear(publications: Publication[]) {
     grouped.set(publication.year, existing);
   });
 
-  return Array.from(grouped.entries()).sort(([yearA], [yearB]) => yearB - yearA);
+  return Array.from(grouped.entries()).sort(
+    ([yearA], [yearB]) => yearB - yearA,
+  );
+}
+
+// Roles are derived from author order, never typed by hand.
+export function getAuthorRole(publication: Publication) {
+  return publication.authorList[0] === profile.name
+    ? "First author"
+    : "Co-author";
 }
 
 export function getPublicationDoiUrl(doi: string) {
@@ -35,7 +51,7 @@ export function getPrimaryPublicationHref(publication: Publication) {
 
 export function getPublicationProjectLinks(
   publication: Publication,
-  project?: Project
+  project?: Project,
 ) {
   return (
     project?.links.filter(
@@ -44,8 +60,8 @@ export function getPublicationProjectLinks(
           (publicationLink) =>
             publicationLink.href === projectLink.href ||
             (publicationLink.kind === projectLink.kind &&
-              publicationLink.label === projectLink.label)
-        )
+              publicationLink.label === projectLink.label),
+        ),
     ) ?? []
   );
 }

@@ -2,6 +2,16 @@
 
 Initial public-source research was completed on April 16, 2026. The career narrative and current profile were audited again on August 27, 2026.
 
+## Visual upgrade — September 26, 2026
+
+A presentation update only: typography, colour surfaces, layout and motion changed; no career, project-status, authorship or impact facts were added or altered.
+
+- Reading-list credits now show the author role next to the venue. “First author” or “Co-author” is derived from the existing `authorList` order in `src/data/site.ts` (VisualSplit first; DIFF, 360+x and MeD co-authored), and “Oral” from the existing `recognition` field. The research stories keep their verified notes (“BMVC 2025 · First author”, “CVPR 2024 · Oral paper · Co-author”); the venue now links to the matching paper entry.
+- Reading-list previews for DIFF and MeD now load small derivatives instead of the full published files. They are lossless WebP crops, stored in `public/images/publications/studies/previews/`, of exactly the framing recorded below: `diff-scene.webp` and `diff-labels.webp` are the unscaled `(62, 1293, 566, 565)` and `(62, 275, 566, 565)` regions of `diff-pipeline.jpg`; `med-noisy.webp` and `med-denoised.webp` are the `(1660, 510, 1040, 720)` region of each MeD image, resampled once (Lanczos) to 760 × 526 for the preview's display size. Lossless encoding means no compression smoothing is added to the noisy image. The source files below are unchanged and remain in the repository. Page weight for these previews fell from about 5.3 MB to under 1 MB.
+- The VisualSplit case assets are unchanged, including their lossless encoding and original pixels.
+- On phones, About uses the existing portrait-format `/public/images/hero/home-hero-mobile.webp` of the same night photograph; wider screens keep `/public/images/hero/home-hero-desktop.webp`.
+- The chapter numerals (I–IV) and the colophon line “Set in Newsreader & DM Sans.” are structural print devices and a statement about the site's own typefaces; they make no claims about the person or the work.
+
 ## Personal collection — September 15, 2026
 
 The user confirmed that his English name is **Henry**. The introduction now says “You can call me Henry.”, and the footer, page metadata and Person schema include this name. Publication authorship and citations retain Chenyuan Qu.

@@ -9,6 +9,7 @@ import { LinkedAuthors } from "./linked-authors";
 import { PublicationActions } from "./publication-actions";
 import { PaperPreview } from "./paper-preview";
 import { paperVisuals } from "@/src/data/paper-visuals";
+import { getAuthorRole } from "@/src/lib/publications";
 
 export function PublicationLibrary() {
   useEffect(() => {
@@ -38,8 +39,8 @@ export function PublicationLibrary() {
     <div className="publication-library" id="papers">
       <div className="library-heading">
         <h3>A little more reading.</h3>
-        <span>
-          {Math.min(...publications.map((paper) => paper.year))} —{" "}
+        <span className="num">
+          {Math.min(...publications.map((paper) => paper.year))}–
           {Math.max(...publications.map((paper) => paper.year))}
         </span>
       </div>
@@ -53,10 +54,18 @@ export function PublicationLibrary() {
           <summary>
             <PaperPreview slug={paper.slug} />
             <span className="paper-heading">
-              <span className="paper-venue">
-                {paper.year} <span aria-hidden="true">·</span>{" "}
-                {paper.shortVenue}
-                {paper.recognition ? " · Oral" : ""}
+              <span className="paper-venue credit-line">
+                <span className="credit-venue">
+                  {paper.year} · {paper.shortVenue}
+                </span>
+                {paper.recognition && (
+                  <>
+                    {" · "}
+                    <span className="credit-honour">Oral</span>
+                  </>
+                )}
+                {" · "}
+                {getAuthorRole(paper)}
               </span>
               <strong>{paperIntroductions[paper.slug].name}</strong>
               <span className="paper-introduction">
@@ -140,7 +149,10 @@ export function PublicationLibrary() {
                           alt={media.alt}
                           sizes="(max-width: 760px) 85vw, 35vw"
                         />
-                        <span>{media.label} ↗</span>
+                        <span>
+                          {media.label}
+                          <ArrowUpRight size={13} aria-hidden="true" />
+                        </span>
                       </a>
                     ),
                   )}
@@ -158,7 +170,7 @@ export function PublicationLibrary() {
             <div key={project.title}>
               <a href={project.links[0].href} target="_blank" rel="noreferrer">
                 {project.title}
-                <span aria-hidden="true">↗</span>
+                <ArrowUpRight size={15} aria-hidden="true" />
               </a>
               <p>{project.summary}</p>
               {project.links.slice(1).map((link) => (
@@ -169,7 +181,7 @@ export function PublicationLibrary() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {link.label} ↗
+                  {link.label} <ArrowUpRight size={12} aria-hidden="true" />
                 </a>
               ))}
             </div>

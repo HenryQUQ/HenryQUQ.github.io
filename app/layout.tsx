@@ -9,6 +9,7 @@ import "./globals.css";
 const sans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
+  axes: ["opsz"],
   display: "swap",
 });
 
@@ -90,10 +91,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${sans.variable} ${display.variable}`}>
       <head>
+        {/* The matte is fetched as a CSS mask (a CORS request), so the
+            preload must match or the browser downloads it twice. */}
         <link
           rel="preload"
           as="image"
           href={withBasePath("/images/portrait/person-matte.webp")}
+          crossOrigin="anonymous"
         />
       </head>
       <body className="antialiased">{children}</body>

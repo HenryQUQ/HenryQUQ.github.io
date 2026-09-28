@@ -6,14 +6,15 @@ The source for [chenyuanqu.com](https://chenyuanqu.com): Chenyuan's personal col
 
 ## What is here
 
-- A layered portrait with three poster compositions, manual selection and a discreet pause/resume control
+- A cover spread: a stacked name beside a layered portrait plate with three compositions, manual selection and a discreet pause/resume control
+- Four numbered chapters on warm paper, with one type scale, one 12-column grid and a header that takes the tone of the surface beneath it
 - Selected work with Nexus product imagery and three editable COMPaD poster designs
 - A VisualSplit comparison study with published colour editing, lighting and reconstruction examples
-- A 360+x panorama that opens inside the scene, with drag and keyboard controls, alongside the complete paper library and citations
-- A personal introduction, career and education details, updates and contact routes
+- A full-width 360+x night band that opens inside the scene, with drag, keyboard and reset controls, alongside the complete paper library, readable credits and citations
+- A full-height night photograph, a personal introduction, career and education details, updates and contact routes
 - Keyboard navigation, reduced-motion support, native reading without JavaScript and GitHub Pages static export
 
-The site is built with Next.js 14, React, TypeScript, Tailwind CSS, and Framer Motion. Public facts and structured content live in `src/data/site.ts`; source provenance is tracked in `docs/sources.md`.
+The site is built with Next.js 14, React, TypeScript and Tailwind CSS, with design tokens and section styles in `app/globals.css` (see `docs/design-spec.md`). Public facts and structured content live in `src/data/site.ts`; source provenance is tracked in `docs/sources.md`.
 
 ## Local development
 

@@ -45,6 +45,13 @@ export async function createPanoramaRenderer(
   function render() {
     if (disposed || !canvas.clientWidth || !canvas.clientHeight) return;
     camera.aspect = canvas.clientWidth / canvas.clientHeight;
+    // Wide frames keep a ~100° horizontal view instead of stretching the edges.
+    camera.fov = Math.min(
+      74,
+      MathUtils.radToDeg(
+        2 * Math.atan(Math.tan(MathUtils.degToRad(50)) / camera.aspect),
+      ),
+    );
     camera.updateProjectionMatrix();
     const phi = MathUtils.degToRad(90 - view.pitch);
     const theta = MathUtils.degToRad(view.yaw + 90);

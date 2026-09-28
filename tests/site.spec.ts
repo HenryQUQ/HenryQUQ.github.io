@@ -54,6 +54,8 @@ test("the introduction leads with the person and an invitation to see the work",
 for (const size of [
   { width: 1440, height: 900 },
   { width: 1280, height: 720 },
+  { width: 1024, height: 768 },
+  { width: 768, height: 1024 },
   { width: 390, height: 844 },
   { width: 320, height: 800 },
 ]) {
@@ -83,6 +85,16 @@ for (const size of [
     const controls = await page.locator(".cq-art-controls").boundingBox();
     const footer = await page.locator(".hero-foot").boundingBox();
     expect(controls!.y + controls!.height).toBeLessThanOrEqual(footer!.y);
+    const person = (await page.locator(".cq-person").boundingBox())!;
+    expect(person.width).toBeGreaterThan(0);
+    const portrait = (await page.locator(".cq-poster").boundingBox())!;
+    if (size.width >= 1000) {
+      const name = (await page.locator(".hero h1").boundingBox())!;
+      expect(
+        name.x + name.width,
+        "The name stays clear of the portrait",
+      ).toBeLessThanOrEqual(portrait.x - 16);
+    }
     await page.screenshot({
       path: testInfo.outputPath("homepage.png"),
       animations: "disabled",
@@ -95,6 +107,200 @@ for (const size of [
     await checkOverflow(page);
   });
 }
+
+for (const size of [
+  { width: 375, height: 667 },
+  { width: 360, height: 740 },
+]) {
+  test(`the invitation to explore stays in the first screen at ${size.width} × ${size.height}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(size);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
+    const invitation = (await page
+      .getByRole("link", { name: "Explore my work" })
+      .boundingBox())!;
+    expect(invitation.y + invitation.height).toBeLessThanOrEqual(size.height);
+    await checkOverflow(page);
+  });
+}
+
+for (const width of [768, 1024, 1440]) {
+  test(`each work canvas keeps clear of its story at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/#enterprise");
+    for (const name of ["01 COMPaD", "02 Nexus", "03 Everyday tools"]) {
+      await page.getByRole("tab", { name }).click();
+      const panel = page.getByRole("tabpanel", { name });
+      const art = (await panel.locator(".work-illustration").boundingBox())!;
+      const story = (await panel.locator(".work-story").boundingBox())!;
+      expect(
+        art.x + art.width <= story.x + 1 || art.y + art.height <= story.y + 1,
+        `${name} canvas and story overlap`,
+      ).toBe(true);
+    }
+    await checkOverflow(page);
+  });
+}
+
+for (const size of [
+  { width: 844, height: 390 },
+  { width: 932, height: 430 },
+  { width: 900, height: 700 },
+  { width: 1024, height: 480 },
+]) {
+  test(`short screens keep the portrait and its controls on the page at ${size.width} × ${size.height}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(size);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
+    await checkOverflow(page);
+    const portrait = (await page.locator(".cq-poster").boundingBox())!;
+    const controls = (await page.locator(".cq-art-controls").boundingBox())!;
+    const footer = (await page.locator(".hero-foot").boundingBox())!;
+    expect(portrait.width).toBeGreaterThanOrEqual(200);
+    expect(controls.x + controls.width).toBeLessThanOrEqual(size.width);
+    expect(controls.y + controls.height).toBeLessThanOrEqual(footer.y);
+  });
+}
+
+test("no image is stretched out of its proportions", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  for (const size of [
+    { width: 1440, height: 900 },
+    { width: 390, height: 844 },
+  ]) {
+    await page.setViewportSize(size);
+    await page.goto("/");
+    for (const id of ["enterprise", "research", "study-x360", "papers"]) {
+      await page.locator(`#${id}`).scrollIntoViewIfNeeded();
+    }
+    await page.locator("#journey").scrollIntoViewIfNeeded();
+    await expect
+      .poll(() =>
+        page
+          .locator(".panorama-fallback img, .about-scene img")
+          .evaluateAll((images) =>
+            images.every(
+              (image) =>
+                (image as HTMLImageElement).complete &&
+                (image as HTMLImageElement).naturalWidth > 0,
+            ),
+          ),
+      )
+      .toBe(true);
+    const stretched = await page.locator("img").evaluateAll((images) =>
+      images
+        .map((image) => image as HTMLImageElement)
+        .filter((image) => {
+          const box = image.getBoundingClientRect();
+          if (!image.naturalWidth || !box.width || !box.height) return false;
+          if (getComputedStyle(image).objectFit !== "fill") return false;
+          const natural = image.naturalWidth / image.naturalHeight;
+          return Math.abs(box.width / box.height - natural) / natural > 0.02;
+        })
+        .map((image) => image.currentSrc),
+    );
+    expect(stretched).toEqual([]);
+  }
+});
+
+test("printing shows every section without scrolling first", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const later = page.locator('#contact .reveal[data-reveal="armed"]');
+  await expect(later).toHaveCount(1);
+  await page.emulateMedia({ media: "print" });
+  await expect(later).toHaveCSS("opacity", "1");
+  await expect(page.locator(".site-header")).toBeHidden();
+});
+
+test("the masthead takes the tone of the surface beneath it", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const header = page.locator(".site-header");
+  await expect(header).toHaveAttribute("data-tone", "paper");
+  for (const [selector, tone, colour] of [
+    ["#enterprise", "stone", "#e4ddcf"],
+    ["#study-x360", "night", "#111a1c"],
+    ["#journey", "photo", "#0c191b"],
+    ["#contact", "rust", "#994028"],
+  ]) {
+    await page
+      .locator(selector)
+      .evaluate((element) =>
+        window.scrollTo(
+          0,
+          element.getBoundingClientRect().top + window.scrollY + 1,
+        ),
+      );
+    await expect(header).toHaveAttribute("data-tone", tone);
+    await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute(
+      "content",
+      colour,
+    );
+  }
+});
+
+test("paper credits name the venue, the role and any oral presentation", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/#papers");
+  for (const [slug, credit] of [
+    ["visualsplit", "2025 · BMVC · First author"],
+    ["diff", "2025 · ICASSP · Co-author"],
+    ["x360", "2024 · CVPR · Oral · Co-author"],
+    ["med", "2023 · ICCV · Co-author"],
+  ]) {
+    await expect(paper(page, slug).locator(".paper-venue")).toHaveText(credit);
+  }
+  await paper(page, "med").locator(":scope > summary").click();
+  await expect(paper(page, "med").locator(".author-self")).toHaveText(
+    "Chenyuan Qu",
+  );
+  await page
+    .locator("#study-visualsplit")
+    .getByRole("link", { name: "BMVC 2025", exact: true })
+    .click();
+  await expect(page).toHaveURL(/#publication-visualsplit$/);
+  await expect(paper(page, "visualsplit")).toHaveAttribute("open", "");
+});
+
+test("only content below the fold waits to reveal, and nothing in view flashes", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const heading = page.locator("#enterprise .reveal").first();
+  await expect(heading).toHaveAttribute("data-reveal", "armed");
+  await expect(page.locator('.hero [data-reveal="armed"]')).toHaveCount(0);
+  await heading.scrollIntoViewIfNeeded();
+  await expect(heading).toHaveAttribute("data-reveal", "shown");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.reload();
+  // Wait for hydration before checking that nothing was hidden.
+  await expect(page.locator(".visualsplit-study")).toHaveAttribute(
+    "data-ready",
+    "true",
+  );
+  await expect(page.locator(".reveal").first()).toHaveAttribute(
+    "data-reveal",
+    "idle",
+  );
+  await expect(page.locator('[data-reveal="armed"]')).toHaveCount(0);
+});
 
 test("navigation reaches each section beneath the fixed header", async ({
   page,
@@ -606,6 +812,11 @@ test("the panorama retains a photograph and project link without WebGL", async (
   });
   await page.goto("/#study-x360");
   await expect(page.locator(".panorama-fallback img")).toBeVisible();
+  await expect(page.locator(".panorama-fallback img")).toHaveCSS(
+    "object-fit",
+    "cover",
+  );
+  await expect(page.locator(".panorama-hint")).toBeHidden();
   const frame = (await page.locator(".immersive-panorama").boundingBox())!;
   const photograph = (await page.locator(".panorama-fallback").boundingBox())!;
   expect(photograph.width).toBeCloseTo(frame.width, 0);
